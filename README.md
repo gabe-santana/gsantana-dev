@@ -32,6 +32,7 @@ tests as a sibling folder at the repo root:
 │   ├── app/              # routes (App Router)
 │   ├── components/       # UI components
 │   ├── lib/              # markdown pipeline, post loading, helpers
+│   ├── functions/        # Cloudflare Pages Function: language redirect on "/"
 │   ├── lib/dictionaries/ # UI translations (en-us, pt-br)
 │   └── posts/            # content, one folder per language (en-us/, pt-br/)
 ├── tests/                # Vitest test files
@@ -115,10 +116,34 @@ shows as **Coming soon** and isn't linked.
 ## Languages
 
 Every page lives under a language prefix: `/en-us/…` and `/pt-br/…`. The
-bare `/` sends visitors to the language they last picked with the switcher,
-otherwise their browser's language, otherwise English. The **EN | PT**
-toggle in the navigation swaps the prefix with a client-side navigation (no
-page reload) and keeps the scroll position.
+**EN | PT** toggle in the navigation swaps the prefix with a client-side
+navigation (no page reload) and keeps the scroll position.
+
+### Language detection on `/`
+
+Visiting the bare domain (`https://gsantana.dev/`) redirects to a language
+at the Cloudflare edge, before any page is sent, via a Pages Function in
+[src/functions/index.ts](src/functions/index.ts). The decision, in
+[src/lib/locale-detection.ts](src/lib/locale-detection.ts), goes:
+
+1. **Saved choice.** If the visitor used the language switcher, the
+   `gsantana_locale` cookie it sets wins.
+2. **Country.** From Cloudflare's IP geolocation (`request.cf.country`),
+   Portuguese-speaking countries go to `/pt-br/`: Brazil, Portugal, Angola,
+   Mozambique, Cape Verde, Guinea-Bissau, São Tomé and Príncipe,
+   Timor-Leste, Macau and Equatorial Guinea. Every other country goes to
+   `/en-us/`.
+3. **Browser language.** Only when the country is unknown (Tor, some
+   VPNs), from the `Accept-Language` header.
+4. **English** otherwise.
+
+The response is a `302` with `Cache-Control: private, no-store` (it depends
+on the visitor, so it's never cached) and keeps any query string. The
+function runs only for `/`; every other URL is served as a static file.
+Locally, `next dev` doesn't run Pages Functions, so `/` falls back to the
+static page in `app/(root)/page.tsx`, which redirects by saved choice or
+browser language in the browser. That page is also the fallback in
+production if the function ever errors.
 
 - **UI text:** `src/lib/dictionaries/en-us.ts` is the source of truth;
   `pt-br.ts` must have exactly the same keys (a type error otherwise).
@@ -158,28 +183,41 @@ happen at the CDN, not via Next's image server (which doesn't exist here).
 
 ## Deploying
 
-The site is the Cloudflare Pages project **gsantana-dev**, served at
-https://gsantana.dev. It uses Direct Upload: the build runs locally and
-wrangler uploads `src/out/`. From `src/`:
+The site is the Cloudflare Pages project **gsantana-dev**, connected to
+this GitHub repo and served at https://gsantana.dev. **Every push to
+`main` is a production release**; pushes to other branches get their own
+preview URL.
+
+Build settings (Cloudflare dashboard → Workers & Pages → gsantana-dev →
+Settings):
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `src` |
+| Build command | `npm test && npm run build` |
+| Output directory | `out` |
+| Env vars (production + preview) | `NEXT_PUBLIC_SITE_URL=https://gsantana.dev`, `NEXT_PUBLIC_MEDIA_CDN_URL=https://cdn.gsantana.dev`, `NODE_VERSION=20` |
+
+The tests run first: **if any test fails, the release is blocked** and the
+live site stays on the previous deployment.
+
+**Release check:** the footer shows a faint `v<version> · <commit>` (hover
+for the build time; click to open the commit on GitHub). After a push, the
+release is live once that hash matches your latest commit on `main`. `src/functions/` is picked up
+automatically and deployed as the edge redirect for `/`. The custom domain
+is a proxied `CNAME gsantana.dev → gsantana-dev.pages.dev` in Cloudflare
+DNS.
+
+### Manual deploy (fallback)
+
+If a Git build is stuck, publish from your machine instead. From `src/`:
 
 ```bash
 npm run deploy
 ```
 
-That builds and publishes to production. Environment variables are baked
-in at build time from `src/.env.local`, so nothing needs to be set in the
-Pages dashboard. Note that a Direct Upload project can't be switched to
-Git-triggered builds later; that would take a new Pages project (the steps
-below).
-
-### Alternative: Git-connected Cloudflare Pages
-
-1. Connect this repo in the Cloudflare Pages dashboard.
-2. Set the project's **root directory** to `src`.
-3. Build command: `npm run build`. Build output directory: `out`.
-4. Add environment variables `NEXT_PUBLIC_SITE_URL` and
-   `NEXT_PUBLIC_MEDIA_CDN_URL` in the Pages project settings.
-5. Push to `main` — Cloudflare builds and deploys automatically.
+It builds locally (using `src/.env.local` for the env vars) and uploads
+`out/` plus `functions/` with wrangler (`npx wrangler login` once first).
 
 To preview a production build locally against the Cloudflare runtime:
 

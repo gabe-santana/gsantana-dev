@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  LOCALE_COOKIE,
   LOCALE_STORAGE_KEY,
   localeConfig,
   locales,
@@ -16,6 +17,17 @@ import {
  * changes but the page never fully reloads. scroll={false} keeps the reader
  * where they were.
  */
+// Remembers the choice for visits to "/": the cookie is read by the edge
+// redirect (functions/index.ts), localStorage by the static fallback script.
+function rememberLocale(locale: Locale) {
+  document.cookie = `${LOCALE_COOKIE}=${locale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
+  try {
+    localStorage.setItem(LOCALE_STORAGE_KEY, locale);
+  } catch {
+    // Storage blocked: the cookie alone still covers the edge redirect.
+  }
+}
+
 export function LanguageSwitcher({
   locale,
   label,
@@ -42,13 +54,7 @@ export function LanguageSwitcher({
             lang={localeConfig[target].tag}
             title={localeConfig[target].name}
             aria-current={isActive ? "true" : undefined}
-            onClick={() => {
-              try {
-                localStorage.setItem(LOCALE_STORAGE_KEY, target);
-              } catch {
-                // Storage blocked: the choice just isn't remembered for "/".
-              }
-            }}
+            onClick={() => rememberLocale(target)}
             className={`rounded-full px-2.5 py-1 transition-colors ${
               isActive
                 ? "bg-accent font-semibold text-background"

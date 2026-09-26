@@ -13,6 +13,8 @@ describe("renderMarkdown", () => {
   });
 
   it("leaves raw <img> src untouched with no CDN configured", async () => {
+    // Explicitly unset: CI builds define the CDN URL as a real env var.
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_CDN_URL", "");
     const { html } = await renderMarkdown('<img src="/jrdev.png" alt="" />');
     expect(html).toContain('src="/jrdev.png"');
   });

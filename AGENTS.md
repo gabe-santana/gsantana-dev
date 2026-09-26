@@ -100,9 +100,14 @@ use it, so both are shared across languages.
 
 - Every page is under `app/[lang]/` (`en-us`, `pt-br`), which is also a
   **root layout** (it owns `<html lang>`). `app/(root)/` is a second root
-  layout used only by `/`, whose inline script redirects to the saved
-  language (localStorage `gsantana:locale`), else the browser language,
-  else `en-us`. With two root layouts there is no shared 404, so
+  layout used only by `/`. In production `/` never reaches it: the Pages
+  Function `src/functions/index.ts` answers first with a 302 decided by
+  `src/lib/locale-detection.ts` (cookie `gsantana_locale` from the
+  switcher, else country via `request.cf.country`, else Accept-Language,
+  else `en-us`). The static page's inline script (localStorage, then
+  browser language) is the fallback for `next dev` and for function
+  errors. `locale-detection.ts` and the function use relative imports, not
+  `@/`, because the Pages Functions bundler doesn't know that alias. With two root layouts there is no shared 404, so
   `app/global-not-found.tsx` (experimental `globalNotFound`) renders the
   bilingual `out/404.html`.
 - `src/lib/i18n.ts`: `locales`, `localeConfig` (BCP 47 tag, switcher label,
