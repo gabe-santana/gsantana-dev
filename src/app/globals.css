@@ -218,6 +218,82 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
 }
 
 
+/* Callouts: <div class="callout info|tip|warning" data-title="…"> -------- */
+
+.prose-post .callout {
+  --callout-color: var(--color-accent);
+  margin: 2rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--callout-color) 30%, transparent);
+  border-left: 3px solid var(--callout-color);
+  border-radius: 0.75rem;
+  background-color: color-mix(in srgb, var(--callout-color) 6%, transparent);
+  font-size: 0.95em;
+}
+
+.prose-post .callout.info {
+  --callout-color: #60a5fa;
+}
+
+.prose-post .callout.tip {
+  --callout-color: var(--color-accent);
+}
+
+.prose-post .callout.warning {
+  --callout-color: #fbbf24;
+}
+
+.prose-post .callout[data-title]::before {
+  content: attr(data-title);
+  display: block;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--callout-color);
+}
+
+.prose-post .callout > :first-child,
+.prose-post .callout > :first-child > :first-child {
+  margin-top: 0;
+}
+
+.prose-post .callout > :last-child {
+  margin-bottom: 0;
+}
+
+/* Editor-style code: legacy <div class="vscode-block"> and code fences with
+   a title (```python title="app.py"), which rehype-pretty-code turns into a
+   figcaption. Both get the same file-tab look. */
+
+.prose-post .vscode-block,
+.prose-post figure[data-rehype-pretty-code-figure]:has(> figcaption) {
+  margin: 2rem 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  background-color: var(--color-surface);
+}
+
+.prose-post .vscode-title,
+.prose-post figcaption[data-rehype-pretty-code-title] {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  background-color: rgb(255 255 255 / 0.02);
+}
+
+.prose-post .vscode-block pre,
+.prose-post figure[data-rehype-pretty-code-figure]:has(> figcaption) pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
 /* "Júnior Inocente": a recurring character who interrupts the post with
    naive questions. Styled as a chat message (avatar + speech bubble), not
    an alert: it's a voice in the conversation, and it isn't clickable. */

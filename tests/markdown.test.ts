@@ -34,6 +34,11 @@ describe("renderMarkdown", () => {
     expect(html).toMatch(/<img[^>]*src="\/b\.png"[^>]*loading="eager"/);
   });
 
+  it("renders a file-name tab for titled code fences", async () => {
+    const { html } = await renderMarkdown('```python title="app.py"\nprint("hi")\n```');
+    expect(html).toMatch(/<figcaption[^>]*data-rehype-pretty-code-title[^>]*>app\.py<\/figcaption>/);
+  });
+
   it("extracts h2/h3 headings with ids matching the rendered anchors", async () => {
     const { html, headings } = await renderMarkdown(
       "# Title\n\n## Soluções de rede\n\n### O que é uma `VNet`?\n\n#### Too deep"

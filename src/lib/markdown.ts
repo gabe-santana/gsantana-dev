@@ -8,6 +8,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import { rehypeCdnImages } from "@/lib/rehype-cdn-images";
+import { rehypeRestoreCodeMeta, rehypeStashCodeMeta } from "@/lib/rehype-code-meta";
 import { rehypeLazyImages } from "@/lib/rehype-lazy-images";
 import {
   rehypeExtractHeadings,
@@ -34,8 +35,11 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
     // remark-rehype (with allowDangerousHtml) keeps raw HTML as opaque
     // "raw" nodes rather than real hast elements. rehype-raw parses them
     // into actual <img>/<div> etc. elements so downstream plugins (like
-    // rehypeCdnImages) can actually inspect and rewrite them.
+    // rehypeCdnImages) can actually inspect and rewrite them. It drops code
+    // fence metadata, hence the stash/restore around it.
+    .use(rehypeStashCodeMeta)
     .use(rehypeRaw)
+    .use(rehypeRestoreCodeMeta)
     .use(rehypeCdnImages)
     .use(rehypeLazyImages)
     .use(rehypeSlug)
@@ -46,7 +50,7 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
     })
     .use(rehypePrettyCode, {
       // The site only ships a dark theme, so a single Shiki theme keeps the
-      // highlighter output (and its CSS) simple — no light/dark token swap.
+      // highlighter output (and its CSS) simple, with no light/dark token swap.
       theme: "github-dark",
       keepBackground: false,
     })
