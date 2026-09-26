@@ -1,6 +1,6 @@
 ---
 title: "Real-Time Message Queuing with Azure Service Bus and C#: A Complete Walkthrough"
-description: "A production-grade Service Bus consumer is a hosted worker that settles every message explicitly, uses sessions when order matters per entity and dead-letters what can never succeed. Because delivery is at-least-once, it must also be idempotent and come with a deliberate way to reprocess the dead-letter queue."
+description: "Build an idempotent C# Service Bus worker with sessions, explicit settlement, and dead-letter recovery."
 date: 2026-02-22
 tags: [Azure, Service Bus, C#, .NET, Messaging]
 tldr:

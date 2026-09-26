@@ -1,6 +1,6 @@
 ---
 title: "Hybrid Search That Actually Works: BM25 + Vectors with Reciprocal Rank Fusion"
-description: "Busca vetorial pura deixa passar termos exatos como códigos de erro, SKUs e IDs, então rode BM25 e busca vetorial lado a lado e combine os rankings com Reciprocal Rank Fusion. Adicione um reranker cross-encoder sobre os primeiros resultados combinados quando precisar de mais precisão e puder pagar a latência."
+description: "Combine BM25 e vetores para encontrar termos exatos e sentido, com reranking quando preciso."
 date: 2025-11-02
 tags: [RAG, Search, Python, Embeddings]
 tldr:

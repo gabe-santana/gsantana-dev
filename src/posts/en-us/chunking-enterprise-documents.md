@@ -1,6 +1,6 @@
 ---
 title: "Chunking Enterprise Documents Without Losing Meaning"
-description: "Fixed-size chunking cuts tables, procedures and policy exceptions mid-thought and strips the context that makes them meaningful. Chunk along the document's structure, prepend the heading path to every chunk, and retrieve small chunks while handing the model their parent section."
+description: "Preserve document structure when chunking so retrieval keeps the context tables and policies need."
 date: 2026-01-05
 tags: [RAG, Chunking, Python, Embeddings]
 tldr:

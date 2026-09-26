@@ -1,6 +1,6 @@
 ---
 title: "Multi-Cloud Without the Pain: Patterns That Survive Contact with Reality"
-description: "Multi-cloud works when you know why you are doing it and make things portable only where it pays off: containers and IaC, federated identity instead of copied secrets, one observability plane. Data placement is the decision that actually locks you in, so make it first."
+description: "Make only the right parts portable, and decide where your data lives first."
 date: 2026-02-06
 tags: [Multi-Cloud, Terraform, Azure, AWS, Architecture]
 tldr:

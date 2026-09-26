@@ -1,6 +1,6 @@
 ---
 title: "Deploying a RAG API to Azure Container Apps with Terraform, Step by Step"
-description: "Um deploy no Azure Container Apps com cara de produção é, na maior parte, identidade e configuração: uma imagem puxada do ACR por uma managed identity, secrets referenciados do Key Vault e escala guiada por concorrência HTTP. Some health probes e uma sequência deliberada para o primeiro deploy, e as novas revisions entram no ar com segurança em vez de falhar no meio da madrugada."
+description: "Implante uma API RAG no Azure Container Apps com identidade gerenciada, Key Vault, escala e health checks."
 date: 2026-04-27
 tags: [Azure, Container Apps, Terraform, RAG, FastAPI]
 tldr:

@@ -1,6 +1,6 @@
 ---
 title: "Orchestrating Multiple Agents Without Building a Distributed Monolith"
-description: "Adicione agents só quando um único agent com boas tools realmente não dá conta e, quando adicionar, escolha um padrão de orquestração explícito, com mensagens tipadas e um único dono para o estado compartilhado. Dê a cada agent um orçamento e uma condição de parada, ou você fica com o acoplamento e os modos de falha de um monólito distribuído sem nenhum dos benefícios."
+description: "Use vários agentes só quando um não bastar, com responsabilidades, orçamento e condições de parada."
 date: 2026-03-26
 tags: [AI Agents, Orchestration, Python, asyncio]
 tldr:

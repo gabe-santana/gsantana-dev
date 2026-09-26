@@ -1,6 +1,6 @@
 ---
 title: "Multi-Cloud Without the Pain: Patterns That Survive Contact with Reality"
-description: "Multi-cloud funciona quando você sabe por que está fazendo isso e torna as coisas portáveis só onde compensa: containers e IaC, identidade federada em vez de segredos copiados, um único plano de observabilidade. Onde os dados ficam é a decisão que realmente te prende, então tome essa decisão primeiro."
+description: "Torne portável só o que compensa e decida primeiro onde seus dados vão morar."
 date: 2026-02-06
 tags: [Multi-Cloud, Terraform, Azure, AWS, Architecture]
 tldr:

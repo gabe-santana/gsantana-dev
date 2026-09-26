@@ -1,6 +1,6 @@
 ---
 title: "Serverless Cost Governance: Keeping Azure Functions and AWS Lambda Bills Predictable"
-description: "Serverless bills scale with traffic, retries and bugs, not with the capacity you planned, so predictability has to be designed in before the surprise. Cap concurrency, wire budgets to people and automation, enforce cost allocation tags with policy, and watch cost per request like you watch latency."
+description: "Keep serverless costs predictable with concurrency limits, budgets, tags, and cost-per-request tracking."
 date: 2026-04-11
 tags: [Serverless, FinOps, Azure Functions, AWS Lambda, Terraform]
 tldr:

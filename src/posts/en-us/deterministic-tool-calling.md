@@ -1,6 +1,6 @@
 ---
 title: "Deterministic Tool Calling: Stop Letting the LLM Improvise Your API Calls"
-description: "A tool call is a proposal from the model, not a command: validate it against strict schemas, business rules and policy before anything runs. Add idempotency keys, bounded retries and structured errors, and your agent stops double-refunding customers when the model gets creative."
+description: "Validate every agent tool call before execution, then make retries bounded and side effects idempotent."
 date: 2026-01-21
 tags: [AI Agents, Tool Calling, Python, Pydantic]
 tldr:

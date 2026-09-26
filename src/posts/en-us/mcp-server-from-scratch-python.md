@@ -1,6 +1,6 @@
 ---
 title: "Model Context Protocol from Scratch: Build Your First MCP Server in Python"
-description: "MCP decouples tools and data from the model host, so you write a server once and any MCP-compatible client can use it. This post walks through the architecture, the three primitives and a working Python server you can plug into Claude Desktop, an IDE or your own agent."
+description: "Build a Python MCP server that exposes tools and data to compatible AI clients."
 date: 2025-11-18
 tags: [MCP, AI Agents, Python, LLM]
 tldr:

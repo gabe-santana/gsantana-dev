@@ -1,6 +1,6 @@
 ---
 title: "Deterministic Tool Calling: Stop Letting the LLM Improvise Your API Calls"
-description: "Uma chamada de tool é uma proposta do modelo, não uma ordem: valide contra schemas estritos, regras de negócio e política antes de qualquer execução. Some idempotency keys, retries limitados e erros estruturados, e seu agente para de reembolsar clientes em dobro quando o modelo resolve ser criativo."
+description: "Valide cada chamada de ferramenta do agente antes da execução e torne os retries seguros."
 date: 2026-01-21
 tags: [AI Agents, Tool Calling, Python, Pydantic]
 tldr:

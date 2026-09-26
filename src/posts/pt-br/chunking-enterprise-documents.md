@@ -1,6 +1,6 @@
 ---
 title: "Chunking Enterprise Documents Without Losing Meaning"
-description: "Chunking de tamanho fixo corta tabelas, procedimentos e exceções de política no meio do raciocínio e arranca o contexto que dá sentido a eles. Faça o chunking seguindo a estrutura do documento, coloque o caminho de headings no início de cada chunk e recupere chunks pequenos entregando ao modelo a seção pai."
+description: "Preserve a estrutura dos documentos no chunking para manter o contexto de tabelas e políticas."
 date: 2026-01-05
 tags: [RAG, Chunking, Python, Embeddings]
 tldr:

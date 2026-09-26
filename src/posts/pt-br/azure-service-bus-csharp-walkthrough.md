@@ -1,6 +1,6 @@
 ---
 title: "Real-Time Message Queuing with Azure Service Bus and C#: A Complete Walkthrough"
-description: "Um consumer de Service Bus pronto para produção é um worker hospedado que liquida cada mensagem explicitamente, usa sessions quando a ordem importa por entidade e manda para dead-letter o que nunca vai dar certo. Como a entrega é at-least-once, ele também precisa ser idempotente e ter um jeito deliberado de reprocessar a dead-letter queue."
+description: "Crie um worker C# de Service Bus idempotente, com sessions, liquidação explícita e recuperação de dead-letter."
 date: 2026-02-22
 tags: [Azure, Service Bus, C#, .NET, Messaging]
 tldr:

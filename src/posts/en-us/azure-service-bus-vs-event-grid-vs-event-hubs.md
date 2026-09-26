@@ -1,6 +1,6 @@
 ---
 title: "Event-Driven Microservices on Azure: Service Bus vs Event Grid vs Event Hubs"
-description: "Pick an Azure messaging service by what the message means, not by feature lists: commands go to Service Bus, notifications go to Event Grid and telemetry streams go to Event Hubs. Real systems usually combine all three, glued together with idempotent consumers and the outbox pattern."
+description: "Choose Service Bus, Event Grid, or Event Hubs by whether you send commands, events, or streams."
 date: 2025-12-04
 tags: [Azure, Messaging, Event-Driven, Microservices, C#]
 tldr:

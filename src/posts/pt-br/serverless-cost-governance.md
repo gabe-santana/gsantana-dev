@@ -1,6 +1,6 @@
 ---
 title: "Serverless Cost Governance: Keeping Azure Functions and AWS Lambda Bills Predictable"
-description: "A fatura de serverless cresce com tráfego, retries e bugs, não com a capacidade que você planejou, então a previsibilidade precisa ser projetada antes da surpresa. Limite a concorrência, ligue budgets a pessoas e automação, exija tags de alocação de custo via policy e acompanhe o custo por requisição como você acompanha latência."
+description: "Controle custos serverless com limites de concorrência, budgets, tags e custo por requisição."
 date: 2026-04-11
 tags: [Serverless, FinOps, Azure Functions, AWS Lambda, Terraform]
 tldr:

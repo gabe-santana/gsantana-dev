@@ -1,6 +1,6 @@
 ---
 title: "Orchestrating Multiple Agents Without Building a Distributed Monolith"
-description: "Add agents only when one agent with good tools truly can't cope, and when you do, pick an explicit orchestration pattern with typed messages and a single owner for shared state. Give every agent a budget and a stop condition, or you get the coupling and failure modes of a distributed monolith without any of its benefits."
+description: "Use multiple agents only when one cannot do the job, with clear ownership, budgets, and stop conditions."
 date: 2026-03-26
 tags: [AI Agents, Orchestration, Python, asyncio]
 tldr:

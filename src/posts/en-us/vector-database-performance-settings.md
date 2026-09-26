@@ -1,6 +1,6 @@
 ---
 title: "Your Vector Database Is Slow Because of These 5 Settings"
-description: "Vector search speed and quality are a trade-off you tune on purpose, measured as recall@k against exact search versus latency. The HNSW graph parameters, ef_search, vector precision, filtering strategy and embedding dimensions decide where your system lands on that curve."
+description: "Tune HNSW, filters, and vector precision against recall and latency, not defaults."
 date: 2026-03-10
 tags: [RAG, Vector Search, HNSW, Python, Performance]
 tldr:
