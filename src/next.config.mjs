@@ -1,3 +1,5 @@
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants.js";
+
 /** @type {import('next').NextConfig} */
 const cdnHost = process.env.NEXT_PUBLIC_MEDIA_CDN_URL
   ? new URL(process.env.NEXT_PUBLIC_MEDIA_CDN_URL).hostname
@@ -39,4 +41,14 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// `next dev` runs no Cloudflare Pages Functions, so the API the site calls
+// (functions/api/*) doesn't exist there. Files named route.dev.ts stand in
+// for them: this extension is only registered for the dev server, and a
+// static export can't contain request-time routes anyway. `output: "export"`
+// is dropped in dev because Next enforces it on every GET route handler even
+// there; builds (the only thing it matters for) still use it.
+export default function config(phase) {
+  if (phase !== PHASE_DEVELOPMENT_SERVER) return nextConfig;
+  const { output: _staticExportOnlyAtBuild, ...devConfig } = nextConfig;
+  return { ...devConfig, pageExtensions: ["dev.ts", "tsx", "ts", "jsx", "js"] };
+}

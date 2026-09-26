@@ -3,9 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/container";
+import { NewsletterForm } from "@/components/newsletter-form";
+import { StockTicker } from "@/components/stock-ticker";
 import { getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
-import { isLocale, localePath, type Locale } from "@/lib/i18n";
+import { isLocale, localeConfig, localePath, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { newsStories, type NewsStory } from "@/lib/news";
 import { alternatesFor } from "@/lib/seo";
@@ -59,8 +61,11 @@ export default async function NewsPage({ params }: PageProps) {
         <p className="font-mono text-xs text-muted">{dict.news.asOf}</p>
       </div>
 
-      <section aria-labelledby="news-lead" className="mt-9">
-        <h2 id="news-lead" className="mb-5 font-mono text-xs uppercase text-muted">
+      <NewsletterForm labels={dict.newsletter} locale={lang} />
+      <StockTicker labels={dict.ticker} localeTag={localeConfig[lang].tag} />
+
+      <section aria-labelledby="news-lead" className="mt-10">
+        <h2 id="news-lead" className="sr-only">
           {dict.news.lead}
         </h2>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">

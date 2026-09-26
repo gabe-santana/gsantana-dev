@@ -81,7 +81,7 @@ export default async function PrinciplePage({ params }: PageProps) {
           </h1>
           <p className="mt-4 text-lg text-muted">{principle.short}</p>
           {principle.isWip ? null : (
-            <p className="mt-4 text-sm text-muted">
+            <p data-pagefind-ignore className="mt-4 text-sm text-muted">
               {format(dict.article.readingTime, { minutes: principle.readingMinutes })}
             </p>
           )}

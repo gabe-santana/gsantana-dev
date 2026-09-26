@@ -76,7 +76,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       }
       header={
         <>
-          <div className="mb-4 flex items-center gap-3 text-sm text-muted">
+          <div data-pagefind-ignore className="mb-4 flex items-center gap-3 text-sm text-muted">
             <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
             <span aria-hidden>&middot;</span>
             <span>{format(dict.article.readingTime, { minutes: post.readingMinutes })}</span>

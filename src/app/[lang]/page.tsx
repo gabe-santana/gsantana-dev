@@ -5,6 +5,7 @@ import { CertificationArticleCard } from "@/components/certification-article-car
 import { Hero } from "@/components/hero";
 import { PostCard } from "@/components/post-card";
 import { PrincipleCard } from "@/components/principle-card";
+import { SearchBox } from "@/components/search-box";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { getAllCertificationSummaries } from "@/lib/certifications";
 import { isLocale, localePath } from "@/lib/i18n";
@@ -28,6 +29,10 @@ export default async function HomePage({
   return (
     <>
       <Hero locale={lang} dict={dict} />
+
+      <Container className="relative pt-4">
+        <SearchBox locale={lang} labels={dict.search} />
+      </Container>
 
       {posts.length > 0 && (
         <Container className="py-24">

@@ -59,6 +59,23 @@ export function ExternalLinkIcon({ className = "h-3.5 w-3.5" }: IconProps) {
   );
 }
 
+export function SearchIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      className={className}
+    >
+      <circle cx="7" cy="7" r="4.75" />
+      <path d="m10.5 10.5 3.25 3.25" />
+    </svg>
+  );
+}
+
 export function RssIcon({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg aria-hidden viewBox="0 0 16 16" className={`fill-current ${className}`}>

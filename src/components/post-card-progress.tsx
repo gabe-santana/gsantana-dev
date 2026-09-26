@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { format } from "@/lib/dictionaries";
-import { getProgress } from "@/lib/reading-progress";
+import { getProgress, PROGRESS_UPDATED_EVENT } from "@/lib/reading-progress";
 
 export function PostCardProgress({
   slug,
@@ -18,9 +18,14 @@ export function PostCardProgress({
   useEffect(() => {
     const sync = () => setPercent(getProgress(slug));
     sync();
-    // Keeps cards in sync when the post is read in another tab.
+    // Keeps cards in sync when the post is read in another tab, or when
+    // progress from another browser arrives (signed-in readers).
     window.addEventListener("storage", sync);
-    return () => window.removeEventListener("storage", sync);
+    window.addEventListener(PROGRESS_UPDATED_EVENT, sync);
+    return () => {
+      window.removeEventListener("storage", sync);
+      window.removeEventListener(PROGRESS_UPDATED_EVENT, sync);
+    };
   }, [slug]);
 
   if (percent <= 0) return null;

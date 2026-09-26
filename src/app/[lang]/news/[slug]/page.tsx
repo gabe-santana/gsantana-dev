@@ -70,7 +70,7 @@ export default async function NewsStoryPage({ params }: PageProps) {
             <span aria-hidden="true" className="mx-2 text-muted">/</span>
             <span className="text-muted">{dict.news.categories[story.category]}</span>
           </nav>
-          <p className="flex flex-wrap gap-x-3 text-sm text-muted">
+          <p data-pagefind-ignore className="flex flex-wrap gap-x-3 text-sm text-muted">
             <time dateTime={story.date}>{formatDate(story.date, lang)}</time>
             <span aria-hidden="true">&middot;</span>
             <span>{story.publisher}</span>

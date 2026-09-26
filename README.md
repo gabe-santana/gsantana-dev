@@ -19,6 +19,10 @@ Cloudflare Pages.
   under `prefers-reduced-motion`.
 - **Cloudflare Pages** for hosting, plus a CDN in front of media (images/
   video) so large assets never bloat the deploy or the page weight.
+- **Pagefind** for full-text search (the field below the landing hero): a static,
+  chunked index built after `next build`, one per language, loaded only when
+  someone opens search. No server, and it scales to thousands of articles.
+  See AGENTS.md > Search.
 - **Vitest** + Testing Library for unit tests.
 
 ## Project layout
@@ -59,7 +63,7 @@ Open http://localhost:3000.
 | Command              | What it does                                      |
 | --------------------- | -------------------------------------------------- |
 | `npm run dev`         | Local dev server with Turbopack                    |
-| `npm run build`       | Production build → static export in `src/out/`     |
+| `npm run build`       | Production build → static export in `src/out/`, plus the search index in `out/pagefind/` |
 | `npm run lint`        | ESLint                                             |
 | `npm run typecheck`   | `tsc --noEmit`                                     |
 | `npm run test`        | Run the test suite once                            |
@@ -145,7 +149,7 @@ on the visitor, so it's never cached) and keeps any query string. Real
 root-level files (`/robots.txt`, `/sitemap.xml`, `/icon.svg`) are served
 as-is, and a path that doesn't exist in any language gets the 404 page
 instead of a redirect. [src/public/_routes.json](src/public/_routes.json)
-keeps the function off `/en-us/*`, `/pt-br/*` and `/_next/*`, so normal
+keeps the function off `/en-us/*`, `/pt-br/*`, `/_next/*` and `/pagefind/*`, so normal
 page views and assets never run code.
 Locally, `next dev` doesn't run Pages Functions: unprefixed links other
 than `/` 404 there, and `/` falls back to the

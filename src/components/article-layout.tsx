@@ -60,14 +60,21 @@ export function ArticleLayout({
       }`}
     >
       <article className="mx-auto w-full min-w-0 max-w-2xl">
-        <header className="mb-10">{header}</header>
+        {/* data-pagefind-body marks what the search index reads (see
+            scripts/build-search-index.mjs); pages without it, and the author
+            card, comments and related items, stay out of search results. */}
+        <header className="mb-10" data-pagefind-body>
+          {header}
+        </header>
 
         {tldr?.length ? (
           <aside
+            data-pagefind-body
             aria-labelledby="tldr-label"
             className="mb-10 rounded-2xl border border-accent/30 bg-accent/[0.05] px-5 py-4 sm:px-6 sm:py-5"
           >
             <p
+              data-pagefind-ignore
               id="tldr-label"
               className="mb-3 font-mono text-xs font-bold uppercase tracking-wider text-accent"
             >
@@ -99,7 +106,11 @@ export function ArticleLayout({
         />
 
         {contentInsert && markerIndex >= 0 ? (
-          <div id="post-content" className="prose-post prose prose-lg prose-invert max-w-none">
+          <div
+            id="post-content"
+            data-pagefind-body
+            className="prose-post prose prose-lg prose-invert max-w-none"
+          >
             <div dangerouslySetInnerHTML={{ __html: contentHtml.slice(0, markerIndex) }} />
             {contentInsert.content}
             <div
@@ -111,6 +122,7 @@ export function ArticleLayout({
         ) : (
           <div
             id="post-content"
+            data-pagefind-body
             className="prose-post prose prose-lg prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />

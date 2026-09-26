@@ -30,3 +30,10 @@ next-env.d.ts
 
 # wrangler
 .wrangler/
+
+# search index generated for next dev (scripts/build-dev-search-index.mjs)
+src/public/pagefind/
+src/public/dev-quotes.json
+
+# newsletter exports (personal data, scripts/export-subscribers.mjs)
+src/subscribers-*.csv

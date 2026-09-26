@@ -107,7 +107,7 @@ use it, so both are shared across languages.
   switcher, else country via `request.cf.country`, else Accept-Language,
   else `en-us`). It serves real root-level files as-is, 404s paths that
   don't exist in any locale, and `src/public/_routes.json` excludes
-  `/en-us/*`, `/pt-br/*` and `/_next/*` so localized pages never invoke
+  `/en-us/*`, `/pt-br/*`, `/_next/*` and `/pagefind/*` so localized pages never invoke
   it. The static page's inline script (localStorage, then
   browser language) is the fallback for `next dev` and for function
   errors. `locale-detection.ts` and the function use relative imports, not
@@ -156,6 +156,135 @@ RSS feed.
 - Don't add anything that requires `@cloudflare/next-on-pages` or an edge
   runtime unless you're deliberately moving off static export — that's a
   bigger architectural change, not a drive-by addition.
+
+## Search
+
+Static, serverless full-text search with [Pagefind](https://pagefind.app).
+`npm run build` is `next build && node scripts/build-search-index.mjs`: the
+script indexes the *exported HTML* (so the index matches what readers see)
+and writes `out/pagefind/`. Pagefind splits the index into small chunks, and
+a query downloads only the chunks for its terms plus one fragment per shown
+result, so the cost of a search stays roughly flat as the site grows (a
+5,000-article synthetic test fetched a few hundred KB per query out of a
+65 MB index).
+
+- **What gets indexed:** only elements with `data-pagefind-body`, which
+  `ArticleLayout` puts on the header, the TL;DR box and the article body.
+  Any page without it (lists, home, about, 404) is left out automatically;
+  a new article type gets search for free by using `ArticleLayout`. Use
+  `data-pagefind-ignore` for text inside those regions that shouldn't match
+  (tag badges, the TL;DR label). Code blocks (`pre`) are excluded in the
+  script because they make unreadable excerpts.
+- **Languages:** Pagefind builds one index per `<html lang>` and the browser
+  picks the one matching the current page. Because the language switcher
+  changes `<html lang>` without a reload, `components/search-box.tsx`
+  keys its Pagefind instance by locale and re-initializes it on switch.
+- **UI:** `components/search-box.tsx`, an inline search field on the
+  landing page, right below the hero's grid, with results listed under it
+  (not in the nav, by the owner's choice). `/` or Ctrl/Cmd+K focuses it.
+  `pagefind.js` is imported lazily (on focus, with `webpackIgnore`), so the
+  page pays nothing until someone searches. Result kinds come from the URL
+  (`lib/search.ts`).
+- **`next dev` has no exported HTML**, so `npm run dev` first runs
+  `scripts/build-dev-search-index.mjs` (`predev`): it indexes the markdown
+  and `lib/news.ts` directly into `public/pagefind/` (gitignored). Content
+  edited during a dev session shows up in search after restarting `dev`.
+  The production build deletes that copy and writes the real index, so the
+  two never mix. If you add a content type, add it to the dev script too.
+- Pagefind is typo tolerant and falls back to partial matches, so a query
+  rarely returns nothing. That's expected.
+
+## Stock ticker (news page)
+
+`components/stock-ticker.tsx` reads `GET /api/quotes`, a Pages Function
+(`functions/api/quotes.ts`) that fetches Finnhub quotes for
+`TICKER_SYMBOLS` (`lib/quotes.ts`) server-side and caches them at the edge
+for 5 minutes, keeping the last good response for a day as an outage
+fallback. The Finnhub key is the Pages secret `FINNHUB_API_KEY` (production
+and preview); it must never appear in client code or the repo. `next dev`
+runs no Functions, so `predev` saves one real snapshot to
+`public/dev-quotes.json` (gitignored) from `FINNHUB_API_KEY` in
+`src/.env.local`, and `scripts/remove-dev-artifacts.mjs` strips it from the
+build. With no data at all, the strip hides itself.
+
+## Newsletter (double opt-in, our own)
+
+The form on `/news` (`components/newsletter-form.tsx`) posts to
+`POST /api/newsletter/subscribe` (`functions/api/newsletter/subscribe.ts`),
+which stores a pending row in D1 and emails a confirmation link through Zoho
+ZeptoMail. The link opens `/<locale>/newsletter/confirm/?token=...`, whose
+client component calls `POST /api/newsletter/verify` and shows the welcome.
+Verification is a POST from the page, never a GET link: mail scanners open
+links, and a verifying GET would let them confirm addresses by themselves.
+
+- **Rules** (`lib/newsletter-server.ts`, unit-tested with an in-memory
+  store): tokens are 256 random bits and only their SHA-256 is stored; links
+  expire after 48 h and a resend invalidates the previous one; same-address
+  resends wait 10 min; one IP can sign up 5 addresses per hour (salted IP
+  hash, never the raw IP); verified addresses are never emailed again and
+  get an "already subscribed" answer instead (this reveals membership, a
+  deliberate choice for a personal newsletter; pending addresses answer like
+  new ones); a honeypot field
+  catches naive bots; the API only accepts same-origin requests.
+- **D1:** database `gsantana-dev-database` (the site's general database),
+  bound as `DB` in production and preview. Schema changes go in
+  `migrations/` and are applied with
+  `npx wrangler d1 execute gsantana-dev-database --remote --file=...`.
+- **Secrets/vars** (Pages project): `ZEPTOMAIL_TOKEN` (secret),
+  `NEWSLETTER_FROM` (verified sender), optional `NEWSLETTER_FROM_NAME` and
+  `ZEPTOMAIL_API_URL` (non-US data centers). Without them, sign-ups answer
+  `send_failed`. `NEWSLETTER_MAILER=log` prints the link instead of emailing
+  it, for local `wrangler pages dev` only.
+- `next dev` runs no Functions, so the form can't subscribe there.
+- **Sending issues is not ZeptoMail's job:** its policy allows
+  transactional mail only (the confirmation email qualifies; newsletters
+  don't) and accounts are reviewed. Issues go out through Zoho Campaigns,
+  which adds the unsubscribe link and headers itself.
+  `npm run newsletter:export [-- --since YYYY-MM-DD]` writes the confirmed
+  subscribers to `subscribers-<date>.csv` (gitignored, personal data) for
+  import into the Campaigns list; delete the file after importing.
+- The old Zoho Campaigns sign-up form code is kept, commented out, in
+  `lib/newsletter-zoho.ts`.
+
+## Sign in with GitHub + synced reading progress
+
+A small user service on Pages Functions (`functions/api/auth/{login,callback,logout}.ts`,
+`functions/api/me.ts`, `functions/api/progress.ts`) with D1 tables `users`
+and `reading_progress` (`migrations/0002_*`). All logic is in
+`lib/user-server.ts`: handlers take a `Request` and return a `Response`, so
+the same code runs in Functions and in the `next dev` stand-ins.
+
+- **OAuth App, no scopes:** the token can only read the public profile and
+  is used once in the callback, never stored. `state` + an HttpOnly cookie
+  guard against login CSRF; `returnTo` only accepts local paths.
+- **Session:** `gs_session`, an HttpOnly cookie holding `payload.HMAC`
+  (key `SESSION_SECRET`), 30 days, no session table. `gs_signed_in=1` is a
+  non-secret, script-readable companion: pages only call the API when it's
+  present, so anonymous visitors cost zero Function invocations.
+- **giscus:** its sessions are minted by giscus.app, so the site can't
+  create one. Instead the callback redirects through
+  `giscus.app/api/oauth/authorize`: one click signs into both (GitHub asks
+  for giscus's consent only the first time). `lib/user-client.ts` stores
+  the returned `?giscus=` session in `localStorage["giscus-session"]` (the
+  key giscus reads) on any page; `?signin=1` marks a site-started sign-in
+  so the comments box doesn't scroll to itself. Signing out clears it too.
+- **Progress sync** (`lib/user-client.ts`, `components/progress-sync.tsx`):
+  localStorage stays the UI's source. Saves are batched and sent with
+  `sendBeacon` on page hide; D1 is pulled only when the last pull is over
+  24 h old or right after signing in; merges keep the maximum per article
+  on both sides. The profile is cached for 12 h.
+- **Deletion:** "Delete my data" (`DELETE /api/me`) removes the user and
+  their progress (LGPD).
+- **OAuth Apps:** one per callback host (GitHub allows one callback URL):
+  production `https://gsantana.dev/api/auth/callback`, local
+  `http://localhost:3000/api/auth/callback`. So sign-in doesn't work on
+  `*.pages.dev` previews. Pages secrets: `GITHUB_CLIENT_ID`,
+  `GITHUB_CLIENT_SECRET`, `SESSION_SECRET`.
+- **`next dev`:** `route.dev.ts` files under `app/api/` stand in for the
+  Functions (next.config.mjs registers `.dev.ts` and drops
+  `output: "export"` only for the dev server), with in-memory stores
+  (`lib/user-dev.ts`, `lib/newsletter-dev.ts`). Without `GITHUB_CLIENT_ID`
+  in `src/.env.local`, "Sign in" logs in a fake `dev-reader`.
 
 ## The parallax system
 

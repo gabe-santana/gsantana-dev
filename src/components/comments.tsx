@@ -3,6 +3,7 @@
 import Giscus from "@giscus/react";
 import { useEffect, useRef, useState } from "react";
 import { giscusConfig } from "@/lib/giscus";
+import { GISCUS_SIGNIN_MARKER } from "@/lib/user";
 
 // After GitHub sign-in, giscus sends the reader back to the page with a
 // `?giscus=<session>` param, so the page reloads at the top. The giscus
@@ -10,7 +11,10 @@ import { giscusConfig } from "@/lib/giscus";
 // — so it has to be read during the first render instead.
 function isReturningFromGiscusSignIn(): boolean {
   if (typeof window === "undefined") return false;
-  return new URLSearchParams(window.location.search).has("giscus");
+  const params = new URLSearchParams(window.location.search);
+  // The site's own sign-in (header menu) also passes through giscus, but the
+  // reader didn't start it from the comments, so don't jump down to them.
+  return params.has("giscus") && !params.has(GISCUS_SIGNIN_MARKER);
 }
 
 function useScrollBackAfterSignIn(target: React.RefObject<HTMLElement | null>) {

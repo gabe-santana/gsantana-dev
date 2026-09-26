@@ -1,4 +1,14 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"],
-  "ignorePatterns": ["out/**", ".next/**", "node_modules/**", "next-env.d.ts"]
+  "extends": [
+    "next/core-web-vitals",
+    "next/typescript"
+  ],
+  "ignorePatterns": [
+    "out/**",
+    ".next/**",
+    ".next-*/**",
+    "node_modules/**",
+    "next-env.d.ts",
+    "public/pagefind/**"
+  ]
 }

@@ -54,7 +54,7 @@ export default async function CertificationArticlePage({ params }: PageProps) {
             <span aria-hidden="true" className="mx-2 text-muted">/</span>
             <span className="text-muted">{article.exam}</span>
           </nav>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+          <p data-pagefind-ignore className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
             <span className="text-accent">{dict.certifications.kinds[article.kind]}</span>
             <span aria-hidden="true">&middot;</span>
             <time dateTime={article.date}>{formatDate(article.date, lang)}</time>

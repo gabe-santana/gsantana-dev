@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/container";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { UserMenu } from "@/components/user-menu";
 import type { Dictionary } from "@/lib/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
 
@@ -49,7 +50,8 @@ export function Nav({
               </Link>
             ))}
           </nav>
-          <div className="order-2 lg:order-none">
+          <div className="order-2 flex items-center gap-2 lg:order-none">
+            <UserMenu labels={dict.auth} />
             <LanguageSwitcher
               locale={locale}
               label={dict.nav.language}
