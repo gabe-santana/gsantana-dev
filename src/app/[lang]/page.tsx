@@ -26,8 +26,27 @@ export default async function HomePage({
     <>
       <Hero locale={lang} dict={dict} />
 
+      {posts.length > 0 && (
+        <Container className="py-24">
+          <div className="mb-8 flex items-end justify-between">
+            <h2 className="text-2xl font-semibold">{dict.home.latestPosts}</h2>
+            <Link
+              href={localePath(lang, "/blog")}
+              className="text-sm text-accent hover:underline"
+            >
+              {dict.home.viewAll}
+            </Link>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <PostCard key={post.slug} post={post} locale={lang} dict={dict} />
+            ))}
+          </div>
+        </Container>
+      )}
+
       {principles.length > 0 && (
-        <Container className="pt-24">
+        <Container className={posts.length > 0 ? "pb-24" : "py-24"}>
           <div className="mb-8 flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold">{dict.home.principlesTitle}</h2>
@@ -49,25 +68,6 @@ export default async function HomePage({
                 dict={dict}
                 showCategory
               />
-            ))}
-          </div>
-        </Container>
-      )}
-
-      {posts.length > 0 && (
-        <Container className="py-24">
-          <div className="mb-8 flex items-end justify-between">
-            <h2 className="text-2xl font-semibold">{dict.home.latestPosts}</h2>
-            <Link
-              href={localePath(lang, "/blog")}
-              className="text-sm text-accent hover:underline"
-            >
-              {dict.home.viewAll}
-            </Link>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post) => (
-              <PostCard key={post.slug} post={post} locale={lang} dict={dict} />
             ))}
           </div>
         </Container>

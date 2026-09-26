@@ -59,14 +59,19 @@ export default async function AboutPage({ params }: PageProps) {
                 className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-accent/25 to-[#a78bfa]/25 blur-3xl"
               />
               <div className="relative rounded-3xl bg-gradient-to-br from-accent/60 via-border to-[#a78bfa]/60 p-px">
-                <Image
-                  src={mediaUrl(author.portrait)}
-                  alt={author.name}
-                  width={480}
-                  height={600}
-                  priority
-                  className="aspect-[4/5] w-full rounded-[calc(1.5rem-1px)] object-cover"
-                />
+                <div className="about-portrait-frame">
+                  <Image
+                    src={mediaUrl(author.portrait)}
+                    alt={author.name}
+                    width={480}
+                    height={600}
+                    priority
+                    className="about-portrait-image aspect-[4/5] w-full object-cover"
+                  />
+                  <div aria-hidden className="about-portrait-wash" />
+                  <div aria-hidden className="about-portrait-glow" />
+                  <div aria-hidden className="about-portrait-scan" />
+                </div>
               </div>
             </div>
 

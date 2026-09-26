@@ -3,6 +3,7 @@ import { format, getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath, locales, switchLocalePath } from "@/lib/i18n";
 import { getAllPostSummaries, getPostSlugs } from "@/lib/posts";
 import { getAllPrinciples } from "@/lib/principles";
+import { newsStories } from "@/lib/news";
 
 describe("locale paths", () => {
   it("prefixes paths with the locale", () => {
@@ -95,5 +96,23 @@ describe("content parity", () => {
         .sort()
     );
     for (const other of others) expect(other).toEqual(base);
+  });
+
+  it("has English and Portuguese versions of every news story", () => {
+    expect(newsStories.length).toBeGreaterThanOrEqual(10);
+    expect(new Set(newsStories.map((story) => story.slug)).size).toBe(newsStories.length);
+    for (const story of newsStories) {
+      for (const locale of locales) {
+        const copy = story.copy[locale];
+        expect(copy.title.trim(), `${story.slug}/${locale} title`).not.toBe("");
+        expect(copy.summary.trim(), `${story.slug}/${locale} summary`).not.toBe("");
+        expect(copy.body.length, `${story.slug}/${locale} body`).toBeGreaterThan(0);
+        expect(copy.analysis.trim(), `${story.slug}/${locale} analysis`).not.toBe("");
+        for (const paragraph of copy.body) {
+          expect(paragraph.trim(), `${story.slug}/${locale} paragraph`).not.toBe("");
+        }
+      }
+      expect(story.sources.length, `${story.slug} supporting sources`).toBeGreaterThanOrEqual(2);
+    }
   });
 });
