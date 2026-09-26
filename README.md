@@ -156,7 +156,23 @@ Because the site is statically exported, `next/image` runs with
 `images.unoptimized: true` — resizing/format negotiation is expected to
 happen at the CDN, not via Next's image server (which doesn't exist here).
 
-## Deploying to Cloudflare Pages
+## Deploying
+
+The site is the Cloudflare Pages project **gsantana-dev**, served at
+https://gsantana.dev. It uses Direct Upload: the build runs locally and
+wrangler uploads `src/out/`. From `src/`:
+
+```bash
+npm run deploy
+```
+
+That builds and publishes to production. Environment variables are baked
+in at build time from `src/.env.local`, so nothing needs to be set in the
+Pages dashboard. Note that a Direct Upload project can't be switched to
+Git-triggered builds later; that would take a new Pages project (the steps
+below).
+
+### Alternative: Git-connected Cloudflare Pages
 
 1. Connect this repo in the Cloudflare Pages dashboard.
 2. Set the project's **root directory** to `src`.

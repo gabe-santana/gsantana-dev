@@ -1,0 +1,10 @@
+# Cloudflare Pages response headers (copied into out/ by the build).
+
+# Next.js emits content-hashed file names here: a changed file gets a new
+# name, so these can be cached forever and never re-checked.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
