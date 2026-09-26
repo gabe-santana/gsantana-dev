@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { ConsoleEasterEgg } from "@/components/console-easter-egg";
 import { ProgressSync } from "@/components/progress-sync";
+import { SessionInsights } from "@/components/session-insights";
 import { ParallaxProvider } from "@/components/parallax/parallax-provider";
 import { getDictionary } from "@/lib/dictionaries";
 import { isLocale, localeConfig, localePath, locales } from "@/lib/i18n";
@@ -69,6 +70,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <ConsoleEasterEgg />
         <ProgressSync />
+        <SessionInsights />
         <ParallaxProvider>
           <Nav locale={lang} dict={dict} />
           <main className="flex-1">{children}</main>

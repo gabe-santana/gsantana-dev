@@ -8,6 +8,7 @@ export const enUs = {
       "Gabriel Santana writes about applied AI, software engineering, and technology.",
     feedDescription: "AI, programming, and technology notes from Gabriel Santana.",
     rights: "All rights reserved.",
+    recordingNotice: "This site records anonymous visits (clicks and scrolling) with Microsoft Clarity to find what to improve. Form fields are masked, and browsers sending Global Privacy Control are never recorded.",
   },
   nav: {
     blog: "Blog",

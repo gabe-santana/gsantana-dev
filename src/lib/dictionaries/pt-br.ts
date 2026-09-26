@@ -7,6 +7,7 @@ export const ptBr: Dictionary = {
       "Gabriel Santana escreve sobre IA aplicada, engenharia de software e tecnologia.",
     feedDescription: "Notas de Gabriel Santana sobre IA, programação e tecnologia.",
     rights: "Todos os direitos reservados.",
+    recordingNotice: "Este site grava visitas anônimas (cliques e rolagem) com o Microsoft Clarity para descobrir o que melhorar. Campos de formulário são mascarados, e navegadores com Global Privacy Control nunca são gravados.",
   },
   nav: {
     blog: "Blog",

@@ -286,6 +286,27 @@ the same code runs in Functions and in the `next dev` stand-ins.
   (`lib/user-dev.ts`, `lib/newsletter-dev.ts`). Without `GITHUB_CLIENT_ID`
   in `src/.env.local`, "Sign in" logs in a fake `dev-reader`.
 
+## Session recordings (Microsoft Clarity, first-party proxy)
+
+`components/session-insights.tsx` loads Clarity (project `yol0e2ogzk`)
+from `/r/t.js` instead of clarity.ms, so content blockers that list
+clarity.ms don't drop it. `functions/r/[[path]].ts` proxies:
+`/r/t.js` (the tag, rewritten by `lib/clarity-proxy.ts#rewriteClarityTag`),
+`/r/s/<version>/clarity.js` (main script, edge-cached a day),
+`POST /r/c/<shard>` (uploads, forwarded to `<shard>.clarity.ms/collect`
+with the visitor IP in X-Forwarded-For) and `/r/p` (the ad cookie-sync
+pixel, answered with 204). The path is deliberately neutral: "clarity",
+"analytics" or "track" would match blocklist path rules.
+
+- Only `gsantana.dev` loads it (not previews or `next dev`), and never when
+  the browser sends Global Privacy Control.
+- The newsletter form and the account menu carry `data-clarity-mask`.
+- The rewrite throws if Clarity's loader gains an unknown clarity.ms
+  endpoint; the test uses a real captured loader. If recordings stop after
+  a Clarity update, check the function logs first.
+- The disclosure text is `site.recordingNotice` in the dictionaries; the
+  owner is still deciding where to show it (currently not rendered).
+
 ## The parallax system
 
 `src/components/parallax/parallax-provider.tsx` + `parallax-layer.tsx`.

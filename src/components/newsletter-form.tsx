@@ -56,6 +56,7 @@ export function NewsletterForm({ labels, locale }: { labels: Dictionary["newslet
 
   return (
     <section
+      data-clarity-mask="true"
       aria-labelledby={`${inputId}-title`}
       className="relative mt-8 overflow-hidden border border-border bg-surface/60"
     >

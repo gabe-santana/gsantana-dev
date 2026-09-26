@@ -66,7 +66,7 @@ export function UserMenu({ labels }: { labels: Dictionary["auth"] }) {
   };
 
   return (
-    <div ref={rootRef} className="relative">
+    <div ref={rootRef} data-clarity-mask="true" className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
