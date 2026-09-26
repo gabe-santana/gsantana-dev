@@ -101,10 +101,14 @@ use it, so both are shared across languages.
 - Every page is under `app/[lang]/` (`en-us`, `pt-br`), which is also a
   **root layout** (it owns `<html lang>`). `app/(root)/` is a second root
   layout used only by `/`. In production `/` never reaches it: the Pages
-  Function `src/functions/index.ts` answers first with a 302 decided by
+  Function `src/functions/[[path]].ts` answers first, for `/` and for any
+  other URL without a locale prefix (shared links), with a 302 decided by
   `src/lib/locale-detection.ts` (cookie `gsantana_locale` from the
   switcher, else country via `request.cf.country`, else Accept-Language,
-  else `en-us`). The static page's inline script (localStorage, then
+  else `en-us`). It serves real root-level files as-is, 404s paths that
+  don't exist in any locale, and `src/public/_routes.json` excludes
+  `/en-us/*`, `/pt-br/*` and `/_next/*` so localized pages never invoke
+  it. The static page's inline script (localStorage, then
   browser language) is the fallback for `next dev` and for function
   errors. `locale-detection.ts` and the function use relative imports, not
   `@/`, because the Pages Functions bundler doesn't know that alias. With two root layouts there is no shared 404, so

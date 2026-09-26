@@ -10,6 +10,12 @@ const nextConfig = {
   output: "export",
   trailingSlash: true,
 
+  // Lets a production build run while `next dev` holds .next/ (on Windows
+  // the dev server's file locks make a concurrent build fail with EPERM):
+  // NEXT_DIST_DIR=.next-build npm run build. The static export then lands
+  // in that folder instead of out/, so deploy it from there.
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
+
   images: {
     // The static export target has no image optimization server, so image
     // resizing/format-negotiation is delegated to the CDN in front of media

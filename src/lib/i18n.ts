@@ -41,7 +41,7 @@ export function switchLocalePath(pathname: string, target: Locale): string {
 }
 
 // Remember an explicit language choice so "/" sends returning visitors
-// straight to it. The cookie is read at the edge by functions/index.ts; the
+// straight to it. The cookie is read at the edge by functions/[[path]].ts; the
 // localStorage key by the fallback redirect script in app/(root)/page.tsx.
 export const LOCALE_STORAGE_KEY = "gsantana:locale";
 export const LOCALE_COOKIE = "gsantana_locale";

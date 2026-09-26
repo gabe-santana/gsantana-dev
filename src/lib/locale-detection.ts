@@ -1,5 +1,5 @@
 // Relative import on purpose: this module is also bundled into the Cloudflare
-// Pages Function (functions/index.ts), whose bundler doesn't know the "@/" alias.
+// Pages Function (functions/[[path]].ts), whose bundler doesn't know the "@/" alias.
 import { defaultLocale, isLocale, type Locale } from "./i18n";
 
 // ISO 3166-1 alpha-2 codes of countries/territories where Portuguese is an

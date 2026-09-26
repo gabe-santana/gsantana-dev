@@ -11,14 +11,9 @@ import {
   type Locale,
 } from "@/lib/i18n";
 
-/**
- * Real links (not buttons): they work without JS, and Next prefetches the
- * other language so switching is an instant client-side navigation — the URL
- * changes but the page never fully reloads. scroll={false} keeps the reader
- * where they were.
- */
-// Remembers the choice for visits to "/": the cookie is read by the edge
-// redirect (functions/index.ts), localStorage by the static fallback script.
+// Remembers the choice for links without a language: the cookie is read by
+// the edge redirect (functions/[[path]].ts), localStorage by the static
+// fallback script on "/".
 function rememberLocale(locale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${locale}; Path=/; Max-Age=31536000; SameSite=Lax; Secure`;
   try {
@@ -28,6 +23,12 @@ function rememberLocale(locale: Locale) {
   }
 }
 
+/**
+ * Real links (not buttons): they work without JS, and Next prefetches the
+ * other language so switching is an instant client-side navigation — the URL
+ * changes but the page never fully reloads. scroll={false} keeps the reader
+ * where they were.
+ */
 export function LanguageSwitcher({
   locale,
   label,

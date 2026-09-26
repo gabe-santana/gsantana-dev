@@ -119,11 +119,14 @@ Every page lives under a language prefix: `/en-us/…` and `/pt-br/…`. The
 **EN | PT** toggle in the navigation swaps the prefix with a client-side
 navigation (no page reload) and keeps the scroll position.
 
-### Language detection on `/`
+### Language detection (links without a language)
 
-Visiting the bare domain (`https://gsantana.dev/`) redirects to a language
-at the Cloudflare edge, before any page is sent, via a Pages Function in
-[src/functions/index.ts](src/functions/index.ts). The decision, in
+Any URL without a language prefix redirects to the visitor's language at
+the Cloudflare edge, before any page is sent: the bare domain
+(`https://gsantana.dev/`) and shared links like
+`https://gsantana.dev/principles/cloud/cost-optimization/` (send that one
+link on LinkedIn and each reader lands in their language). It's a Pages
+Function in [src/functions/[[path]].ts](src/functions/[[path]].ts). The decision, in
 [src/lib/locale-detection.ts](src/lib/locale-detection.ts), goes:
 
 1. **Saved choice.** If the visitor used the language switcher, the
@@ -138,9 +141,14 @@ at the Cloudflare edge, before any page is sent, via a Pages Function in
 4. **English** otherwise.
 
 The response is a `302` with `Cache-Control: private, no-store` (it depends
-on the visitor, so it's never cached) and keeps any query string. The
-function runs only for `/`; every other URL is served as a static file.
-Locally, `next dev` doesn't run Pages Functions, so `/` falls back to the
+on the visitor, so it's never cached) and keeps any query string. Real
+root-level files (`/robots.txt`, `/sitemap.xml`, `/icon.svg`) are served
+as-is, and a path that doesn't exist in any language gets the 404 page
+instead of a redirect. [src/public/_routes.json](src/public/_routes.json)
+keeps the function off `/en-us/*`, `/pt-br/*` and `/_next/*`, so normal
+page views and assets never run code.
+Locally, `next dev` doesn't run Pages Functions: unprefixed links other
+than `/` 404 there, and `/` falls back to the
 static page in `app/(root)/page.tsx`, which redirects by saved choice or
 browser language in the browser. That page is also the fallback in
 production if the function ever errors.
@@ -215,6 +223,10 @@ If a Git build is stuck, publish from your machine instead. From `src/`:
 ```bash
 npm run deploy
 ```
+
+To build while `npm run dev` is running (on Windows the dev server locks
+`.next/`), use `NEXT_DIST_DIR=.next-build npx next build`; the static
+export then lands in `src/.next-build/` instead of `out/`.
 
 It builds locally (using `src/.env.local` for the env vars) and uploads
 `out/` plus `functions/` with wrangler (`npx wrangler login` once first).
