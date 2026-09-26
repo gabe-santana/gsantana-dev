@@ -13,6 +13,18 @@ describe.each(locales)("posts (%s)", (locale) => {
     expect(getPostSlugs(locale)).not.toContain("principles");
   });
 
+  it("gives every post a TL;DR of 2 to 4 non-empty takeaways", () => {
+    for (const post of getAllPostSummaries(locale)) {
+      expect(Array.isArray(post.tldr), `${post.slug} has a tldr list`).toBe(true);
+      expect(post.tldr.length, `${post.slug} tldr size`).toBeGreaterThanOrEqual(2);
+      expect(post.tldr.length, `${post.slug} tldr size`).toBeLessThanOrEqual(4);
+      for (const item of post.tldr) {
+        expect(typeof item === "string" && item.trim().length > 0, `${post.slug} tldr item`).toBe(true);
+        expect(item, `${post.slug} tldr has no em dash`).not.toContain("—");
+      }
+    }
+  });
+
   it("exposes dates as YYYY-MM-DD strings, even when unquoted in YAML", () => {
     for (const post of getAllPostSummaries(locale)) {
       expect(post.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);

@@ -3,6 +3,10 @@ title: "Building a Resilient .NET API with Polly: Retries, Circuit Breakers, and
 description: "Resiliência é um orçamento, não uma pilha de retries: faça retry só de falhas transitórias em chamadas idempotentes, com backoff exponencial e jitter, e limite tudo com um timeout total mais um timeout por tentativa. Adicione um circuit breaker para que uma dependência com problema ganhe fôlego em vez de uma tempestade de retries."
 date: 2025-12-20
 tags: [.NET, C#, Resilience, Polly]
+tldr:
+  - "Faça retry só de falhas transitórias em chamadas idempotentes, com backoff exponencial e jitter, e respeite o Retry-After nas respostas 429."
+  - "Ordene as estratégias como um orçamento: timeout total, depois retry, depois circuit breaker, depois timeout por tentativa."
+  - "Com o circuito aberto, falhe rápido com um fallback em cache ou um 503 claro, em vez de alimentar uma tempestade de retries."
 ---
 
 Todo sistema distribuído tem uma dependência que falha no pior momento possível. Normalmente não é uma queda dramática. É um serviço de preços que começa a responder em 9 segundos em vez de 90 milissegundos, ou uma API de estoque que devolve 503 em uma a cada cinco requisições. Sua API não quebrou, mas está prestes a quebrar, por causa da forma como ela reage.

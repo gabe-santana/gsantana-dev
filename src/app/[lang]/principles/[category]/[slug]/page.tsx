@@ -48,6 +48,7 @@ export default async function PrinciplePage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={principle.key}
+      tldr={principle.tldr}
       headings={principle.headings}
       contentHtml={principle.contentHtml}
       header={

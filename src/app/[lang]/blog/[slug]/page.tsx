@@ -55,6 +55,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={post.slug}
+      tldr={post.tldr}
       headings={post.headings}
       contentHtml={post.contentHtml}
       header={

@@ -3,6 +3,10 @@ title: "Event-Driven Microservices on Azure: Service Bus vs Event Grid vs Event 
 description: "Pick an Azure messaging service by what the message means, not by feature lists: commands go to Service Bus, notifications go to Event Grid and telemetry streams go to Event Hubs. Real systems usually combine all three, glued together with idempotent consumers and the outbox pattern."
 date: 2025-12-04
 tags: [Azure, Messaging, Event-Driven, Microservices, C#]
+tldr:
+  - "Choose by what the message means: commands go to Service Bus, discrete notifications to Event Grid, telemetry streams to Event Hubs."
+  - "Delivery is at least once, so make consumers idempotent and use the outbox pattern to avoid dual writes."
+  - "Settle Service Bus messages explicitly, dead-letter poison messages, and pick partition keys that spread load without breaking ordering."
 ---
 
 Azure has three services with "message" or "event" somewhere in the description, and all three will happily accept a JSON payload from your code. That is exactly the trap. Teams pick the one they saw in a tutorial, then spend months fighting it: ordering that is not there, retries that flood a webhook, or a queue that quietly becomes an analytics pipeline it was never designed to be.

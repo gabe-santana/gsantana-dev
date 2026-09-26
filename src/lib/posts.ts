@@ -22,6 +22,8 @@ export interface PostFrontmatter {
   tags: string[];
   cover?: string;
   draft?: boolean;
+  /** 2 to 4 short takeaways shown in the TL;DR box. Required (tests enforce it). */
+  tldr: string[];
 }
 
 export interface PostSummary extends PostFrontmatter {

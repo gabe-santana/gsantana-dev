@@ -51,6 +51,7 @@ export const enUs = {
     readingProgress: "Reading progress",
     onThisPage: "On this page",
     backToTop: "Back to top ↑",
+    tldr: "TL;DR",
   },
   principles: {
     eyebrow: "Principles",

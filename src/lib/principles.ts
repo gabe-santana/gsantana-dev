@@ -24,6 +24,8 @@ const WIP_MARKERS = ["Em Construção", "Under Construction"];
 interface PrincipleFrontmatter {
   title: string;
   short: string;
+  /** Optional takeaways shown in the TL;DR box, like posts. */
+  tldr?: string[];
 }
 
 export interface PrincipleSummary extends PrincipleFrontmatter {
@@ -41,6 +43,7 @@ export interface PrincipleSummary extends PrincipleFrontmatter {
 }
 
 export interface Principle extends PrincipleSummary {
+  tldr?: string[];
   contentHtml: string;
   headings: TocHeading[];
 }
@@ -104,7 +107,7 @@ export async function getPrinciple(
   locale: Locale,
   summary: PrincipleSummary
 ): Promise<Principle> {
-  const { content } = readPrincipleFile(locale, summary.category, summary.slug);
+  const { frontmatter, content } = readPrincipleFile(locale, summary.category, summary.slug);
   const { html, headings } = await renderMarkdown(content);
-  return { ...summary, contentHtml: html, headings };
+  return { ...summary, tldr: frontmatter.tldr, contentHtml: html, headings };
 }

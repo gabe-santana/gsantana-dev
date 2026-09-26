@@ -4,6 +4,10 @@ description: Zero to hero in Azure networking solutions.
 short: 
 date: 2025-10-19
 tags: [Network, Azure]
+tldr:
+  - "Plan address space first: non-overlapping CIDR blocks per VNet and subnet avoid painful re-addressing when you add peering, VPN or ExpressRoute."
+  - "Layer your defenses: NSGs and route tables at the subnet, Azure Firewall at the hub, and Private Link to keep PaaS traffic off the internet."
+  - "Grow with hub and spoke: shared services and connectivity in a central hub, workloads in isolated spokes, observed with Network Watcher and Azure Monitor."
 ---
 
 The definitive guide to networking solutions on Microsoft Azure. Every now and then the “Naive Junior” pops up with questions a lot of people have (they just don't ask). Use these interruptions to solidify your understanding.

@@ -81,6 +81,13 @@ describe("content parity", () => {
     for (const other of others) expect(other).toEqual(base);
   });
 
+  it("has the same number of TL;DR takeaways for a post in every locale", () => {
+    const counts = (l: (typeof locales)[number]) =>
+      Object.fromEntries(getAllPostSummaries(l).map((p) => [p.slug, p.tldr?.length ?? 0]));
+    const [base, ...others] = locales.map(counts);
+    for (const other of others) expect(other).toEqual(base);
+  });
+
   it("has every principle in every locale", () => {
     const [base, ...others] = locales.map((l) =>
       getAllPrinciples(l)

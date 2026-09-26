@@ -4,6 +4,10 @@ description: Zero to hero em soluções de Rede na Azure.
 short: 
 date: 2025-10-19
 tags: [Network, Azure]
+tldr:
+  - "Planeje o endereçamento antes de tudo: blocos CIDR sem sobreposição por VNet e sub-rede evitam refazer endereços ao adicionar peering, VPN ou ExpressRoute."
+  - "Defenda em camadas: NSGs e tabelas de rota na sub-rede, Azure Firewall no hub e Private Link para tirar o tráfego de PaaS da internet."
+  - "Cresça com hub e spoke: serviços compartilhados e conectividade num hub central, workloads em spokes isolados, observados com Network Watcher e Azure Monitor."
 ---
 
 Guia definitivo das soluções de rede na Microsoft Azure. De tempos em tempos aparece o “Júnior Inocente” com dúvidas que muita gente tem (só não fala). Use essas interrupções para consolidar entendimento.

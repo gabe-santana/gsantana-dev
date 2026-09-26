@@ -50,6 +50,7 @@ export const ptBr: Dictionary = {
     readingProgress: "Progresso de leitura",
     onThisPage: "Nesta página",
     backToTop: "Voltar ao topo ↑",
+    tldr: "TL;DR",
   },
   principles: {
     eyebrow: "Princípios",

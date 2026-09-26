@@ -24,6 +24,8 @@ interface ArticleLayoutProps {
    * languages.
    */
   articleKey: string;
+  /** Key takeaways shown in a TL;DR box right under the header. */
+  tldr?: string[];
 }
 
 export function ArticleLayout({
@@ -34,6 +36,7 @@ export function ArticleLayout({
   contentHtml,
   headings,
   articleKey,
+  tldr,
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
   const tocLabels = {
@@ -51,6 +54,28 @@ export function ArticleLayout({
     >
       <article className="mx-auto w-full min-w-0 max-w-2xl">
         <header className="mb-10">{header}</header>
+
+        {tldr?.length ? (
+          <aside
+            aria-labelledby="tldr-label"
+            className="mb-10 rounded-2xl border border-accent/30 bg-accent/[0.05] px-5 py-4 sm:px-6 sm:py-5"
+          >
+            <p
+              id="tldr-label"
+              className="mb-3 font-mono text-xs font-bold uppercase tracking-wider text-accent"
+            >
+              {dict.article.tldr}
+            </p>
+            <ul className="space-y-2 text-[0.95rem] leading-relaxed text-foreground/90">
+              {tldr.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span aria-hidden className="mt-[0.6em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        ) : null}
 
         {hasToc ? (
           <div className="lg:hidden">

@@ -3,6 +3,10 @@ title: "Model Context Protocol from Scratch: Build Your First MCP Server in Pyth
 description: "O MCP desacopla tools e dados do host do modelo, então você escreve um server uma vez e qualquer client compatível com MCP consegue usá-lo. Este post percorre a arquitetura, os três primitivos e um server Python funcional que você pluga no Claude Desktop, numa IDE ou no seu próprio agente."
 date: 2025-11-18
 tags: [MCP, AI Agents, Python, LLM]
+tldr:
+  - "O MCP separa tools e dados do host do modelo: escreva um server e qualquer client compatível com MCP consegue usá-lo."
+  - "Um server expõe tools (ações do modelo), resources (contexto da aplicação) e prompts (templates do usuário) via JSON-RPC, por stdio ou Streamable HTTP."
+  - "Mantenha as tools estreitas e bem descritas, devolva erros legíveis, limite o tamanho da saída e nunca faça log no stdout com o transporte stdio."
 ---
 
 Todo time que constrói com LLMs acaba escrevendo o mesmo código de cola: uma função que busca na wiki, outra que lê tickets, outra que consulta o banco, cada uma embrulhada no formato de tool calling específico do modelo ou framework que estava na moda naquele mês. Aí alguém quer a mesma capacidade dentro da IDE, ou em outro framework de agentes, e a cola é escrita de novo.

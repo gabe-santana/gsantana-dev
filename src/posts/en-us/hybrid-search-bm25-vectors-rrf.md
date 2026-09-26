@@ -3,6 +3,10 @@ title: "Hybrid Search That Actually Works: BM25 + Vectors with Reciprocal Rank F
 description: "Pure vector search quietly misses exact terms like error codes, SKUs and IDs, so run BM25 and vector retrieval side by side and fuse their rankings with Reciprocal Rank Fusion. Add a cross-encoder reranker on the fused top results when you need the extra precision and can pay the latency."
 date: 2025-11-02
 tags: [RAG, Search, Python, Embeddings]
+tldr:
+  - "Vector search blurs exact tokens like error codes and SKUs; BM25 keyword search finds them, so run both retrievers side by side."
+  - "Fuse the two rankings with Reciprocal Rank Fusion (sum of 1/(k + rank), k around 60): it uses ranks and ignores incompatible score scales."
+  - "Rerank the fused candidates with a cross-encoder: fusion decides what survives, reranking decides the final order."
 ---
 
 Picture a support bot sitting on top of thousands of troubleshooting articles. A user types "what does ERR-4012 mean on the checkout API?" and the bot answers with a beautifully written paragraph about... payment timeouts in general. The article that literally has `ERR-4012` in its title exists. It just never made it into the context window, because the vector search thought three other articles "felt" closer.
