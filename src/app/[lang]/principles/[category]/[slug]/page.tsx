@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/article-layout";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath, locales } from "@/lib/i18n";
+import { mediaUrl } from "@/lib/media";
 import { findPrinciple, getAllPrinciples, getPrinciple } from "@/lib/principles";
 import { alternatesFor } from "@/lib/seo";
 
@@ -25,12 +27,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const summary = findPrinciple(lang, category, slug);
   if (!summary) return {};
   const dict = getDictionary(lang);
+  const cover = `/principles/${category}/${slug}/cover.webp`;
 
   return {
     title: `${summary.title} · ${dict.principles.eyebrow}`,
     description: summary.short,
     alternates: alternatesFor(lang, summary.path),
-    openGraph: { title: summary.title, description: summary.short, type: "article" },
+    openGraph: { title: summary.title, description: summary.short, type: "article", images: [mediaUrl(cover)] },
   };
 }
 
@@ -42,6 +45,7 @@ export default async function PrinciplePage({ params }: PageProps) {
 
   const dict = getDictionary(lang);
   const principle = await getPrinciple(lang, summary);
+  const cover = `/principles/${category}/${slug}/cover.webp`;
 
   return (
     <ArticleLayout
@@ -80,6 +84,18 @@ export default async function PrinciplePage({ params }: PageProps) {
             </p>
           )}
         </>
+      }
+      lead={
+        <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-border/60">
+          <Image
+            src={mediaUrl(cover)}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(min-width: 768px) 768px, 100vw"
+            priority
+          />
+        </div>
       }
     />
   );

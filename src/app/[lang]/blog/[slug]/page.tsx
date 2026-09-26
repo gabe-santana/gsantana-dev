@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isLocale(lang) || !isPublished(lang, slug)) return {};
 
   const post = await getPostBySlug(lang, slug);
+  const cover = post.cover ?? `/posts/${slug}/cover.webp`;
   return {
     title: post.title,
     description: post.description,
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: post.description,
       type: "article",
       publishedTime: post.date,
-      images: post.cover ? [mediaUrl(post.cover)] : undefined,
+      images: [mediaUrl(cover)],
     },
   };
 }
@@ -49,6 +50,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const dict = getDictionary(lang);
   const post = await getPostBySlug(lang, slug);
+  const cover = post.cover ?? `/posts/${slug}/cover.webp`;
 
   return (
     <ArticleLayout
@@ -77,18 +79,16 @@ export default async function BlogPostPage({ params }: PageProps) {
         </>
       }
       lead={
-        post.cover ? (
-          <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-border/60">
-            <Image
-              src={mediaUrl(post.cover)}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="(min-width: 768px) 768px, 100vw"
-              priority
-            />
-          </div>
-        ) : null
+        <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-border/60">
+          <Image
+            src={mediaUrl(cover)}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="(min-width: 768px) 768px, 100vw"
+            priority
+          />
+        </div>
       }
     />
   );

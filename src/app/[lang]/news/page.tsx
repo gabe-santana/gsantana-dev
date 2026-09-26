@@ -67,16 +67,14 @@ export default async function NewsPage({ params }: PageProps) {
           <article className="min-w-0">
             <Link href={localePath(lang, `/news/${lead.slug}`)} className="group block">
               <div className="relative aspect-[16/9] overflow-hidden border border-border bg-surface">
-                {lead.image && (
-                  <Image
-                    src={mediaUrl(lead.image)}
-                    alt={dict.news.waferAlt}
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 620px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                )}
+                <Image
+                  src={mediaUrl(lead.image)}
+                  alt={dict.news.waferAlt}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 620px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
               </div>
               <div className="mt-5"><StoryMeta story={lead} locale={lang} /></div>
               <h3 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight text-foreground transition-colors group-hover:text-accent sm:text-4xl">
@@ -93,7 +91,7 @@ export default async function NewsPage({ params }: PageProps) {
             {side.map((story, index) => (
               <article key={story.slug} className="py-5 first:pt-0 last:pb-0 lg:first:pt-0">
                 <Link href={localePath(lang, `/news/${story.slug}`)} className="group block">
-                  {index === 0 && story.image && (
+                  {index === 0 && (
                     <div className="relative mb-4 aspect-[16/8] overflow-hidden bg-surface">
                       <Image
                         src={mediaUrl(story.image)}

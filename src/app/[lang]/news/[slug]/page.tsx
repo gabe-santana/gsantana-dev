@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: story.copy[lang].title,
     description: story.copy[lang].summary,
     alternates: alternatesFor(lang, `/news/${slug}`),
-    openGraph: { type: "article", publishedTime: story.date, images: story.image ? [mediaUrl(story.image)] : undefined },
+    openGraph: { type: "article", publishedTime: story.date, images: [mediaUrl(story.image)] },
   };
 }
 
@@ -77,18 +77,18 @@ export default async function NewsStoryPage({ params }: PageProps) {
           <p className="mt-4 text-lg text-muted">{copy.summary}</p>
         </>
       }
-      lead={story.image ? (
+      lead={
         <div className="relative mb-10 aspect-[16/9] overflow-hidden border border-border/60">
           <Image
             src={mediaUrl(story.image)}
-            alt={story.slug === "gpt-6-sol-luna" ? dict.news.waferAlt : dict.news.codeAlt}
+            alt=""
             fill
             className="object-cover"
             sizes="(min-width: 768px) 768px, 100vw"
             priority
           />
         </div>
-      ) : null}
+      }
     />
   );
 }

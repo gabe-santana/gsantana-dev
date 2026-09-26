@@ -77,13 +77,13 @@ export function ArticleLayout({
           </aside>
         ) : null}
 
+        {lead}
+
         {hasToc ? (
           <div className="lg:hidden">
             <MobileTableOfContents headings={headings} labels={tocLabels} />
           </div>
         ) : null}
-
-        {lead}
 
         <ReadingProgressBar
           slug={articleKey}

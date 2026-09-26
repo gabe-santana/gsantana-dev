@@ -16,7 +16,7 @@ export interface NewsStory {
   publisher: string;
   sourceUrl: string;
   sources: { url: string; label: Record<Locale, string> }[];
-  image?: string;
+  image: string;
   copy: Record<Locale, NewsCopy>;
 }
 
@@ -32,7 +32,7 @@ export const newsStories: NewsStory[] = [
       { url: "https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/", label: { "en-us": "GitHub: local sandboxing release", "pt-br": "GitHub: lançamento do sandbox local" } },
       { url: "https://docs.github.com/en/enterprise-cloud%40latest/copilot/how-tos/github-copilot-app/configure-local-sandboxing", label: { "en-us": "GitHub Docs: configuring local sandboxing", "pt-br": "GitHub Docs: configuração do sandbox local" } },
     ],
-    image: "/news/copilot-weekly-releases/cover.png",
+    image: "/news/copilot-weekly-releases/cover.webp",
     copy: {
       "en-us": {
         title: "GitHub Copilot adds new models and tighter agent controls",
@@ -72,6 +72,7 @@ Começaria com um repositório e uma tarefa realista. Conferiria quais modelos e
   },
   {
     slug: "github-ships-more-css",
+    image: "/news/github-ships-more-css/cover.webp",
     date: "2026-09-25",
     category: "engineering",
     publisher: "GitHub Engineering",
@@ -119,6 +120,7 @@ Se sua aplicação React tem um gargalo parecido, meça o tempo de renderizaçã
   },
   {
     slug: "agentic-autofix-copilot-memory",
+    image: "/news/agentic-autofix-copilot-memory/cover.webp",
     date: "2026-09-25",
     category: "security",
     publisher: "GitHub",
@@ -166,6 +168,7 @@ Ainda é uma ferramenta para propor mudanças, não uma aprovação de seguranç
   },
   {
     slug: "codeql-2-27-1",
+    image: "/news/codeql-2-27-1/cover.webp",
     date: "2026-09-25",
     category: "security",
     publisher: "GitHub",
@@ -213,6 +216,7 @@ Confira as mudanças nos resultados da próxima análise e confirme o conjunto c
   },
   {
     slug: "copilot-custom-canvases",
+    image: "/news/copilot-custom-canvases/cover.webp",
     date: "2026-09-25",
     category: "ai",
     publisher: "GitHub",
@@ -260,6 +264,7 @@ Escolha um fluxo com estado real: preparação de release, triagem de incidente 
   },
   {
     slug: "ai-powered-fuzzing-taskflow",
+    image: "/news/ai-powered-fuzzing-taskflow/cover.webp",
     date: "2026-09-24",
     category: "security",
     publisher: "GitHub Security Lab",
@@ -307,6 +312,7 @@ Trate harnesses gerados e relatórios de vulnerabilidade como pistas. Confira se
   },
   {
     slug: "when-chat-is-the-wrong-ui",
+    image: "/news/when-chat-is-the-wrong-ui/cover.webp",
     date: "2026-09-24",
     category: "ai",
     publisher: "GitHub",
@@ -354,6 +360,7 @@ Antes de dar um canvas a todo agente, faça três perguntas: a tarefa tem estado
   },
   {
     slug: "copilot-huge-pull-requests",
+    image: "/news/copilot-huge-pull-requests/cover.webp",
     date: "2026-09-23",
     category: "engineering",
     publisher: "GitHub Engineering",
@@ -401,6 +408,7 @@ Meça as transições de estado caras, não apenas a primeira pintura. Abra deta
   },
   {
     slug: "github-actions-node-24",
+    image: "/news/github-actions-node-24/cover.webp",
     date: "2026-09-23",
     category: "engineering",
     publisher: "GitHub",
@@ -448,6 +456,7 @@ O GitHub alerta que o Node 24 não suporta macOS 13.4 ou anterior nesse contexto
   },
   {
     slug: "copilot-code-review-controls",
+    image: "/news/copilot-code-review-controls/cover.webp",
     date: "2026-09-23",
     category: "ai",
     publisher: "GitHub",
@@ -504,7 +513,7 @@ Comece onde o feedback automático é mais útil: repositórios com filas ativas
       { url: "https://developers.openai.com/api/docs/models/gpt-6-luna", label: { "en-us": "OpenAI API: GPT-6 Luna model details", "pt-br": "OpenAI API: detalhes do modelo GPT-6 Luna" } },
       { url: "https://developers.openai.com/api/docs/changelog", label: { "en-us": "OpenAI API changelog", "pt-br": "Histórico de alterações da API OpenAI" } },
     ],
-    image: "/news/gpt-6-sol-luna/cover.png",
+    image: "/news/gpt-6-sol-luna/cover.webp",
     copy: {
       "en-us": {
         title: "OpenAI brings GPT-6 Sol and Luna to everyday AI work",
@@ -544,6 +553,7 @@ Execute o mesmo conjunto de tarefas reais nos dois modelos. Acompanhe qualidade 
   },
   {
     slug: "gpt-6-prompt-caching",
+    image: "/news/gpt-6-prompt-caching/cover.webp",
     date: "2026-09-22",
     category: "ai",
     publisher: "OpenAI",
