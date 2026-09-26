@@ -7,6 +7,7 @@ import { format, getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath, locales } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { findPrinciple, getAllPrinciples, getPrinciple } from "@/lib/principles";
+import { getRelatedItems } from "@/lib/related-items";
 import { alternatesFor } from "@/lib/seo";
 
 interface PageProps {
@@ -52,6 +53,7 @@ export default async function PrinciplePage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={principle.key}
+      relatedItems={getRelatedItems(lang, principle.key)}
       tldr={principle.tldr}
       headings={principle.headings}
       contentHtml={principle.contentHtml}

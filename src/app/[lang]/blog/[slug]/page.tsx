@@ -9,6 +9,7 @@ import { formatDate } from "@/lib/format-date";
 import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { getAllPostSummaries, getPostBySlug, getPostSlugs } from "@/lib/posts";
+import { getRelatedItems } from "@/lib/related-items";
 import { alternatesFor } from "@/lib/seo";
 
 interface PageProps {
@@ -64,6 +65,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={post.slug}
+      relatedItems={getRelatedItems(lang, post.slug)}
       tldr={post.tldr}
       headings={post.headings}
       contentHtml={post.contentHtml}

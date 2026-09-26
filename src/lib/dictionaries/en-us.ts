@@ -10,10 +10,9 @@ export const enUs = {
     rights: "All rights reserved.",
   },
   nav: {
-    home: "Home",
     blog: "Blog",
     news: "News",
-    certifications: "Certifications",
+    certifications: "CertLabs",
     principles: "Principles",
     about: "About",
     language: "Language",
@@ -32,12 +31,15 @@ export const enUs = {
     intro:
       "I'm Gabriel Santana. I write about applied AI, systems engineering, and the tools shaping how we build software. Notes from the field, not just theory.",
     readBlog: "Read the blog",
+    readNews: "News",
     aboutMe: "About me",
   },
   home: {
     principlesTitle: "Principles",
     principlesSubtitle: "The architecture principles behind my decisions.",
     allPrinciples: "All {count} →",
+    certificationsTitle: "CertLabs",
+    certificationsSubtitle: "Exam walkthroughs and study notes for technology certifications.",
     latestPosts: "Latest posts",
     viewAll: "View all →",
   },
@@ -45,6 +47,7 @@ export const enUs = {
     title: "Blog",
     description: "Notes on applied AI, software engineering, and technology.",
     empty: "No posts yet. Check back soon.",
+    readArticle: "Read article",
   },
   news: {
     title: "News",
@@ -68,12 +71,11 @@ export const enUs = {
   },
   certifications: {
     eyebrow: "Study notes",
-    title: "Certifications",
+    title: "CertLabs",
     description: "Exam questions, training notes, and architecture decisions explained from first principles.",
     metaDescription: "Technology certification study notes, exam question walkthroughs, and practical Azure architecture guidance by Gabriel Santana.",
     readArticle: "Read article",
     breadcrumb: "Breadcrumb",
-    videoTitle: "Gabriel Santana explains an AZ-305 SQL Server migration question",
     openVideo: "Player blocked? Watch on LinkedIn",
     kinds: {
       question: "Exam walkthrough",
@@ -89,6 +91,7 @@ export const enUs = {
     onThisPage: "On this page",
     backToTop: "Back to top ↑",
     tldr: "TL;DR",
+    relatedItems: "Related Items",
   },
   principles: {
     eyebrow: "Principles",
@@ -128,7 +131,7 @@ export const enUs = {
     introSiteLink: "Principles",
     introSiteAfter: "I rely on when making design decisions.",
     connectLinkedIn: "Connect on LinkedIn",
-    certificationsTitle: "Certifications",
+    certificationsTitle: "CertLabs",
     certificationsSubtitle:
       "Microsoft Azure, from administration to solution architecture.",
     projectsTitle: "Selected projects",

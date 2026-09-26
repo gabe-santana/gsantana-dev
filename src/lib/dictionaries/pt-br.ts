@@ -9,10 +9,9 @@ export const ptBr: Dictionary = {
     rights: "Todos os direitos reservados.",
   },
   nav: {
-    home: "Início",
     blog: "Blog",
     news: "Notícias",
-    certifications: "Certificações",
+    certifications: "CertLabs",
     principles: "Princípios",
     about: "Sobre",
     language: "Idioma",
@@ -31,12 +30,15 @@ export const ptBr: Dictionary = {
     intro:
       "Sou Gabriel Santana. Escrevo sobre IA aplicada, engenharia de sistemas e as ferramentas que estão mudando como construímos software. Notas de quem está na prática, não só teoria.",
     readBlog: "Ler o blog",
+    readNews: "Notícias",
     aboutMe: "Sobre mim",
   },
   home: {
     principlesTitle: "Princípios",
     principlesSubtitle: "Os princípios de arquitetura por trás das minhas decisões.",
     allPrinciples: "Todos os {count} →",
+    certificationsTitle: "CertLabs",
+    certificationsSubtitle: "Questões comentadas e notas de estudo para certificações de tecnologia.",
     latestPosts: "Posts recentes",
     viewAll: "Ver todos →",
   },
@@ -44,6 +46,7 @@ export const ptBr: Dictionary = {
     title: "Blog",
     description: "Notas sobre IA aplicada, engenharia de software e tecnologia.",
     empty: "Nenhum post ainda. Volte em breve.",
+    readArticle: "Ler artigo",
   },
   news: {
     title: "Notícias",
@@ -67,12 +70,11 @@ export const ptBr: Dictionary = {
   },
   certifications: {
     eyebrow: "Notas de estudo",
-    title: "Certificações",
+    title: "CertLabs",
     description: "Questões comentadas, treinamentos e decisões de arquitetura explicadas desde o fundamento.",
     metaDescription: "Notas de estudo para certificações de tecnologia, questões comentadas e orientações práticas de arquitetura Azure por Gabriel Santana.",
     readArticle: "Ler artigo",
     breadcrumb: "Caminho de navegação",
-    videoTitle: "Gabriel Santana explica uma questão de migração do SQL Server no AZ-305",
     openVideo: "Player bloqueado? Assista no LinkedIn",
     kinds: {
       question: "Questão comentada",
@@ -88,6 +90,7 @@ export const ptBr: Dictionary = {
     onThisPage: "Nesta página",
     backToTop: "Voltar ao topo ↑",
     tldr: "TL;DR",
+    relatedItems: "Conteúdos relacionados",
   },
   principles: {
     eyebrow: "Princípios",
@@ -127,7 +130,7 @@ export const ptBr: Dictionary = {
     introSiteLink: "Princípios",
     introSiteAfter: "em que me apoio para tomar decisões de design.",
     connectLinkedIn: "Conectar no LinkedIn",
-    certificationsTitle: "Certificações",
+    certificationsTitle: "CertLabs",
     certificationsSubtitle: "Microsoft Azure, da administração à arquitetura de soluções.",
     projectsTitle: "Projetos em destaque",
     projectsSubtitle: "Open source, no GitHub.",

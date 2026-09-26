@@ -9,6 +9,7 @@ import { isLocale, localePath, locales } from "@/lib/i18n";
 import { renderMarkdown } from "@/lib/markdown";
 import { mediaUrl } from "@/lib/media";
 import { getNewsStory, newsStories } from "@/lib/news";
+import { getRelatedItems } from "@/lib/related-items";
 import { alternatesFor } from "@/lib/seo";
 
 interface PageProps {
@@ -57,6 +58,7 @@ export default async function NewsStoryPage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={`news/${story.slug}`}
+      relatedItems={getRelatedItems(lang, `news/${story.slug}`)}
       contentHtml={html}
       headings={headings}
       header={

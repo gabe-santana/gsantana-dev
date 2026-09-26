@@ -32,6 +32,12 @@ export function Hero({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             {dict.hero.readBlog}
           </Link>
           <Link
+            href={localePath(locale, "/news")}
+            className="rounded-full border border-accent/50 px-6 py-3 text-sm font-semibold text-accent transition-colors hover:border-accent hover:bg-accent/10"
+          >
+            {dict.hero.readNews}
+          </Link>
+          <Link
             href={localePath(locale, "/about")}
             className="rounded-full border border-border px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-accent/60"
           >

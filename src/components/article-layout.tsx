@@ -1,6 +1,7 @@
 import { AuthorCard } from "@/components/author-card";
 import { Comments } from "@/components/comments";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
+import { RelatedItems } from "@/components/related-items";
 import {
   MobileTableOfContents,
   TableOfContents,
@@ -9,6 +10,7 @@ import type { Dictionary } from "@/lib/dictionaries";
 import { isGiscusConfigured } from "@/lib/giscus";
 import { localeConfig, type Locale } from "@/lib/i18n";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
+import type { RelatedItem } from "@/lib/related-items";
 
 interface ArticleLayoutProps {
   locale: Locale;
@@ -27,6 +29,7 @@ interface ArticleLayoutProps {
   articleKey: string;
   /** Key takeaways shown in a TL;DR box right under the header. */
   tldr?: string[];
+  relatedItems?: RelatedItem[];
 }
 
 export function ArticleLayout({
@@ -39,6 +42,7 @@ export function ArticleLayout({
   headings,
   articleKey,
   tldr,
+  relatedItems = [],
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
   const markerIndex = contentInsert ? contentHtml.indexOf(contentInsert.marker) : -1;
@@ -121,6 +125,8 @@ export function ArticleLayout({
             labels={dict.comments}
           />
         ) : null}
+
+        <RelatedItems items={relatedItems} locale={locale} dict={dict} />
       </article>
 
       {hasToc ? (

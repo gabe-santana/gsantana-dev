@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/container";
+import { PostCardProgress } from "@/components/post-card-progress";
 import { getAllCertificationSummaries } from "@/lib/certifications";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
@@ -39,7 +40,7 @@ export default async function CertificationsPage({ params }: PageProps) {
 
       <div className="divide-y divide-border border-b border-border">
         {articles.map((article) => (
-          <article key={article.slug} className="py-8 first:pt-9">
+          <article key={article.slug} className="relative py-8 first:pt-9">
             <Link href={localePath(lang, `/certifications/${article.slug}`)} className="group block sm:grid sm:grid-cols-[minmax(0,1fr)_11rem] sm:gap-10">
               <div>
                 <p className="font-mono text-xs uppercase text-accent">
@@ -59,6 +60,10 @@ export default async function CertificationsPage({ params }: PageProps) {
                 <span>{format(dict.article.readingTime, { minutes: article.readingMinutes })}</span>
               </p>
             </Link>
+            <PostCardProgress
+              slug={`certifications/${article.slug}`}
+              labels={{ percentRead: dict.article.percentRead, read: dict.article.read }}
+            />
           </article>
         ))}
       </div>

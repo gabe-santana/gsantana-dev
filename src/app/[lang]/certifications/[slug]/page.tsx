@@ -6,6 +6,7 @@ import { getAllCertificationSummaries, getCertificationBySlug, getCertificationS
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
 import { isLocale, localePath, locales } from "@/lib/i18n";
+import { getRelatedItems } from "@/lib/related-items";
 import { alternatesFor } from "@/lib/seo";
 
 interface PageProps {
@@ -41,6 +42,7 @@ export default async function CertificationArticlePage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={`certifications/${slug}`}
+      relatedItems={getRelatedItems(lang, `certifications/${slug}`)}
       headings={article.headings}
       contentHtml={article.contentHtml}
       header={
@@ -75,7 +77,7 @@ export default async function CertificationArticlePage({ params }: PageProps) {
           <div className="mx-auto aspect-[504/399] w-full max-w-[504px] overflow-hidden border border-border bg-surface">
             <iframe
               src={article.videoEmbed}
-              title={dict.certifications.videoTitle}
+              title={article.title}
               className="h-full w-full"
               allow="fullscreen; picture-in-picture"
               loading="eager"

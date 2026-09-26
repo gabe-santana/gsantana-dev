@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/container";
+import { CertificationArticleCard } from "@/components/certification-article-card";
 import { Hero } from "@/components/hero";
 import { PostCard } from "@/components/post-card";
 import { PrincipleCard } from "@/components/principle-card";
 import { format, getDictionary } from "@/lib/dictionaries";
+import { getAllCertificationSummaries } from "@/lib/certifications";
 import { isLocale, localePath } from "@/lib/i18n";
 import { getAllPostSummaries } from "@/lib/posts";
 import { getAllPrinciples } from "@/lib/principles";
@@ -21,6 +23,7 @@ export default async function HomePage({
   const posts = getAllPostSummaries(lang).slice(0, 3);
   const allPrinciples = getAllPrinciples(lang);
   const principles = allPrinciples.filter((p) => !p.isWip).slice(0, 3);
+  const certifications = getAllCertificationSummaries(lang).slice(0, 3);
 
   return (
     <>
@@ -67,6 +70,33 @@ export default async function HomePage({
                 locale={lang}
                 dict={dict}
                 showCategory
+              />
+            ))}
+          </div>
+        </Container>
+      )}
+
+      {certifications.length > 0 && (
+        <Container className={posts.length > 0 || principles.length > 0 ? "pb-24" : "py-24"}>
+          <div className="mb-8 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-semibold">{dict.home.certificationsTitle}</h2>
+              <p className="mt-1 text-sm text-muted">{dict.home.certificationsSubtitle}</p>
+            </div>
+            <Link
+              href={localePath(lang, "/certifications")}
+              className="shrink-0 text-sm text-accent hover:underline"
+            >
+              {dict.home.viewAll}
+            </Link>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {certifications.map((article) => (
+              <CertificationArticleCard
+                key={article.slug}
+                article={article}
+                locale={lang}
+                dict={dict}
               />
             ))}
           </div>

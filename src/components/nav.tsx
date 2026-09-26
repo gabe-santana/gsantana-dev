@@ -15,11 +15,8 @@ export function Nav({
   switcherPath?: string;
 }) {
   const links = [
-    // The logo already links home, so "Home" is dropped on small screens to
-    // leave room for the other links and the language switcher.
-    { href: "/", label: dict.nav.home, className: "hidden lg:inline" },
-    { href: "/blog", label: dict.nav.blog },
     { href: "/news", label: dict.nav.news },
+    { href: "/blog", label: dict.nav.blog },
     { href: "/certifications", label: dict.nav.certifications },
     { href: "/principles", label: dict.nav.principles },
     { href: "/about", label: dict.nav.about },
@@ -40,8 +37,14 @@ export function Nav({
               <Link
                 key={link.href}
                 href={localePath(locale, link.href)}
-                className={`transition-colors hover:text-foreground ${link.className ?? ""}`}
+                className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
               >
+                {link.href === "/news" ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none h-1.5 w-1.5 flex-none rounded-full bg-red-500 shadow-[0_0_8px_#ef4444] motion-safe:animate-pulse"
+                  />
+                ) : null}
                 {link.label}
               </Link>
             ))}
