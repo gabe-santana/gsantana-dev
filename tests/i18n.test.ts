@@ -4,6 +4,7 @@ import { isLocale, localePath, locales, switchLocalePath } from "@/lib/i18n";
 import { getAllPostSummaries, getPostSlugs } from "@/lib/posts";
 import { getAllPrinciples } from "@/lib/principles";
 import { newsStories } from "@/lib/news";
+import { getAllCertificationSummaries, getCertificationSlugs } from "@/lib/certifications";
 
 describe("locale paths", () => {
   it("prefixes paths with the locale", () => {
@@ -71,11 +72,12 @@ describe("content parity", () => {
     for (const other of others) expect(other).toEqual(base);
   });
 
-  it("localizes post and principle titles without changing their keys", () => {
+  it("localizes post, principle, and certification titles without changing their keys", () => {
     const titles = (locale: (typeof locales)[number]) =>
       new Map([
         ...getAllPostSummaries(locale).map((post) => [post.slug, post.title] as const),
         ...getAllPrinciples(locale).map((principle) => [principle.key, principle.title] as const),
+        ...getAllCertificationSummaries(locale).map((article) => [`certifications/${article.slug}`, article.title] as const),
       ]);
     const english = titles("en-us");
     const portuguese = titles("pt-br");
@@ -101,6 +103,20 @@ describe("content parity", () => {
         .sort()
     );
     for (const other of others) expect(other).toEqual(base);
+  });
+
+  it("has every certification article in every locale with the same media", () => {
+    const [base, ...others] = locales.map((l) => getCertificationSlugs(l).sort());
+    expect(base.length).toBeGreaterThan(0);
+    for (const other of others) expect(other).toEqual(base);
+
+    for (const slug of base) {
+      const versions = locales.map((l) => getAllCertificationSummaries(l).find((article) => article.slug === slug)!);
+      expect(versions[0].videoEmbed).toBe(versions[1].videoEmbed);
+      expect(versions[0].sourceUrl).toBe(versions[1].sourceUrl);
+      expect(versions[0].exam).toBe(versions[1].exam);
+      expect(versions[0].kind).toBe(versions[1].kind);
+    }
   });
 
   it("has English and Portuguese versions of every news story", () => {

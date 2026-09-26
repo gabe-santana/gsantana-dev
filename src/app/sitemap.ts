@@ -4,6 +4,7 @@ import { getAllPostSummaries } from "@/lib/posts";
 import { getAllPrinciples } from "@/lib/principles";
 import { siteUrl } from "@/lib/seo";
 import { newsStories } from "@/lib/news";
+import { getAllCertificationSummaries } from "@/lib/certifications";
 
 export const dynamic = "force-static";
 
@@ -25,7 +26,7 @@ function localized(
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
-  const staticRoutes = ["/", "/blog", "/news", "/principles", "/about"].flatMap((path) =>
+  const staticRoutes = ["/", "/blog", "/news", "/certifications", "/principles", "/about"].flatMap((path) =>
     localized(path, now)
   );
 
@@ -35,6 +36,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const entry = postRoutes.get(post.slug) ?? { date: post.date, locales: [] };
       entry.locales.push(l);
       postRoutes.set(post.slug, entry);
+    }
+  }
+
+  const certificationRoutes = new Map<string, { date: string; locales: Locale[] }>();
+  for (const l of locales) {
+    for (const article of getAllCertificationSummaries(l)) {
+      const entry = certificationRoutes.get(article.slug) ?? { date: article.date, locales: [] };
+      entry.locales.push(l);
+      certificationRoutes.set(article.slug, entry);
     }
   }
 
@@ -50,6 +60,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...staticRoutes,
     ...newsStories.flatMap((story) => localized(`/news/${story.slug}`, story.date)),
+    ...[...certificationRoutes].flatMap(([slug, { date, locales: available }]) =>
+      localized(`/certifications/${slug}`, date, available)
+    ),
     ...[...postRoutes].flatMap(([slug, { date, locales: available }]) =>
       localized(`/blog/${slug}`, date, available)
     ),
