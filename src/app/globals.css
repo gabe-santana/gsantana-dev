@@ -1,0 +1,245 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-background: #05070d;
+  --color-foreground: #f3f5f8;
+  --color-muted: #8b93a7;
+  --color-accent: #5eead4;
+  --color-surface: #0d1119;
+  --color-border: #1e2433;
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+/* Decorative parallax backgrounds -------------------------------------- */
+
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      rgb(255 255 255 / 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Vignette: grid is strongest behind the headline and dissolves before it
+   reaches any edge of the hero, so it never ends in a visible line. */
+.bg-grid-fade {
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 70% at 40% 40%,
+    #000 20%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 70% at 40% 40%,
+    #000 20%,
+    transparent 75%
+  );
+}
+
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.35;
+}
+
+.blob-accent {
+  background: radial-gradient(circle at center, #5eead4, transparent 70%);
+}
+
+.blob-violet {
+  background: radial-gradient(circle at center, #a78bfa, transparent 70%);
+}
+
+/* Hero typewriter caret ------------------------------------------------- */
+
+.typewriter-caret {
+  display: inline-block;
+  width: 0.06em;
+  min-width: 3px;
+  height: 0.85em;
+  margin-left: 0.08em;
+  vertical-align: -0.06em;
+  border-radius: 1px;
+  background-color: currentColor;
+}
+
+/* Solid while typing/deleting, blinking only while idle — like a real
+   terminal caret. */
+.typewriter-caret.is-idle {
+  animation: caret-blink 1.05s step-end infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .typewriter-caret.is-idle {
+    animation: none;
+  }
+}
+
+/* Markdown / rehype-pretty-code output ---------------------------------- */
+
+.prose-post {
+  /* Typography's invert palette uses pure #fff for headings/bold/links,
+     which sparkles against a near-black background over a long read.
+     Pull those down to the site foreground and route links to the accent. */
+  --tw-prose-invert-headings: var(--color-foreground);
+  --tw-prose-invert-bold: #e6e9ef;
+  --tw-prose-invert-links: var(--color-accent);
+  --tw-prose-invert-quotes: #c9cfda;
+  --tw-prose-invert-code: var(--color-foreground);
+  text-rendering: optimizeLegibility;
+}
+
+.prose-post p,
+.prose-post li {
+  text-wrap: pretty;
+}
+
+.prose-post h2,
+.prose-post h3 {
+  letter-spacing: -0.01em;
+  /* Keeps anchor jumps clear of the sticky nav; must match ACTIVE_LINE_PX
+     in table-of-contents.tsx (120px) minus a little slack. */
+  scroll-margin-top: 6.5rem;
+}
+
+.toc-scroller {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.prose-post a:not(.anchor) {
+  text-decoration-color: rgb(94 234 212 / 0.4);
+  text-underline-offset: 3px;
+}
+
+.prose-post pre {
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface) !important;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+
+.prose-post code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.prose-post :not(pre) > code {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  padding: 0.15rem 0.4rem;
+}
+
+.prose-post [data-rehype-pretty-code-fragment] {
+  display: block;
+}
+
+.prose-post a.anchor {
+  text-decoration: none;
+  color: inherit;
+}
+
+.prose-post h2 > a.anchor:hover::after,
+.prose-post h3 > a.anchor:hover::after {
+  content: " #";
+  color: var(--color-accent);
+}
+
+
+/* "Júnior Inocente" — a recurring character who interrupts the post with
+   naive questions. Styled as a chat message (avatar + speech bubble), not
+   an alert: it's a voice in the conversation, and it isn't clickable. */
+
+.prose-post .junior-card {
+  --junior-color: #a78bfa;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  margin: 2.25rem 0;
+}
+
+.prose-post .junior-card-img {
+  flex: none;
+  width: 3rem;
+  height: 3rem;
+  margin: 0.125rem 0 0;
+  border-radius: 9999px;
+  object-fit: cover;
+  background-color: var(--color-surface);
+  box-shadow:
+    0 0 0 2px var(--color-background),
+    0 0 0 3.5px rgb(167 139 250 / 0.55);
+}
+
+.prose-post .junior-card-content {
+  flex: 1;
+  min-width: 0;
+  max-width: 34rem;
+  padding: 0.75rem 1.125rem 0.875rem;
+  /* Small top-left corner "points" the bubble at the avatar, the way chat
+     apps do it — no pseudo-element tail needed. */
+  border-radius: 0.3rem 1.25rem 1.25rem 1.25rem;
+  border: 1px solid rgb(167 139 250 / 0.18);
+  background-color: rgb(167 139 250 / 0.07);
+}
+
+.prose-post .junior-card-title {
+  margin-bottom: 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--junior-color);
+}
+
+.prose-post .junior-card-quote {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-foreground);
+}
+
+@media (max-width: 640px) {
+  .prose-post .junior-card {
+    gap: 0.625rem;
+  }
+
+  .prose-post .junior-card-img {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+}

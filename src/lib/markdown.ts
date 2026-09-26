@@ -1,0 +1,55 @@
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeSlug from "rehype-slug";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypePrettyCode from "rehype-pretty-code";
+import rehypeStringify from "rehype-stringify";
+import { rehypeCdnImages } from "@/lib/rehype-cdn-images";
+import {
+  rehypeExtractHeadings,
+  type TocHeading,
+} from "@/lib/rehype-extract-headings";
+
+export interface RenderedMarkdown {
+  html: string;
+  headings: TocHeading[];
+}
+
+/**
+ * Renders post markdown to HTML at build time only. Nothing here runs in
+ * the browser, so a fully-featured pipeline (syntax highlighting, heading
+ * anchors) costs zero runtime JS.
+ */
+export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown> {
+  const headings: TocHeading[] = [];
+
+  const file = await unified()
+    .use(remarkParse)
+    .use(remarkGfm)
+    .use(remarkRehype, { allowDangerousHtml: true })
+    // remark-rehype (with allowDangerousHtml) keeps raw HTML as opaque
+    // "raw" nodes rather than real hast elements. rehype-raw parses them
+    // into actual <img>/<div> etc. elements so downstream plugins (like
+    // rehypeCdnImages) can actually inspect and rewrite them.
+    .use(rehypeRaw)
+    .use(rehypeCdnImages)
+    .use(rehypeSlug)
+    .use(rehypeExtractHeadings, { headings })
+    .use(rehypeAutolinkHeadings, {
+      behavior: "wrap",
+      properties: { className: ["anchor"] },
+    })
+    .use(rehypePrettyCode, {
+      // The site only ships a dark theme, so a single Shiki theme keeps the
+      // highlighter output (and its CSS) simple — no light/dark token swap.
+      theme: "github-dark",
+      keepBackground: false,
+    })
+    .use(rehypeStringify, { allowDangerousHtml: true })
+    .process(markdown);
+
+  return { html: String(file), headings };
+}
