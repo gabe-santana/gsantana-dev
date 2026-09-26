@@ -22,7 +22,7 @@ When a team neglects this design principle, things get messy very early on. In t
 Yep, *it's rare, but it happens all the time*... Who hasn't been there? It's very common to come across systems that are actually well architected, but once you look at the processes, it's one thing after another and everything keeps getting worse. 
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-name">Naive Junior</div>
 		<div class="junior-card-desc">
@@ -69,7 +69,7 @@ You're not just focused on shipping the feature, but also on how it will be oper
 
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-name">Naive Junior</div>
 		<div class="junior-card-desc">
@@ -139,7 +139,7 @@ Many workloads still rely on manual flows that eat up time and energy, usually o
 With automation, you save time, save money and eliminate human error.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -216,7 +216,7 @@ The goal here is clear: make sure every deployment is consistent, predictable an
 Every change, whether to code, configuration or artifacts, needs to go through the same level of rigor. Testing, monitoring and versioning aren't overkill: they're the bare minimum to make sure you're not shipping a time bomb to your customer.
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Worried junior dev" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Worried junior dev" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Naive Junior</div>
 		<div class="junior-card-quote">
@@ -311,7 +311,7 @@ When the team doesn't follow clear change processes, you run the risk of:
 | **Continuous feedback and learning**  | Every change is an opportunity to improve the process. Review incidents and adjustments so the next change is even safer. |
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Confused junior dev" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Confused junior dev" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Naive Junior</div>
 		<div class="junior-card-quote">
@@ -374,7 +374,7 @@ Increased resource usage: collecting metrics and logs, running side-by-side depl
 Increased latency: gateways, messaging, anti-corruption layers or sidecars can introduce execution delays, eating into your performance "budget".
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Confused junior dev" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Confused junior dev" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Naive Junior</div>
 		<div class="junior-card-quote">

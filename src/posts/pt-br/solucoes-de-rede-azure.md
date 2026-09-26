@@ -1,5 +1,5 @@
 ---
-title: Guia Definitivo - Soluções de Rede na Azure
+title: The Definitive Guide - Networking Solutions on Azure
 description: Zero to hero em soluções de Rede na Azure.
 short: 
 date: 2025-10-19
@@ -27,7 +27,7 @@ E quando o condomínio cresce demais? Quando já existem tantos prédios que fic
 Primeiro conceito firme: sem máscara o IP é ambíguo. `10.50.12.34` sozinho não diz qual bloco ele ocupa — tal como um número de apartamento sem saber se os dois primeiros dígitos representam o andar ou não. A máscara `/20`, por exemplo, delimita o espaço disponível e evita colisões ao expandir.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior inquisitivo" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior inquisitivo" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -39,7 +39,7 @@ Primeiro conceito firme: sem máscara o IP é ambíguo. `10.50.12.34` sozinho n�
 Você só empurra o problema. Blocos grandes demais complicam peering, desperdiçam espaço e dificultam segmentação de segurança. Melhor vários blocos bem definidos do que um monolito confuso.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -69,7 +69,7 @@ Você não precisa decorar cada campo de cada cabeçalho, mas precisa saber “o
 O modelo TCP/IP simplifica em 4 camadas (Link, Internet, Transporte, Aplicação). Em cloud trabalhamos majoritariamente nas camadas 3 a 7. Quando você escolhe uma VNet está definindo limites de L3; ao criar um NSG está aplicando política que inspeciona metadados principalmente L3/L4; ao usar um Application Gateway adiciona lógica L7; e um Front Door expande L7 para o edge global.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -154,7 +154,7 @@ Para reduzir consumo de endereços públicos:
 - **NAT Gateway (Cloud)**: Em Azure, fornece escala e consistência para SNAT outbound sem consumir IP público por VM.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -198,7 +198,7 @@ Estratégia recomendada:
 - **Escalabilidade**: Serviços de IoT ou milhões de clientes beneficiam-se de endereçamento direto IPv6.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -247,7 +247,7 @@ Perímetro lógico isolado. Você escolhe uma ou mais faixas (ex: 10.40.0.0/16) 
 Segmentos para separar funções. Boa prática: uma subnet para front-end, outra para dados, outra para integração/serviços (ex: Private Endpoints), outra para segurança (Firewall/Azure Bastion). Cada subnet herda a faixa CIDR da VNet e tem seu próprio recorte.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -263,7 +263,7 @@ Separar subnets reduz blast radius. Se uma regra de segurança ou rota errada af
 Filtro L4 (e parte de L3). Cada regra tem: prioridade (menor número = avaliada antes), direção (Inbound/Outbound), protocolo (TCP/UDP/Any), origem, destino, porta e ação (Allow/Deny).
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior confuso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior confuso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -293,7 +293,7 @@ Exemplo de regra simplificada (conceito):
 Altera o next hop para destinos específicos. Útil para inspecionar tráfego em firewall (Virtual Appliance) ou direcionar rotas para on-premises via VPN/ExpressRoute. Planeje para evitar **assimetria**: ida por um caminho e volta por outro gera perdas de sessão.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -321,7 +321,7 @@ Permite RDP/SSH para VMs sem expor portas públicas. Reduz superfície de ataque
 Túnel IPsec sobre Internet pública conectando data center (ou escritório) à Azure. Bom para começar rápido. Limitações: latência variável, picos de jitter, throughput dependente de SKU do gateway e da banda local.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -337,7 +337,7 @@ Migre quando: precisa SLA rígido, latência baixa constante, tráfego crescente
 Conexão privada provisionada por parceiro telecom. Oferece latência estável e banda garantida (SKUs variam). Suporta dois emparelhamentos principais: **Private** (acesso às VNets) e **Microsoft** (acesso a serviços públicos como M365 sem transitar na Internet). Planeje redundância (pares de circuitos) para alta disponibilidade real.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior intrigado" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior intrigado" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -376,7 +376,7 @@ Coloca interface privada para serviço PaaS dentro da sua VNet. Evita exposure p
 Roteamento por path/host, SSL offload para reduzir carga em backend, suporte a Web Application Firewall (OWASP), redirecionamentos e reescrita de cabeçalhos. Planeje **zones** para alta disponibilidade regional e ajuste o tamanho do SKU ao volume real.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -392,7 +392,7 @@ Não. Para CDN e aceleração global use Front Door ou Azure CDN. Application Ga
 Edge global com POPs distribuídos, caching (dynamic e static acceleration), roteamento por geografia, prioridade ou latência e proteção contra ataques de volumetria. Combine com WAF policies.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -420,7 +420,7 @@ Base DNS, combina com Front Door (Front Door para HTTP, Traffic Manager para cen
 Firewall gerenciado (Azure Firewall) reduz operação (patching, escalonamento automático, integração com políticas). NVAs (Fortinet, Palo Alto) dão recursos especializados (ex: IPS avançado, filtragem de camada 7 proprietária). Faça matriz de requisitos (TLS inspection, Threat Intel, custo, skills internas) antes de decidir.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -452,7 +452,7 @@ Postura contínua, alertas anômalos (ex: tráfego inesperado para portas não u
 Ferramentas práticas: Topology (mapa visual), Packet Capture (debug profundo), Flow Logs (tráfego NSG), Connection Monitor (latência e disponibilidade). Ative apenas o necessário para equilibrar custo/valor.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior curioso" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior curioso" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">

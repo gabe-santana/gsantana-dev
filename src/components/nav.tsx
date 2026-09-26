@@ -4,7 +4,16 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import type { Dictionary } from "@/lib/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
 
-export function Nav({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+export function Nav({
+  locale,
+  dict,
+  switcherPath,
+}: {
+  locale: Locale;
+  dict: Dictionary;
+  /** Passed to the language switcher; see LanguageSwitcher.fixedPath. */
+  switcherPath?: string;
+}) {
   const links = [
     // The logo already links home, so "Home" is dropped on small screens to
     // leave room for the other links and the language switcher.
@@ -35,7 +44,11 @@ export function Nav({ locale, dict }: { locale: Locale; dict: Dictionary }) {
               </Link>
             ))}
           </nav>
-          <LanguageSwitcher locale={locale} label={dict.nav.language} />
+          <LanguageSwitcher
+            locale={locale}
+            label={dict.nav.language}
+            fixedPath={switcherPath}
+          />
         </div>
       </Container>
     </header>

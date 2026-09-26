@@ -75,6 +75,41 @@ body {
   background: radial-gradient(circle at center, #a78bfa, transparent 70%);
 }
 
+/* <Bilingual>: show only the copy matching <html lang> (404 page) ------- */
+
+html[lang^="pt"] [data-lang="en-us"],
+html:not([lang^="pt"]) [data-lang="pt-br"] {
+  display: none !important;
+}
+
+/* 404 game: RPG-style message box and blinking prompt ------------------ */
+
+.game-dialog {
+  background-color: #10131f;
+  /* Stacked hard-edged rings read as a pixel-art frame at any size. */
+  box-shadow:
+    0 0 0 3px #1b1f2e,
+    0 0 0 6px #e2b95b,
+    0 0 0 9px #1b1f2e,
+    0 12px 32px rgb(0 0 0 / 0.6);
+}
+
+.pixel-blink {
+  animation: pixel-blink 1s steps(1) infinite;
+}
+
+@keyframes pixel-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-blink {
+    animation: none;
+  }
+}
+
 /* Hero typewriter caret ------------------------------------------------- */
 
 .typewriter-caret {

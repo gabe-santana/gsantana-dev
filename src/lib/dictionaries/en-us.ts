@@ -113,9 +113,43 @@ export const enUs = {
     verifyLabel: "{name} ({exam}): verify on Microsoft Learn",
   },
   notFound: {
-    title: "Page not found",
-    description: "The page you're looking for doesn't exist or was moved.",
-    backHome: "← Back home",
+    eyebrow: "Error 404",
+    title: "This page got lost in the dungeon.",
+    description:
+      "The page you asked for is hidden in one of the chests below. Fight your way through, open them one by one and find it.",
+    backHome: "← Take me home",
+    game: {
+      start: "Press Enter or tap to explore",
+      hint: "Open the chests to find your lost page.",
+      controls: "Move: WASD / arrows · Attack or open: J / Space · Shield: K / Shift",
+      attack: "Attack / open",
+      shield: "Shield",
+      mimic: "It was a mimic! Run!",
+      winTitle: "You found {path}!",
+      winBody: "It doesn't exist. You're off to notify the master.",
+      gameOver: "You fainted in the dungeon.",
+      playAgain: "Play again",
+      credit: "Art: Tiny Dungeon by Kenney (CC0)",
+      chestTitle: "You opened a chest!",
+      mimicTitle: "Uh-oh!",
+      continue: "Press Space or tap to continue",
+      mute: "Mute sound",
+      unmute: "Turn sound on",
+      // What the wrong chests contain, picked at random. Keep the same count
+      // in every locale.
+      chests: [
+        "/about? No, that one exists. Keep looking.",
+        "/wp-admin? Nice try. This isn't WordPress.",
+        "/.env? Absolutely not.",
+        "/index.php? Wrong decade.",
+        "A rubber duck. It asks what your bug is.",
+        "/node_modules? You'd need a much bigger chest.",
+        "/admin? Access denied. Obviously.",
+        "An old CSS hack. It still works in IE6.",
+        "/login? It wants a password you don't have.",
+        "A semicolon; someone was looking for it.",
+      ],
+    },
   },
 };
 

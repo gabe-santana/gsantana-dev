@@ -27,7 +27,7 @@ And what happens when the complex grows too big? When there are so many building
 First solid concept: without a mask, an IP is ambiguous. `10.50.12.34` on its own doesn't tell you which block it belongs to, just like an apartment number when you don't know whether the first two digits are the floor or not. A `/20` mask, for example, delimits the available space and prevents collisions when you expand.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Inquisitive junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Inquisitive junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -39,7 +39,7 @@ First solid concept: without a mask, an IP is ambiguous. `10.50.12.34` on its ow
 You're just kicking the can down the road. Oversized blocks complicate peering, waste space and make security segmentation harder. Several well-defined blocks beat one confusing monolith.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -69,7 +69,7 @@ You don't need to memorize every field of every header, but you do need to know 
 The TCP/IP model simplifies things into 4 layers (Link, Internet, Transport, Application). In the cloud we work mostly at layers 3 through 7. When you pick a VNet, you're defining L3 boundaries; when you create an NSG, you're applying a policy that inspects mostly L3/L4 metadata; when you use an Application Gateway, you add L7 logic; and Front Door extends L7 out to the global edge.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -154,7 +154,7 @@ To reduce consumption of public addresses:
 - **NAT Gateway (Cloud)**: On Azure, provides scale and consistency for outbound SNAT without consuming a public IP per VM.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -198,7 +198,7 @@ Recommended strategy:
 - **Scalability**: IoT services or millions of clients benefit from direct IPv6 addressing.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -247,7 +247,7 @@ An isolated logical perimeter. You pick one or more ranges (e.g., 10.40.0.0/16) 
 Segments that separate functions. Good practice: one subnet for the front end, another for data, another for integration/services (e.g., Private Endpoints), and another for security (Firewall/Azure Bastion). Each subnet takes a slice of the VNet's CIDR range.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -263,7 +263,7 @@ Separate subnets reduce the blast radius. If a bad security rule or route hits t
 An L4 filter (and partly L3). Each rule has: priority (lower number = evaluated first), direction (Inbound/Outbound), protocol (TCP/UDP/Any), source, destination, port and action (Allow/Deny).
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Confused junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Confused junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -293,7 +293,7 @@ Simplified rule example (concept):
 Changes the next hop for specific destinations. Useful for inspecting traffic in a firewall (Virtual Appliance) or steering routes to on-premises via VPN/ExpressRoute. Plan to avoid **asymmetry**: going out one path and coming back another causes dropped sessions.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -321,7 +321,7 @@ Enables RDP/SSH to VMs without exposing public ports. Reduces the attack surface
 An IPsec tunnel over the public Internet connecting a data center (or office) to Azure. Good for getting started quickly. Limitations: variable latency, jitter spikes, and throughput that depends on the gateway SKU and local bandwidth.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -337,7 +337,7 @@ Migrate when you need: a strict SLA, consistently low latency, growing traffic (
 A private connection provisioned by a telecom partner. It offers stable latency and guaranteed bandwidth (SKUs vary). It supports two main peerings: **Private** (access to VNets) and **Microsoft** (access to public services like M365 without traversing the Internet). Plan for redundancy (circuit pairs) to get real high availability.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Intrigued junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Intrigued junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -376,7 +376,7 @@ Places a private interface for a PaaS service inside your VNet. Avoids public ex
 Path/host-based routing, SSL offload to lighten the backend load, Web Application Firewall (OWASP) support, redirects and header rewriting. Plan for **zones** for regional high availability and size the SKU to your actual volume.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -392,7 +392,7 @@ No. For CDN and global acceleration, use Front Door or Azure CDN. Application Ga
 A global edge with distributed POPs, caching (dynamic and static acceleration), routing by geography, priority or latency, and protection against volumetric attacks. Pair it with WAF policies.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -420,7 +420,7 @@ DNS-based; it pairs with Front Door (Front Door for HTTP, Traffic Manager for mu
 A managed firewall (Azure Firewall) reduces operational overhead (patching, autoscaling, policy integration). NVAs (Fortinet, Palo Alto) provide specialized features (e.g., advanced IPS, proprietary layer 7 filtering). Build a requirements matrix (TLS inspection, Threat Intel, cost, in-house skills) before deciding.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Thoughtful junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Thoughtful junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">
@@ -452,7 +452,7 @@ Continuous posture management and anomaly alerts (e.g., unexpected traffic to un
 Practical tools: Topology (visual map), Packet Capture (deep debugging), Flow Logs (NSG traffic), Connection Monitor (latency and availability). Enable only what you need to balance cost and value.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Curious junior dev" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Curious junior dev" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Naive Junior</div>
     <div class="junior-card-quote">

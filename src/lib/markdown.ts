@@ -8,6 +8,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import { rehypeCdnImages } from "@/lib/rehype-cdn-images";
+import { rehypeLazyImages } from "@/lib/rehype-lazy-images";
 import {
   rehypeExtractHeadings,
   type TocHeading,
@@ -36,6 +37,7 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
     // rehypeCdnImages) can actually inspect and rewrite them.
     .use(rehypeRaw)
     .use(rehypeCdnImages)
+    .use(rehypeLazyImages)
     .use(rehypeSlug)
     .use(rehypeExtractHeadings, { headings })
     .use(rehypeAutolinkHeadings, {

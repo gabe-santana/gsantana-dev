@@ -157,6 +157,8 @@ production if the function ever errors.
   `pt-br.ts` must have exactly the same keys (a type error otherwise).
   Placeholders like `{minutes}` are filled by `format()`.
 - **Content:** `src/posts/<lang>/…`, same file names in each language.
+- **Titles are always in English**, identical in every language (only
+  descriptions and bodies are translated). A test enforces it.
 - **Adding a language:** add it to `locales` and `localeConfig` in
   `src/lib/i18n.ts`, add a dictionary, and add a content folder.
 

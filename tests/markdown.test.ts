@@ -25,6 +25,15 @@ describe("renderMarkdown", () => {
     expect(html).toContain('src="https://cdn.gsantana.dev/jrdev.png"');
   });
 
+  it("lazy-loads images unless the markdown says otherwise", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_CDN_URL", "");
+    const { html } = await renderMarkdown(
+      '<img src="/a.png" alt="" />\n\n<img src="/b.png" alt="" loading="eager" />'
+    );
+    expect(html).toMatch(/<img[^>]*src="\/a\.png"[^>]*loading="lazy"[^>]*decoding="async"/);
+    expect(html).toMatch(/<img[^>]*src="\/b\.png"[^>]*loading="eager"/);
+  });
+
   it("extracts h2/h3 headings with ids matching the rendered anchors", async () => {
     const { html, headings } = await renderMarkdown(
       "# Title\n\n## Soluções de rede\n\n### O que é uma `VNet`?\n\n#### Too deep"

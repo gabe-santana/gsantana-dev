@@ -22,7 +22,7 @@ Quando este princípio de design é neglicenciado pelo time, as coisas começam 
 Pois é, *é raro, mas acontece bastante*... Quem nunca? É muito comum de se ver por aí sistemas que até são bem arquitetados, mas quando vemos os processos, é uma coisa atrás da outra e tudo vai piorando. 
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-name">Júnior Inocente</div>
 		<div class="junior-card-desc">
@@ -69,7 +69,7 @@ Você não está apenas preocupado em entregar a feature, mas também em como el
 
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-name">Júnior Inocente</div>
 		<div class="junior-card-desc">
@@ -139,7 +139,7 @@ Muitos workloads ainda dependem de fluxos manuais que consomem tempo e energia, 
 Com automação, você ganha tempo, economiza dinheiro e elimina falhas humanas.
 
 <div class="junior-card">
-  <img src="/shared/jrdev.png" alt="Dev Júnior pensativo" class="junior-card-img" />
+  <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior pensativo" class="junior-card-img" />
   <div class="junior-card-content">
     <div class="junior-card-title">Júnior Inocente</div>
     <div class="junior-card-quote">
@@ -216,7 +216,7 @@ Aqui o objetivo é claro: garantir que cada deployment seja consistente, previs�
 Toda mudança, seja no código, na configuração ou nos artefatos, precisa passar pelo mesmo nível de rigor. Testar, monitorar e versionar não é frescura: é o mínimo necessário pra garantir que você não esteja levando bomba pro cliente.
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Dev Júnior preocupado" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Dev Júnior preocupado" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Júnior Inocente</div>
 		<div class="junior-card-quote">
@@ -311,7 +311,7 @@ Quando o time não segue processos de mudança claros, você corre risco de:
 | **Feedback e aprendizado contínuo**  | Cada mudança é uma oportunidade de melhorar o processo. Analise incidentes e ajustes para que a próxima mudança seja ainda mais segura. |
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Dev Júnior confuso" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Dev Júnior confuso" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Júnior Inocente</div>
 		<div class="junior-card-quote">
@@ -374,7 +374,7 @@ Uso de recursos aumentado, coletar métricas e logs, executar deploys lado a lad
 Latência aumentada, gateways, mensageria, anti-corruption layers ou sidecars podem introduzir atraso na execução, consumindo seu “budget” de performance.
 
 <div class="junior-card">
-	<img src="/shared/jrdev.png" alt="Dev Júnior confuso" class="junior-card-img" />
+	<img src="/shared/jrdev-avatar.webp" alt="Dev Júnior confuso" class="junior-card-img" />
 	<div class="junior-card-content">
 		<div class="junior-card-title">Júnior Inocente</div>
 		<div class="junior-card-quote">

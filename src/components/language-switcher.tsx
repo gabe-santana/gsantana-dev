@@ -6,6 +6,7 @@ import {
   LOCALE_COOKIE,
   LOCALE_STORAGE_KEY,
   localeConfig,
+  localePath,
   locales,
   switchLocalePath,
   type Locale,
@@ -32,11 +33,22 @@ function rememberLocale(locale: Locale) {
 export function LanguageSwitcher({
   locale,
   label,
+  fixedPath,
 }: {
   locale: Locale;
   label: string;
+  /**
+   * Link to this locale-free path instead of the current page. The static
+   * 404 needs it: it's built once for every missing URL, so the current
+   * path isn't known at build time (and switching a 404 is pointless).
+   */
+  fixedPath?: string;
 }) {
-  const pathname = usePathname();
+  const currentPath = usePathname();
+  const hrefFor = (target: Locale) =>
+    fixedPath !== undefined
+      ? localePath(target, fixedPath)
+      : switchLocalePath(currentPath, target);
 
   return (
     <div
@@ -49,7 +61,7 @@ export function LanguageSwitcher({
         return (
           <Link
             key={target}
-            href={switchLocalePath(pathname, target)}
+            href={hrefFor(target)}
             scroll={false}
             hrefLang={localeConfig[target].tag}
             lang={localeConfig[target].tag}

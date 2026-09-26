@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath, locales, switchLocalePath } from "@/lib/i18n";
-import { getPostSlugs } from "@/lib/posts";
+import { getAllPostSummaries, getPostSlugs } from "@/lib/posts";
 import { getAllPrinciples } from "@/lib/principles";
 
 describe("locale paths", () => {
@@ -50,6 +50,12 @@ describe("dictionaries", () => {
     }
   });
 
+  it("has the same number of 404 chest messages in every locale", () => {
+    // The game picks one index and shows that line in every language.
+    const counts = locales.map((l) => getDictionary(l).notFound.game.chests.length);
+    expect(new Set(counts).size).toBe(1);
+  });
+
   it("fills placeholders", () => {
     expect(format("{minutes} min read", { minutes: 5 })).toBe("5 min read");
     expect(format("{unknown} stays", {})).toBe("{unknown} stays");
@@ -61,6 +67,17 @@ describe("content parity", () => {
   // every locale or switching would land on a 404.
   it("has every post in every locale", () => {
     const [base, ...others] = locales.map((l) => getPostSlugs(l).sort());
+    for (const other of others) expect(other).toEqual(base);
+  });
+
+  it("keeps every title in English, identical in every locale", () => {
+    // House rule: titles are never translated (descriptions and bodies are).
+    const titles = (l: (typeof locales)[number]) =>
+      Object.fromEntries([
+        ...getAllPostSummaries(l).map((p) => [p.slug, p.title]),
+        ...getAllPrinciples(l).map((p) => [p.key, p.title]),
+      ]);
+    const [base, ...others] = locales.map(titles);
     for (const other of others) expect(other).toEqual(base);
   });
 
