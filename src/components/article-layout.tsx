@@ -1,31 +1,45 @@
 import { AuthorCard } from "@/components/author-card";
 import { Comments } from "@/components/comments";
-import { isGiscusConfigured } from "@/lib/giscus";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
 import {
   MobileTableOfContents,
   TableOfContents,
 } from "@/components/table-of-contents";
+import type { Dictionary } from "@/lib/dictionaries";
+import { isGiscusConfigured } from "@/lib/giscus";
+import { localeConfig, type Locale } from "@/lib/i18n";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 
 interface ArticleLayoutProps {
+  locale: Locale;
+  dict: Dictionary;
   header: React.ReactNode;
   /** Rendered between the header and the body, e.g. a cover image. */
   lead?: React.ReactNode;
   contentHtml: string;
   headings: TocHeading[];
-  /** localStorage key the reading progress is saved under. */
-  progressKey: string;
+  /**
+   * Stable, locale-independent article key: reading progress is saved under
+   * it and it names the comment thread, so both follow the article across
+   * languages.
+   */
+  articleKey: string;
 }
 
 export function ArticleLayout({
+  locale,
+  dict,
   header,
   lead,
   contentHtml,
   headings,
-  progressKey,
+  articleKey,
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
+  const tocLabels = {
+    onThisPage: dict.article.onThisPage,
+    backToTop: dict.article.backToTop,
+  };
 
   return (
     <div
@@ -40,13 +54,17 @@ export function ArticleLayout({
 
         {hasToc ? (
           <div className="lg:hidden">
-            <MobileTableOfContents headings={headings} />
+            <MobileTableOfContents headings={headings} labels={tocLabels} />
           </div>
         ) : null}
 
         {lead}
 
-        <ReadingProgressBar slug={progressKey} targetId="post-content" />
+        <ReadingProgressBar
+          slug={articleKey}
+          targetId="post-content"
+          label={dict.article.readingProgress}
+        />
 
         <div
           id="post-content"
@@ -54,14 +72,20 @@ export function ArticleLayout({
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
 
-        <AuthorCard />
+        <AuthorCard locale={locale} dict={dict} />
 
-        {isGiscusConfigured ? <Comments term={progressKey} /> : null}
+        {isGiscusConfigured ? (
+          <Comments
+            term={articleKey}
+            lang={localeConfig[locale].giscusLang}
+            labels={dict.comments}
+          />
+        ) : null}
       </article>
 
       {hasToc ? (
         <aside className="hidden lg:block">
-          <TableOfContents headings={headings} />
+          <TableOfContents headings={headings} labels={tocLabels} />
         </aside>
       ) : null}
     </div>

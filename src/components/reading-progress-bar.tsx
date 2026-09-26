@@ -11,9 +11,11 @@ import { saveProgress } from "@/lib/reading-progress";
 export function ReadingProgressBar({
   slug,
   targetId,
+  label,
 }: {
   slug: string;
   targetId: string;
+  label: string;
 }) {
   const barRef = useRef<HTMLDivElement>(null);
 
@@ -70,7 +72,7 @@ export function ReadingProgressBar({
     <div
       ref={barRef}
       role="progressbar"
-      aria-label="Reading progress"
+      aria-label={label}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={0}

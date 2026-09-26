@@ -23,6 +23,14 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
+
+  experimental: {
+    // The app has two root layouts ("/" redirect and app/[lang]), so there's
+    // no shared layout for a 404. app/global-not-found.tsx renders its own
+    // <html> and becomes out/404.html, which Cloudflare serves for any
+    // missing URL.
+    globalNotFound: true,
+  },
 };
 
 export default nextConfig;

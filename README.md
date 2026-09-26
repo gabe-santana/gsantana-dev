@@ -32,7 +32,8 @@ tests as a sibling folder at the repo root:
 │   ├── app/              # routes (App Router)
 │   ├── components/       # UI components
 │   ├── lib/              # markdown pipeline, post loading, helpers
-│   └── posts/            # blog content — one markdown file per post
+│   ├── lib/dictionaries/ # UI translations (en-us, pt-br)
+│   └── posts/            # content, one folder per language (en-us/, pt-br/)
 ├── tests/                # Vitest test files
 ├── AGENTS.md             # conventions for AI coding agents working here
 ├── LICENSE
@@ -66,7 +67,9 @@ Open http://localhost:3000.
 
 ## Writing a post
 
-Add a markdown file to `src/posts/`, e.g. `src/posts/my-new-post.md`:
+Add the post **in every language**, with the same file name in each
+language folder, e.g. `src/posts/en-us/my-new-post.md` and
+`src/posts/pt-br/my-new-post.md`:
 
 ```markdown
 ---
@@ -85,15 +88,18 @@ const answer = 42;
 \`\`\`
 ```
 
-The filename (minus `.md`) becomes the URL slug: `/blog/my-new-post`. Nothing
-else needs to be registered — `getAllPostSummaries()` / `getPostSlugs()` in
-[src/lib/posts.ts](src/lib/posts.ts) read the directory at build time.
+The filename (minus `.md`) becomes the URL slug, shared by both languages:
+`/en-us/blog/my-new-post` and `/pt-br/blog/my-new-post`. Nothing else needs
+to be registered. A test fails if a post or principle is missing in one
+language, because the language switcher keeps the slug and would land on a
+404.
 
 ## Writing a principle
 
 Principles are the site's special, long-lived articles, listed at
-`/principles`. Add one at `src/posts/principles/<category>/<slug>.md`, where
-the category folder is `cloud`, `enterprise`, or `solution`:
+`/principles`. Add one at `src/posts/<lang>/principles/<category>/<slug>.md`
+(in both languages), where the category folder is `cloud`, `enterprise`, or
+`solution`:
 
 ```markdown
 ---
@@ -102,8 +108,24 @@ short: "One-line summary shown on cards and as the page lead."
 ---
 ```
 
-It's published at `/principles/<category>/<slug>`. While its body still
-contains "Em Construção", it shows as **Coming soon** and isn't linked.
+It's published at `/<lang>/principles/<category>/<slug>`. While its body
+still contains "Em Construção" (pt-br) or "Under Construction" (en-us), it
+shows as **Coming soon** and isn't linked.
+
+## Languages
+
+Every page lives under a language prefix: `/en-us/…` and `/pt-br/…`. The
+bare `/` sends visitors to the language they last picked with the switcher,
+otherwise their browser's language, otherwise English. The **EN | PT**
+toggle in the navigation swaps the prefix with a client-side navigation (no
+page reload) and keeps the scroll position.
+
+- **UI text:** `src/lib/dictionaries/en-us.ts` is the source of truth;
+  `pt-br.ts` must have exactly the same keys (a type error otherwise).
+  Placeholders like `{minutes}` are filled by `format()`.
+- **Content:** `src/posts/<lang>/…`, same file names in each language.
+- **Adding a language:** add it to `locales` and `localeConfig` in
+  `src/lib/i18n.ts`, add a dictionary, and add a content folder.
 
 ## Media / CDN
 

@@ -1,25 +1,25 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
-import readingTime from "reading-time";
+import type { Locale } from "@/lib/i18n";
 import { renderMarkdown } from "@/lib/markdown";
+import { minutesToRead, postsDirectory } from "@/lib/posts";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 
-export const PRINCIPLES_DIRECTORY = path.join(process.cwd(), "posts", "principles");
+export function principlesDirectory(locale: Locale): string {
+  return path.join(postsDirectory(locale), "principles");
+}
 
-// The folder a principle lives in is its category; this list sets the order
-// and display names. A new category folder must be added here to show up.
-export const PRINCIPLE_CATEGORIES = [
-  { id: "cloud", label: "Cloud Architecture" },
-  { id: "enterprise", label: "Enterprise Architecture" },
-  { id: "solution", label: "Solution Architecture" },
-] as const;
+// The folder a principle lives in is its category; this list sets the order.
+// Display names come from the dictionaries (principles.categories). A new
+// category folder must be added here and there to show up.
+export const PRINCIPLE_CATEGORIES = ["cloud", "enterprise", "solution"] as const;
 
-export type PrincipleCategory = (typeof PRINCIPLE_CATEGORIES)[number]["id"];
+export type PrincipleCategory = (typeof PRINCIPLE_CATEGORIES)[number];
 
-// Placeholder principles all carry this heading. They're still built as pages
-// (so shared links don't 404) but listed as "coming soon" instead of linked.
-const WIP_MARKER = "Em Construção";
+// Placeholder principles carry one of these headings. They're still built as
+// pages (so shared links don't 404) but listed as "coming soon", not linked.
+const WIP_MARKERS = ["Em Construção", "Under Construction"];
 
 interface PrincipleFrontmatter {
   title: string;
@@ -29,12 +29,15 @@ interface PrincipleFrontmatter {
 export interface PrincipleSummary extends PrincipleFrontmatter {
   slug: string;
   category: PrincipleCategory;
-  categoryLabel: string;
-  readingTime: string;
+  readingMinutes: number;
   isWip: boolean;
-  href: string;
-  /** Namespaced so it can never collide with a blog post slug. */
-  progressKey: string;
+  /** Path without the locale prefix, e.g. /principles/cloud/reliability */
+  path: string;
+  /**
+   * Shared by every locale: reading progress and comments follow the
+   * article, not the language. Namespaced so it can't collide with a post.
+   */
+  key: string;
 }
 
 export interface Principle extends PrincipleSummary {
@@ -42,9 +45,9 @@ export interface Principle extends PrincipleSummary {
   headings: TocHeading[];
 }
 
-function readPrincipleFile(category: PrincipleCategory, slug: string) {
+function readPrincipleFile(locale: Locale, category: PrincipleCategory, slug: string) {
   const raw = fs.readFileSync(
-    path.join(PRINCIPLES_DIRECTORY, category, `${slug}.md`),
+    path.join(principlesDirectory(locale), category, `${slug}.md`),
     "utf8"
   );
   const { data, content } = matter(raw);
@@ -52,50 +55,56 @@ function readPrincipleFile(category: PrincipleCategory, slug: string) {
 }
 
 function toSummary(
-  category: (typeof PRINCIPLE_CATEGORIES)[number],
+  locale: Locale,
+  category: PrincipleCategory,
   slug: string
 ): PrincipleSummary {
-  const { frontmatter, content } = readPrincipleFile(category.id, slug);
+  const { frontmatter, content } = readPrincipleFile(locale, category, slug);
   return {
     title: frontmatter.title,
     short: frontmatter.short,
     slug,
-    category: category.id,
-    categoryLabel: category.label,
-    readingTime: readingTime(content).text,
-    isWip: content.includes(WIP_MARKER),
-    href: `/principles/${category.id}/${slug}`,
-    progressKey: `principles/${category.id}/${slug}`,
+    category,
+    readingMinutes: minutesToRead(content),
+    isWip: WIP_MARKERS.some((marker) => content.includes(marker)),
+    path: `/principles/${category}/${slug}`,
+    key: `principles/${category}/${slug}`,
   };
 }
 
-export function getAllPrinciples(): PrincipleSummary[] {
+export function getAllPrinciples(locale: Locale): PrincipleSummary[] {
   return PRINCIPLE_CATEGORIES.flatMap((category) => {
-    const dir = path.join(PRINCIPLES_DIRECTORY, category.id);
+    const dir = path.join(principlesDirectory(locale), category);
     if (!fs.existsSync(dir)) return [];
-    return fs
-      .readdirSync(dir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => toSummary(category, file.replace(/\.md$/, "")))
-      // Readable principles first, then placeholders; alphabetical within each.
-      .sort(
-        (a, b) =>
-          Number(a.isWip) - Number(b.isWip) || a.title.localeCompare(b.title)
-      );
+    return (
+      fs
+        .readdirSync(dir)
+        .filter((file) => file.endsWith(".md"))
+        .map((file) => toSummary(locale, category, file.replace(/\.md$/, "")))
+        // Readable principles first, then placeholders; alphabetical within each.
+        .sort(
+          (a, b) =>
+            Number(a.isWip) - Number(b.isWip) || a.title.localeCompare(b.title)
+        )
+    );
   });
 }
 
 export function findPrinciple(
+  locale: Locale,
   category: string,
   slug: string
 ): PrincipleSummary | undefined {
-  return getAllPrinciples().find(
+  return getAllPrinciples(locale).find(
     (principle) => principle.category === category && principle.slug === slug
   );
 }
 
-export async function getPrinciple(summary: PrincipleSummary): Promise<Principle> {
-  const { content } = readPrincipleFile(summary.category, summary.slug);
+export async function getPrinciple(
+  locale: Locale,
+  summary: PrincipleSummary
+): Promise<Principle> {
+  const { content } = readPrincipleFile(locale, summary.category, summary.slug);
   const { html, headings } = await renderMarkdown(content);
   return { ...summary, contentHtml: html, headings };
 }

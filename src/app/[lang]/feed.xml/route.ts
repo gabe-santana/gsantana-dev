@@ -1,10 +1,16 @@
+import { getDictionary } from "@/lib/dictionaries";
+import { isLocale, localeConfig, localePath, locales } from "@/lib/i18n";
 import { getAllPostSummaries } from "@/lib/posts";
+import { siteUrl } from "@/lib/seo";
 
-// Static export builds this once at build time — there is no server to
-// regenerate it per-request.
+// Static export builds one feed per locale at build time — there is no
+// server to regenerate it per-request.
 export const dynamic = "force-static";
+export const dynamicParams = false;
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gsantana.dev";
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
 
 function escapeXml(value: string): string {
   return value.replace(/[<>&'"]/g, (char) => {
@@ -23,12 +29,17 @@ function escapeXml(value: string): string {
   });
 }
 
-export function GET() {
-  const posts = getAllPostSummaries();
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ lang: string }> }
+) {
+  const { lang } = await params;
+  if (!isLocale(lang)) return new Response("Not found", { status: 404 });
+  const dict = getDictionary(lang);
 
-  const items = posts
+  const items = getAllPostSummaries(lang)
     .map((post) => {
-      const url = `${siteUrl}/blog/${post.slug}`;
+      const url = `${siteUrl}${localePath(lang, `/blog/${post.slug}`)}`;
       return `
     <item>
       <title>${escapeXml(post.title)}</title>
@@ -44,9 +55,9 @@ export function GET() {
 <rss version="2.0">
   <channel>
     <title>gsantana.dev</title>
-    <link>${siteUrl}</link>
-    <description>AI, programming, and technology notes from Gabriel Santana.</description>
-    <language>en</language>${items}
+    <link>${siteUrl}${localePath(lang)}</link>
+    <description>${escapeXml(dict.site.feedDescription)}</description>
+    <language>${localeConfig[lang].tag.toLowerCase()}</language>${items}
   </channel>
 </rss>`;
 

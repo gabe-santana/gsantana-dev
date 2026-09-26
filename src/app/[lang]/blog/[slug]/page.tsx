@@ -3,29 +3,36 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/article-layout";
 import { TagBadge } from "@/components/tag-badge";
+import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
+import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { getAllPostSummaries, getPostBySlug, getPostSlugs } from "@/lib/posts";
+import { alternatesFor } from "@/lib/seo";
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }
+
+export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return getPostSlugs().map((slug) => ({ slug }));
+  return locales.flatMap((lang) => getPostSlugs(lang).map((slug) => ({ lang, slug })));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const isPublished = getAllPostSummaries().some((post) => post.slug === slug);
-  if (!isPublished) return {};
+function isPublished(lang: Locale, slug: string): boolean {
+  return getAllPostSummaries(lang).some((post) => post.slug === slug);
+}
 
-  const post = await getPostBySlug(slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang, slug } = await params;
+  if (!isLocale(lang) || !isPublished(lang, slug)) return {};
+
+  const post = await getPostBySlug(lang, slug);
   return {
     title: post.title,
     description: post.description,
+    alternates: alternatesFor(lang, `/blog/${slug}`),
     openGraph: {
       title: post.title,
       description: post.description,
@@ -37,27 +44,27 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
-  const isPublished = getAllPostSummaries().some((post) => post.slug === slug);
-  if (!isPublished) notFound();
+  const { lang, slug } = await params;
+  if (!isLocale(lang) || !isPublished(lang, slug)) notFound();
 
-  const post = await getPostBySlug(slug);
+  const dict = getDictionary(lang);
+  const post = await getPostBySlug(lang, slug);
 
   return (
     <ArticleLayout
-      progressKey={post.slug}
+      locale={lang}
+      dict={dict}
+      articleKey={post.slug}
       headings={post.headings}
       contentHtml={post.contentHtml}
       header={
         <>
           <div className="mb-4 flex items-center gap-3 text-sm text-muted">
-            <time dateTime={post.date}>{formatDate(post.date)}</time>
+            <time dateTime={post.date}>{formatDate(post.date, lang)}</time>
             <span aria-hidden>&middot;</span>
-            <span>{post.readingTime}</span>
+            <span>{format(dict.article.readingTime, { minutes: post.readingMinutes })}</span>
           </div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight">
-            {post.title}
-          </h1>
+          <h1 className="text-4xl font-bold leading-tight tracking-tight">{post.title}</h1>
           <p className="mt-4 text-lg text-muted">{post.description}</p>
           {post.tags?.length ? (
             <div className="mt-6 flex flex-wrap gap-2">

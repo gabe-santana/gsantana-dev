@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { CertificationCard } from "@/components/certification-card";
 import { Container } from "@/components/container";
 import {
@@ -11,41 +12,41 @@ import {
 } from "@/components/icons";
 import { GridBackdrop } from "@/components/grid-backdrop";
 import { author, certifications } from "@/lib/author";
+import { getDictionary } from "@/lib/dictionaries";
+import { isLocale, localePath } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
+import { alternatesFor } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: `${author.name} — ${author.role}, Microsoft Certified Azure Solutions Architect Expert.`,
-};
+interface PageProps {
+  params: Promise<{ lang: string }>;
+}
 
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lang } = await params;
+  if (!isLocale(lang)) return {};
+  const dict = getDictionary(lang);
+  return {
+    title: dict.about.eyebrow,
+    description: dict.about.metaDescription,
+    alternates: alternatesFor(lang, "/about"),
+  };
+}
+
+// Descriptions live in the dictionaries (about.projects), keyed by repo name.
 const projects = [
-  {
-    name: "agentic-mesh",
-    language: "Python",
-    description:
-      "Open-source distributed platform for AI agents and enterprise RAG.",
-  },
-  {
-    name: "sightline",
-    language: "Terraform",
-    description:
-      "Autonomous video and audio intelligence platform for AI agents.",
-  },
-  {
-    name: "hybrid-cloud-mcp-agentic-framework",
-    language: "Terraform",
-    description:
-      "Reference architecture connecting Google Cloud Vertex AI and Oracle Cloud through the Model Context Protocol, with event-driven, highly available multi-cloud workflows.",
-  },
-  {
-    name: "gabe-language",
-    language: "C",
-    description:
-      "An x86 compiler built from scratch to learn how compilers work.",
-  },
-];
+  { name: "agentic-mesh", language: "Python" },
+  { name: "sightline", language: "Terraform" },
+  { name: "hybrid-cloud-mcp-agentic-framework", language: "Terraform" },
+  { name: "gabe-language", language: "C" },
+] as const;
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: PageProps) {
+  const { lang } = await params;
+  if (!isLocale(lang)) notFound();
+  const dict = getDictionary(lang);
+
   return (
     <>
       <div className="relative overflow-x-clip">
@@ -70,11 +71,15 @@ export default function AboutPage() {
             </div>
 
             <div>
-              <p className="font-mono text-sm text-accent">About</p>
+              <p className="font-mono text-sm text-accent">
+                {dict.about.eyebrow}
+              </p>
               <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
                 {author.name}
               </h1>
-              <p className="mt-3 text-lg text-foreground/90">{author.role}</p>
+              <p className="mt-3 text-lg text-foreground/90">
+                {dict.author.role}
+              </p>
               <a
                 href={`mailto:${author.email}`}
                 className="mt-2 inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-accent"
@@ -84,21 +89,16 @@ export default function AboutPage() {
               </a>
 
               <div className="mt-6 max-w-xl space-y-4 leading-relaxed text-muted">
+                <p>{dict.about.introFocus}</p>
                 <p>
-                  I design and build cloud systems, lately with a focus on AI
-                  agents: distributed agent platforms, enterprise RAG, and the
-                  infrastructure that keeps them running across clouds.
-                </p>
-                <p>
-                  This site is where I write about it: hands-on posts on Azure
-                  and architecture, and the{" "}
+                  {dict.about.introSiteBefore}{" "}
                   <Link
-                    href="/principles"
+                    href={localePath(lang, "/principles")}
                     className="text-accent hover:underline"
                   >
-                    Principles
+                    {dict.about.introSiteLink}
                   </Link>{" "}
-                  I rely on when making design decisions.
+                  {dict.about.introSiteAfter}
                 </p>
               </div>
 
@@ -110,7 +110,7 @@ export default function AboutPage() {
                   className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-background transition-transform hover:scale-105"
                 >
                   <LinkedInIcon />
-                  Connect on LinkedIn
+                  {dict.about.connectLinkedIn}
                 </a>
                 <a
                   href={author.github}
@@ -131,15 +131,20 @@ export default function AboutPage() {
         <section aria-labelledby="certifications" className="mt-12">
           <div className="mb-8">
             <h2 id="certifications" className="text-2xl font-semibold">
-              Certifications
+              {dict.about.certificationsTitle}
             </h2>
             <p className="mt-1 text-sm text-muted">
-              Microsoft Azure, from administration to solution architecture.
+              {dict.about.certificationsSubtitle}
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
             {certifications.map((cert) => (
-              <CertificationCard key={cert.exam} cert={cert} />
+              <CertificationCard
+                key={cert.exam}
+                cert={cert}
+                locale={lang}
+                labels={dict.certification}
+              />
             ))}
           </div>
         </section>
@@ -147,9 +152,11 @@ export default function AboutPage() {
         <section aria-labelledby="projects" className="mt-28">
           <div className="mb-8">
             <h2 id="projects" className="text-2xl font-semibold">
-              Selected projects
+              {dict.about.projectsTitle}
             </h2>
-            <p className="mt-1 text-sm text-muted">Open source, on GitHub.</p>
+            <p className="mt-1 text-sm text-muted">
+              {dict.about.projectsSubtitle}
+            </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {projects.map((project) => (
@@ -169,7 +176,7 @@ export default function AboutPage() {
                   </span>
                 </div>
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
-                  {project.description}
+                  {dict.about.projects[project.name]}
                 </p>
                 <p className="mt-3 text-xs text-muted/80">{project.language}</p>
               </a>

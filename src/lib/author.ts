@@ -1,8 +1,6 @@
 export const author = {
   name: "Gabriel Santana",
-  role: "AI Solutions Architect",
   email: "contact@gsantana.dev",
-  bio: "AI Solutions Architect designing systems where applied AI meets production. I write about what I'm building, breaking, and learning.",
   // Small pre-cropped avatar on the media CDN; the original photo is far
   // too heavy (12 MB) to ship for an 80px image.
   avatar: "/author/me-avatar.webp",

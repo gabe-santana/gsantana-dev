@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { format } from "@/lib/dictionaries";
 import { getProgress } from "@/lib/reading-progress";
 
-export function PostCardProgress({ slug }: { slug: string }) {
+export function PostCardProgress({
+  slug,
+  labels,
+}: {
+  slug: string;
+  labels: { percentRead: string; read: string };
+}) {
   // Starts at 0 on the server and first client render (storage isn't
   // readable during SSR), then fills in after mount — no hydration mismatch.
   const [percent, setPercent] = useState(0);
@@ -19,7 +26,7 @@ export function PostCardProgress({ slug }: { slug: string }) {
   if (percent <= 0) return null;
 
   const isComplete = percent >= 100;
-  const label = isComplete ? "Read" : `${percent}% read`;
+  const label = isComplete ? labels.read : format(labels.percentRead, { percent });
 
   return (
     <div

@@ -2,12 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
 import { author } from "@/lib/author";
+import type { Dictionary } from "@/lib/dictionaries";
+import { localePath, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 
-export function AuthorCard() {
+export function AuthorCard({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   return (
     <aside
-      aria-label="About the author"
+      aria-label={dict.author.aboutTheAuthor}
       className="mt-16 border-t border-border/60 pt-12"
     >
       <div className="flex flex-col gap-5 rounded-2xl border border-border/60 bg-surface/50 p-6 sm:flex-row sm:items-start sm:gap-6">
@@ -21,13 +23,13 @@ export function AuthorCard() {
 
         <div className="min-w-0">
           <p className="font-mono text-xs uppercase tracking-wider text-muted">
-            Written by
+            {dict.author.writtenBy}
           </p>
           <p className="mt-1 text-lg font-semibold text-foreground">
             {author.name}
           </p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
-            {author.bio}
+            {dict.author.bio}
           </p>
 
           <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
@@ -50,13 +52,16 @@ export function AuthorCard() {
               LinkedIn
             </a>
             <a
-              href="/feed.xml"
+              href={localePath(locale, "/feed.xml")}
               className="text-muted transition-colors hover:text-foreground"
             >
               RSS
             </a>
-            <Link href="/about" className="text-accent hover:underline">
-              More about me &rarr;
+            <Link
+              href={localePath(locale, "/about")}
+              className="text-accent hover:underline"
+            >
+              {dict.author.moreAboutMe}
             </Link>
           </div>
         </div>

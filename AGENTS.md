@@ -23,7 +23,7 @@ is the real `package.json`; there is no root-level one on purpose.
 │   ├── app/        # App Router routes
 │   ├── components/
 │   ├── lib/
-│   └── posts/      # markdown blog content
+│   └── posts/      # content, one folder per locale: en-us/, pt-br/
 ├── tests/          # Vitest test files (sibling of src/, not inside it)
 ├── AGENTS.md
 ├── LICENSE
@@ -57,7 +57,10 @@ root, because Vite's dev-server file guard otherwise refuses to serve
 
 ## Content model
 
-Blog posts are markdown files in `src/posts/*.md` with frontmatter:
+Content is split per locale: `src/posts/<locale>/*.md` are blog posts and
+`src/posts/<locale>/principles/…` are principles. **Every article exists in
+every locale under the same file name** (`tests/i18n.test.ts` enforces it),
+because the language switcher keeps the slug. Post frontmatter:
 
 ```yaml
 title: string
@@ -68,28 +71,58 @@ cover: string   # optional, root-relative path resolved via mediaUrl()
 draft: boolean  # optional, default false; drafts only render in `next dev`
 ```
 
-The pipeline: `src/lib/posts.ts` reads `src/posts/`, `gray-matter` splits
+The pipeline: `src/lib/posts.ts` reads `src/posts/<locale>/`, `gray-matter` splits
 frontmatter from content, `src/lib/markdown.ts` renders the markdown body to
 HTML via a `unified`/`remark`/`rehype` pipeline (GFM, heading anchors,
 Shiki-based syntax highlighting through `rehype-pretty-code`) — entirely at
-build time. `src/app/blog/[slug]/page.tsx` calls `generateStaticParams()`
-from `getPostSlugs()`, so every post becomes its own static HTML file. There
+build time. `src/app/[lang]/blog/[slug]/page.tsx` generates one static page
+per (locale, slug) pair. There
 is no CMS, no database, and no runtime markdown parsing.
 
 ### Principles (second content type)
 
-`src/posts/principles/<category>/<slug>.md` are architecture principles,
-shown at `/principles` and `/principles/<category>/<slug>`, loaded by
+`src/posts/<locale>/principles/<category>/<slug>.md` are architecture
+principles, shown at `/<locale>/principles/…`, loaded by
 `src/lib/principles.ts`. Frontmatter is `title` and `short` (no date/tags).
-The **folder is the category**; `PRINCIPLE_CATEGORIES` sets order and
-display names, so a new category folder must be registered there. A file
-whose body contains "Em Construção" is treated as a placeholder: still
+The **folder is the category**; `PRINCIPLE_CATEGORIES` sets the order and
+the dictionaries (`principles.categories`) the display names, so a new
+category folder must be registered in both. A file whose body contains
+"Em Construção" or "Under Construction" is treated as a placeholder: still
 built as a page, but listed as "Coming soon" (not linked) and left out of
 the sitemap. `getPostSlugs()` only reads top-level `.md` files, so
 principles never leak into the blog list. Posts and principles share
-`src/components/article-layout.tsx` (TOC, progress bar, author card);
-principle reading progress is stored under `principles/<category>/<slug>`
-so it can't collide with a post slug.
+`src/components/article-layout.tsx` (TOC, progress bar, author card,
+comments). Each article has one locale-independent key (the post slug, or
+`principles/<category>/<slug>`): reading progress and the giscus thread
+use it, so both are shared across languages.
+
+## Internationalization
+
+- Every page is under `app/[lang]/` (`en-us`, `pt-br`), which is also a
+  **root layout** (it owns `<html lang>`). `app/(root)/` is a second root
+  layout used only by `/`, whose inline script redirects to the saved
+  language (localStorage `gsantana:locale`), else the browser language,
+  else `en-us`. With two root layouts there is no shared 404, so
+  `app/global-not-found.tsx` (experimental `globalNotFound`) renders the
+  bilingual `out/404.html`.
+- `src/lib/i18n.ts`: `locales`, `localeConfig` (BCP 47 tag, switcher label,
+  giscus language), `localePath()`, `switchLocalePath()`.
+- UI copy lives only in `src/lib/dictionaries/`. `en-us.ts` is the source
+  of truth and `Dictionary` is its type, so `pt-br.ts` must match key for
+  key. Interpolated strings use `{placeholder}` templates filled by
+  `format()` (not functions), because client components receive them as
+  props. Never hardcode user-visible text in components; add a key.
+- Always build internal links with `localePath(locale, path)`. Components
+  get `locale`/`dict` as props from the page; client components get only
+  the strings they need.
+- `src/lib/seo.ts#alternatesFor()` adds canonical + hreflang links; use it
+  in every page's `generateMetadata`. The sitemap lists each locale with
+  its alternates, and each locale has its own RSS feed at
+  `/<locale>/feed.xml`.
+- The language switcher uses `<Link scroll={false}>`: a client-side
+  navigation between the same `[lang]` layout, so the page never reloads.
+  Components holding locale-dependent client state need a `key={locale}`
+  to reset on switch (see the hero typewriter).
 
 When adding library functions for posts, keep them synchronous/pure where
 possible (they only ever run at build time) and keep `getAllPostSummaries()`
@@ -105,7 +138,7 @@ RSS feed.
   at runtime, no middleware. Everything must be resolvable at `next build`
   time.
 - Any Route Handler (`route.ts`) must set `export const dynamic =
-  "force-static"` or the build fails. See `src/app/feed.xml/route.ts`,
+  "force-static"` or the build fails. See `src/app/[lang]/feed.xml/route.ts`,
   `src/app/sitemap.ts`, `src/app/robots.ts` for the pattern.
 - `next/image` runs with `images.unoptimized: true` (there's no image
   optimization server in a static export). Don't rely on Next's on-demand

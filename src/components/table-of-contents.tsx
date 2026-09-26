@@ -117,7 +117,18 @@ function TocLinks({
   );
 }
 
-export function TableOfContents({ headings }: { headings: TocHeading[] }) {
+export interface TocLabels {
+  onThisPage: string;
+  backToTop: string;
+}
+
+export function TableOfContents({
+  headings,
+  labels,
+}: {
+  headings: TocHeading[];
+  labels: TocLabels;
+}) {
   const { activeId, activate } = useActiveHeading(headings);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
@@ -141,9 +152,9 @@ export function TableOfContents({ headings }: { headings: TocHeading[] }) {
   }, [activeId]);
 
   return (
-    <nav aria-label="On this page" className="sticky top-24">
+    <nav aria-label={labels.onThisPage} className="sticky top-24">
       <p className="mb-4 font-mono text-xs uppercase tracking-wider text-muted">
-        On this page
+        {labels.onThisPage}
       </p>
       <div
         ref={scrollerRef}
@@ -169,13 +180,19 @@ export function TableOfContents({ headings }: { headings: TocHeading[] }) {
         }}
         className="mt-6 text-xs text-muted transition-colors hover:text-accent"
       >
-        Back to top &uarr;
+        {labels.backToTop}
       </button>
     </nav>
   );
 }
 
-export function MobileTableOfContents({ headings }: { headings: TocHeading[] }) {
+export function MobileTableOfContents({
+  headings,
+  labels,
+}: {
+  headings: TocHeading[];
+  labels: TocLabels;
+}) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
   return (
@@ -184,7 +201,7 @@ export function MobileTableOfContents({ headings }: { headings: TocHeading[] }) 
       className="group mb-10 rounded-xl border border-border/60 bg-surface/50"
     >
       <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-medium text-foreground [&::-webkit-details-marker]:hidden">
-        On this page
+        {labels.onThisPage}
         <svg
           aria-hidden
           viewBox="0 0 16 16"

@@ -35,7 +35,15 @@ function useScrollBackAfterSignIn(target: React.RefObject<HTMLElement | null>) {
  * domain move. `strict` stops giscus fuzzy-matching a different article's
  * thread with a similar key.
  */
-export function Comments({ term }: { term: string }) {
+export function Comments({
+  term,
+  lang,
+  labels,
+}: {
+  term: string;
+  lang: string;
+  labels: { title: string; invitation: string };
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   useScrollBackAfterSignIn(sectionRef);
 
@@ -47,11 +55,10 @@ export function Comments({ term }: { term: string }) {
       className="mt-16 scroll-mt-24"
     >
       <h2 id="comments-heading" className="mb-2 text-xl font-semibold">
-        Comments
+        {labels.title}
       </h2>
       <p className="mb-8 text-sm text-muted">
-        Questions, corrections, or your own take are all welcome. Sign in with
-        GitHub to join in.
+        {labels.invitation}
       </p>
       <Giscus
         repo={giscusConfig.repo}
@@ -65,7 +72,7 @@ export function Comments({ term }: { term: string }) {
         emitMetadata="0"
         inputPosition="top"
         theme="transparent_dark"
-        lang="en"
+        lang={lang}
         // The iframe only loads once the reader scrolls near it, so posts
         // pay nothing for comments until someone actually gets there.
         loading="lazy"
