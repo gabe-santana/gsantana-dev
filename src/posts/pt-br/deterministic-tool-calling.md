@@ -4,7 +4,7 @@ description: "Uma chamada de tool é uma proposta do modelo, não uma ordem: val
 date: 2026-01-21
 tags: [AI Agents, Tool Calling, Python, Pydantic]
 tldr:
-  - "Trate toda chamada de tool como entrada não confiável: faça o parse, valide com schemas Pydantic estritos, cheque regras de negócio e allowlist antes de executar."
+  - "Trate toda chamada de tool como entrada não confiável: valide com schemas Pydantic estritos, cheque regras de negócio e allowlist antes de executar."
   - "Proteja efeitos colaterais com idempotency keys derivadas dos argumentos validados, retries limitados em erros transitórios, loop guards e confirmação humana para tools arriscadas."
   - "Devolva objetos ToolResult estruturados, com códigos de erro estáveis e mensagens acionáveis, e teste o dispatcher de forma determinística com pytest, sem modelo nenhum."
 ---

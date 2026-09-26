@@ -5,7 +5,7 @@ date: 2026-02-22
 tags: [Azure, Service Bus, C#, .NET, Messaging]
 tldr:
   - "Rode o consumer como worker hospedado com PeekLock e AutoCompleteMessages desligado, e faça complete, abandon ou dead-letter de cada mensagem explicitamente."
-  - "Use sessions com o id da entidade para ordem por entidade, mais um número de sequência que torna duplicatas, updates antigos e replays da DLQ inofensivos."
+  - "Use sessions por id da entidade para manter a ordem, mais um número de sequência que torna inofensivos duplicatas, updates antigos e replays da DLQ."
   - "Reprocesse a dead-letter queue com uma ferramenta revisada que reenvia falhas de retry com novo MessageId e deixa conflitos de negócio para humanos."
 ---
 
