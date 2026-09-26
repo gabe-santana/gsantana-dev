@@ -266,11 +266,11 @@ def hybrid_search(
 
 
 if __name__ == "__main__":
-    for query in ["what does ERR-4012 mean", "my card payment was refused"]:
+    for query in ["what does ERR-4012 mean", "the bank rejected my purchase"]:
         print(query, "->", hybrid_search(query, final_top_n=3))
 ```
 
-Rode e olhe cada lista separadamente antes da fusão. Na consulta com `ERR-4012`, o BM25 coloca o `kb-101` em primeiro com folga, porque `err-4012` é um token raro; a lista vetorial pode muito bem ranquear os artigos genéricos de sessão e de pagamento ali pertinho. Na consulta do "card refused", os papéis se invertem: o BM25 só enxerga palavras em comum, enquanto os embeddings reconhecem que `kb-104` e `kb-102` falam da mesma coisa. O RRF fica com os vencedores dos dois lados.
+Rode e olhe cada lista separadamente antes da fusão. Na consulta com `ERR-4012`, o BM25 devolve exatamente um resultado, o `kb-101`, porque `err-4012` é um token raro e nenhum outro documento o contém. A lista vetorial também coloca o `kb-101` em primeiro neste corpus minúsculo, mas ela nunca volta vazia: preenche o ranking com os vizinhos mais próximos, relacionados ou não. A segunda consulta não tem nenhuma palavra em comum com o `kb-102` ("the bank rejected my purchase" contra "retry declined card transactions"), então o BM25 nunca o recupera, enquanto os embeddings o colocam em segundo. O RRF o mantém na lista de candidatos, em quarto, porque só um retriever votou nele; o cross-encoder então o leva para o top três final. Essa é a divisão de trabalho: a fusão decide o que sobrevive, o reranking decide a ordem.
 
 <div class="callout tip" data-title="Dica">
   <p>Sempre registre em log os rankings individuais (<code>keyword_ids</code>, <code>semantic_ids</code>) ao lado do combinado, pelo menos em staging. Quando uma consulta dá errado, a primeira pergunta é "qual retriever deixou passar?", e você não consegue responder isso só com a lista combinada.</p>

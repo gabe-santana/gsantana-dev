@@ -52,10 +52,17 @@ export function getPostSlugs(locale: Locale): string[] {
     .map((file) => file.replace(/\.md$/, ""));
 }
 
+// YAML turns an unquoted `date: 2025-11-02` into a Date object; keep it as
+// "YYYY-MM-DD" so sorting, <time dateTime> and feeds all get the same string.
+function normalizeDate(value: unknown): string {
+  return value instanceof Date ? value.toISOString().slice(0, 10) : String(value);
+}
+
 function readPostFile(locale: Locale, slug: string) {
   const raw = fs.readFileSync(path.join(postsDirectory(locale), `${slug}.md`), "utf8");
   const { data, content } = matter(raw);
-  return { frontmatter: data as PostFrontmatter, content };
+  const frontmatter = { ...data, date: normalizeDate(data.date) } as PostFrontmatter;
+  return { frontmatter, content };
 }
 
 export async function getPostBySlug(locale: Locale, slug: string): Promise<Post> {

@@ -266,11 +266,11 @@ def hybrid_search(
 
 
 if __name__ == "__main__":
-    for query in ["what does ERR-4012 mean", "my card payment was refused"]:
+    for query in ["what does ERR-4012 mean", "the bank rejected my purchase"]:
         print(query, "->", hybrid_search(query, final_top_n=3))
 ```
 
-Run it and look at each list separately before fusing. For the `ERR-4012` query, BM25 puts `kb-101` first with a large margin, because `err-4012` is a rare token; the vector list may happily rank the generic session and payment articles close to it. For the "card refused" query the roles flip: BM25 only sees overlapping words, while the embeddings recognize that `kb-104` and `kb-102` talk about the same thing. RRF keeps the winners of both.
+Run it and look at each list separately before fusing. For the `ERR-4012` query, BM25 returns exactly one hit, `kb-101`, because `err-4012` is a rare token and no other document contains it. The vector list ranks `kb-101` first too on this tiny corpus, but it never comes back empty: it fills the ranking with nearest neighbors, related or not. The second query shares no words with `kb-102` ("the bank rejected my purchase" versus "retry declined card transactions"), so BM25 never retrieves it, while the embeddings rank it second. RRF keeps it in the candidate list, fourth, because only one retriever voted for it; the cross-encoder then moves it into the final top three. That is the division of labor: fusion decides what survives, reranking decides the order.
 
 <div class="callout tip" data-title="Tip">
   <p>Always log the individual rankings (<code>keyword_ids</code>, <code>semantic_ids</code>) next to the fused one, at least in staging. When a query goes wrong, the first question is "which retriever missed it?", and you cannot answer that from the fused list alone.</p>

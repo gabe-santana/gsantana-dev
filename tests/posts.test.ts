@@ -13,6 +13,12 @@ describe.each(locales)("posts (%s)", (locale) => {
     expect(getPostSlugs(locale)).not.toContain("principles");
   });
 
+  it("exposes dates as YYYY-MM-DD strings, even when unquoted in YAML", () => {
+    for (const post of getAllPostSummaries(locale)) {
+      expect(post.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+
   it("sorts posts by date, newest first", () => {
     const dates = getAllPostSummaries(locale).map((post) => post.date);
     expect(dates).toEqual([...dates].sort().reverse());
