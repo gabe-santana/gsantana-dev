@@ -1,5 +1,5 @@
 ---
-title: "Orchestrating Multiple Agents Without Building a Distributed Monolith"
+title: "Orquestrando múltiplos agentes sem criar um monólito distribuído"
 description: "Use vários agentes só quando um não bastar, com responsabilidades, orçamento e condições de parada."
 date: 2026-03-26
 tags: [AI Agents, Orchestration, Python, asyncio]

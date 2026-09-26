@@ -1,5 +1,5 @@
 ---
-title: Operational Excellence
+title: Excelência operacional
 short: Operações vista como viabilizador do produto e da melhoria contínua e não como burocracia
 category: cloud
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Event-Driven Microservices on Azure: Service Bus vs Event Grid vs Event Hubs"
+title: "Microsserviços orientados a eventos no Azure: Service Bus, Event Grid ou Event Hubs?"
 description: "Escolha Service Bus, Event Grid ou Event Hubs conforme você envia comandos, eventos ou streams."
 date: 2025-12-04
 tags: [Azure, Messaging, Event-Driven, Microservices, C#]

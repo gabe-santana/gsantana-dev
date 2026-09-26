@@ -1,5 +1,5 @@
 ---
-title: "Deploying a RAG API to Azure Container Apps with Terraform, Step by Step"
+title: "Implantando uma API RAG no Azure Container Apps com Terraform, passo a passo"
 description: "Implante uma API RAG no Azure Container Apps com identidade gerenciada, Key Vault, escala e health checks."
 date: 2026-04-27
 tags: [Azure, Container Apps, Terraform, RAG, FastAPI]

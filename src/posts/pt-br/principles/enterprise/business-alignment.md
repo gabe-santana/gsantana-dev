@@ -1,5 +1,5 @@
 ---
-title: Business Alignment
+title: Alinhamento com o negócio
 short: Capacidades e decisões ligadas a outcomes mensuráveis.
 category: enterprise
 ---

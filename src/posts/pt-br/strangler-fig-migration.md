@@ -1,5 +1,5 @@
 ---
-title: "The Strangler Fig Migration Blueprint: Moving a Monolith to the Cloud Without a Big Bang"
+title: "O plano Strangler Fig: migrando um monólito para a nuvem sem Big Bang"
 description: "Migre um monólito uma rota por vez, com dono claro para os dados e rollback por fatia."
 date: 2026-06-14
 tags: [Cloud Architecture, Migration, Strangler Fig, .NET, YARP]

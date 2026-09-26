@@ -1,5 +1,5 @@
 ---
-title: "Deterministic Tool Calling: Stop Letting the LLM Improvise Your API Calls"
+title: "Chamadas de ferramentas determinísticas: pare de improvisar APIs com LLMs"
 description: "Valide cada chamada de ferramenta do agente antes da execução e torne os retries seguros."
 date: 2026-01-21
 tags: [AI Agents, Tool Calling, Python, Pydantic]

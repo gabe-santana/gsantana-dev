@@ -1,5 +1,5 @@
 ---
-title: "Chunking Enterprise Documents Without Losing Meaning"
+title: "Como dividir documentos corporativos sem perder o sentido"
 description: "Preserve a estrutura dos documentos no chunking para manter o contexto de tabelas e políticas."
 date: 2026-01-05
 tags: [RAG, Chunking, Python, Embeddings]

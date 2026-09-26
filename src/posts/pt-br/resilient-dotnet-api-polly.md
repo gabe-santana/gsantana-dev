@@ -1,5 +1,5 @@
 ---
-title: "Building a Resilient .NET API with Polly: Retries, Circuit Breakers, and Timeouts"
+title: "Construindo uma API .NET resiliente com Polly: retentativas, circuit breakers e timeouts"
 description: "Limite retries com timeouts e circuit breakers para uma dependência falha não derrubar sua API."
 date: 2025-12-20
 tags: [.NET, C#, Resilience, Polly]

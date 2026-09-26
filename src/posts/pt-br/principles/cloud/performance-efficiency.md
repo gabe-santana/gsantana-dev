@@ -1,5 +1,5 @@
 ---
-title: Performance Efficiency
+title: Eficiência de desempenho
 short: Uso eficiente de recursos e escalabilidade.
 category: cloud
 ---

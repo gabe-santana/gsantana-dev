@@ -1,5 +1,5 @@
 ---
-title: "Your Vector Database Is Slow Because of These 5 Settings"
+title: "Seu banco vetorial está lento por causa destas 5 configurações"
 description: "Ajuste HNSW, filtros e precisão dos vetores medindo recall e latência, não pelos valores padrão."
 date: 2026-03-10
 tags: [RAG, Vector Search, HNSW, Python, Performance]

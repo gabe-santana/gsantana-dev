@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArticleLayout } from "@/components/article-layout";
+import { AgenticMeshDiagram } from "@/components/agentic-mesh-diagram";
 import { TagBadge } from "@/components/tag-badge";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
@@ -30,6 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const post = await getPostBySlug(lang, slug);
   const cover = post.cover ?? `/posts/${slug}/cover.webp`;
+
   return {
     title: post.title,
     description: post.description,
@@ -51,6 +53,11 @@ export default async function BlogPostPage({ params }: PageProps) {
   const dict = getDictionary(lang);
   const post = await getPostBySlug(lang, slug);
   const cover = post.cover ?? `/posts/${slug}/cover.webp`;
+  const diagramMarker = '<div id="agentic-mesh-canvas-slot"></div>';
+  const hasDiagram = slug === "agentic-mesh-architecture-rag-agents";
+  if (hasDiagram && !post.contentHtml.includes(diagramMarker)) {
+    throw new Error("AgenticMesh diagram marker missing from rendered article");
+  }
 
   return (
     <ArticleLayout
@@ -60,6 +67,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       tldr={post.tldr}
       headings={post.headings}
       contentHtml={post.contentHtml}
+      contentInsert={
+        hasDiagram
+          ? { marker: diagramMarker, content: <AgenticMeshDiagram locale={lang} /> }
+          : undefined
+      }
       header={
         <>
           <div className="mb-4 flex items-center gap-3 text-sm text-muted">

@@ -1,5 +1,5 @@
 ---
-title: Cost Optimization
+title: Otimização de custos
 short: Um dos Príncipios de Design de Arquitetura mais importantes em tomada de decisão de Arquitetura de Sistemas, afinal de contas, quem quer pagar pelo desnecessário?
 category: cloud
 ---

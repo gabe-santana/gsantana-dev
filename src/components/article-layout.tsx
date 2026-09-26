@@ -17,6 +17,7 @@ interface ArticleLayoutProps {
   /** Rendered between the header and the body, e.g. a cover image. */
   lead?: React.ReactNode;
   contentHtml: string;
+  contentInsert?: { marker: string; content: React.ReactNode };
   headings: TocHeading[];
   /**
    * Stable, locale-independent article key: reading progress is saved under
@@ -34,11 +35,13 @@ export function ArticleLayout({
   header,
   lead,
   contentHtml,
+  contentInsert,
   headings,
   articleKey,
   tldr,
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
+  const markerIndex = contentInsert ? contentHtml.indexOf(contentInsert.marker) : -1;
   const tocLabels = {
     onThisPage: dict.article.onThisPage,
     backToTop: dict.article.backToTop,
@@ -91,11 +94,23 @@ export function ArticleLayout({
           label={dict.article.readingProgress}
         />
 
-        <div
-          id="post-content"
-          className="prose-post prose prose-lg prose-invert max-w-none"
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
-        />
+        {contentInsert && markerIndex >= 0 ? (
+          <div id="post-content" className="prose-post prose prose-lg prose-invert max-w-none">
+            <div dangerouslySetInnerHTML={{ __html: contentHtml.slice(0, markerIndex) }} />
+            {contentInsert.content}
+            <div
+              dangerouslySetInnerHTML={{
+                __html: contentHtml.slice(markerIndex + contentInsert.marker.length),
+              }}
+            />
+          </div>
+        ) : (
+          <div
+            id="post-content"
+            className="prose-post prose prose-lg prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: contentHtml }}
+          />
+        )}
 
         <AuthorCard locale={locale} dict={dict} />
 

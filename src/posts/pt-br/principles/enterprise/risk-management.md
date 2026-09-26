@@ -1,5 +1,5 @@
 ---
-title: Risk Management
+title: Gestão de riscos
 short: Visibilidade e mitigação proativa de riscos técnicos.
 category: enterprise
 ---

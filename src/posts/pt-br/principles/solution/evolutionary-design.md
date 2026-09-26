@@ -1,5 +1,5 @@
 ---
-title: Evolutionary Design
+title: Design evolutivo
 short: Evolução incremental guiada por feedback e métricas.
 category: solution
 ---

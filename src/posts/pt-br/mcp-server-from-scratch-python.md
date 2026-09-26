@@ -1,5 +1,5 @@
 ---
-title: "Model Context Protocol from Scratch: Build Your First MCP Server in Python"
+title: "Model Context Protocol do zero: crie seu primeiro servidor MCP em Python"
 description: "Construa um servidor MCP em Python para expor ferramentas e dados a clientes de IA."
 date: 2025-11-18
 tags: [MCP, AI Agents, Python, LLM]

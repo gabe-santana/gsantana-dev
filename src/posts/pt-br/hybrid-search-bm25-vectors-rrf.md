@@ -1,5 +1,5 @@
 ---
-title: "Hybrid Search That Actually Works: BM25 + Vectors with Reciprocal Rank Fusion"
+title: "Busca híbrida que funciona: BM25, vetores e Reciprocal Rank Fusion"
 description: "Combine BM25 e vetores para encontrar termos exatos e sentido, com reranking quando preciso."
 date: 2025-11-02
 tags: [RAG, Search, Python, Embeddings]

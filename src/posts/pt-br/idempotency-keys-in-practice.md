@@ -1,5 +1,5 @@
 ---
-title: "Idempotency Keys in Practice: Making Payment-Style APIs Safe to Retry"
+title: "Chaves de idempotência na prática: APIs seguras para novas tentativas"
 description: "Use chaves de idempotência para evitar efeitos duplicados ao repetir um POST após timeout."
 date: 2026-06-30
 tags: [APIs, Idempotency, .NET, C#]

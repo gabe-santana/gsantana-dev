@@ -1,5 +1,5 @@
 ---
-title: Bounded Contexts
+title: Contextos delimitados
 short: Domínios isolados com linguagens claras e anti-corrupção.
 category: solution
 ---

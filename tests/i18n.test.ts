@@ -71,15 +71,20 @@ describe("content parity", () => {
     for (const other of others) expect(other).toEqual(base);
   });
 
-  it("keeps every title in English, identical in every locale", () => {
-    // House rule: titles are never translated (descriptions and bodies are).
-    const titles = (l: (typeof locales)[number]) =>
-      Object.fromEntries([
-        ...getAllPostSummaries(l).map((p) => [p.slug, p.title]),
-        ...getAllPrinciples(l).map((p) => [p.key, p.title]),
+  it("localizes post and principle titles without changing their keys", () => {
+    const titles = (locale: (typeof locales)[number]) =>
+      new Map([
+        ...getAllPostSummaries(locale).map((post) => [post.slug, post.title] as const),
+        ...getAllPrinciples(locale).map((principle) => [principle.key, principle.title] as const),
       ]);
-    const [base, ...others] = locales.map(titles);
-    for (const other of others) expect(other).toEqual(base);
+    const english = titles("en-us");
+    const portuguese = titles("pt-br");
+
+    expect([...portuguese.keys()].sort()).toEqual([...english.keys()].sort());
+    for (const [key, title] of portuguese) {
+      expect(title.trim(), key).not.toBe("");
+      expect(title, key).not.toBe(english.get(key));
+    }
   });
 
   it("has the same number of TL;DR takeaways for a post in every locale", () => {
@@ -112,6 +117,7 @@ describe("content parity", () => {
           expect(paragraph.trim(), `${story.slug}/${locale} paragraph`).not.toBe("");
         }
       }
+      expect(story.copy["pt-br"].title, story.slug).not.toBe(story.copy["en-us"].title);
       expect(story.sources.length, `${story.slug} supporting sources`).toBeGreaterThanOrEqual(2);
     }
   });

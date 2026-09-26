@@ -1,5 +1,5 @@
 ---
-title: "Evaluating RAG Like an Engineer: Building a Retrieval Test Set in Python"
+title: "Avaliando RAG como engenheiro: crie um conjunto de testes de recuperação em Python"
 description: "Crie um conjunto versionado de testes de RAG e valide retrieval e fidelidade no CI."
 date: 2026-05-13
 tags: [RAG, Evaluation, Python, Testing]

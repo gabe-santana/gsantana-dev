@@ -1,5 +1,5 @@
 ---
-title: Sustainability
+title: Sustentabilidade
 short: Decisões que reduzem impacto ambiental sem sacrificar valor.
 category: cloud
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Multi-Cloud Without the Pain: Patterns That Survive Contact with Reality"
+title: "Multicloud sem dor: padrões que funcionam no mundo real"
 description: "Torne portável só o que compensa e decida primeiro onde seus dados vão morar."
 date: 2026-02-06
 tags: [Multi-Cloud, Terraform, Azure, AWS, Architecture]

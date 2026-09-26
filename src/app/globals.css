@@ -262,6 +262,67 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   display: block;
 }
 
+.prose-post .agentic-mesh-diagram {
+  margin: 2rem 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #0b1018;
+}
+
+.prose-post .agentic-mesh-diagram canvas {
+  display: block;
+  width: 100%;
+  height: 450px;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+@media (max-width: 560px) {
+  .prose-post .agentic-mesh-diagram canvas {
+    height: 650px;
+  }
+}
+
+.prose-post .project-repo-card {
+  margin: 2.5rem 0 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 8px;
+  background: var(--color-surface);
+}
+
+.prose-post .project-repo-card .project-repo-label {
+  margin: 0 0 0.35rem;
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.prose-post .project-repo-card .project-repo-title {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.prose-post .project-repo-card p:not(.project-repo-label) {
+  margin: 0.5rem 0 0.9rem;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.prose-post .project-repo-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .prose-post a.anchor {
   text-decoration: none;
   color: inherit;

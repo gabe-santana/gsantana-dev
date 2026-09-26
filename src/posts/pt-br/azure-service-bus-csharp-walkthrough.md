@@ -1,5 +1,5 @@
 ---
-title: "Real-Time Message Queuing with Azure Service Bus and C#: A Complete Walkthrough"
+title: "Mensageria em tempo real com Azure Service Bus e C#: guia completo"
 description: "Crie um worker C# de Service Bus idempotente, com sessions, liquidação explícita e recuperação de dead-letter."
 date: 2026-02-22
 tags: [Azure, Service Bus, C#, .NET, Messaging]

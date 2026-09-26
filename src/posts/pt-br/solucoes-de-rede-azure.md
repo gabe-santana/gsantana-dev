@@ -1,5 +1,5 @@
 ---
-title: The Definitive Guide - Networking Solutions on Azure
+title: Guia definitivo de soluções de rede no Azure
 description: Zero to hero em soluções de Rede na Azure.
 short: 
 date: 2025-10-19

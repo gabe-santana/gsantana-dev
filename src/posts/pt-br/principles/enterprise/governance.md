@@ -1,5 +1,5 @@
 ---
-title: Governance
+title: Governança
 short: Guardrails e policies como código acelerando com segurança.
 category: enterprise
 ---

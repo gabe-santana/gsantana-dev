@@ -1,5 +1,5 @@
 ---
-title: "Securing MCP Servers: Auth, Scopes, and Prompt Injection Boundaries"
+title: "Protegendo servidores MCP: autenticação, escopos e limites contra prompt injection"
 description: "Proteja ferramentas MCP contra prompt injection com autorização, validação e limites testados."
 date: 2026-05-29
 tags: [MCP, Security, AI Agents, Python]
