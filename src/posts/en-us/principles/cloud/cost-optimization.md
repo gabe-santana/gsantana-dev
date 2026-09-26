@@ -310,7 +310,7 @@ Combining Governance (prevention via PaC) and Automation (continuous correction)
 <strong>Start small</strong>: prioritize high-impact guardrails (mandatory tags, SKU limits, allowed regions).<br/>
 <strong>Define ownership</strong>: who approves, who monitors and who answers for deviations.<br/>
 <strong>Explain the why</strong>: connect policies to FinOps (showback/chargeback, budgets, alerts) and provide enablement (templates, IaC modules, examples).<br/>
-<strong>Automate</strong>: apply Policy as Code and pipeline checks — avoid reactive manual audits.<br/>
+<strong>Automate</strong>: apply Policy as Code and pipeline checks to avoid reactive manual audits.<br/>
 <strong>Measure and iterate</strong>: compliance metrics, blocked deviations and estimated savings guide continuous tuning.
 </p>
 </div>

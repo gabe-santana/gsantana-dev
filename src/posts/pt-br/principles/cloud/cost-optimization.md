@@ -311,7 +311,7 @@ A união de Governança (prevenção via PaC) e Automação (correção contínu
 <strong>Comece pequeno</strong>: priorize guardrails de alto impacto (tags obrigatórias, limites de SKU, regiões permitidas).<br/>
 <strong>Defina ownership</strong>: quem aprova, quem monitora e quem responde por desvios.<br/>
 <strong>Explique o porquê</strong>: conecte políticas a FinOps (showback/chargeback, orçamento, alertas) e ofereça enablement (templates, módulos IaC, exemplos).<br/>
-<strong>Automatize</strong>: aplique Policy as Code e verificações no pipeline — evite auditoria manual reativa.<br/>
+<strong>Automatize</strong>: aplique Policy as Code e verificações no pipeline e evite auditoria manual reativa.<br/>
 <strong>Meça e itere</strong>: métricas de aderência, desvios bloqueados e economia estimada orientam o ajuste contínuo.
 </p>
 </div>

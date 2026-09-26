@@ -123,7 +123,7 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   background-color: currentColor;
 }
 
-/* Solid while typing/deleting, blinking only while idle — like a real
+/* Solid while typing/deleting, blinking only while idle, like a real
    terminal caret. */
 .typewriter-caret.is-idle {
   animation: caret-blink 1.05s step-end infinite;
@@ -218,7 +218,7 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
 }
 
 
-/* "Júnior Inocente" — a recurring character who interrupts the post with
+/* "Júnior Inocente": a recurring character who interrupts the post with
    naive questions. Styled as a chat message (avatar + speech bubble), not
    an alert: it's a voice in the conversation, and it isn't clickable. */
 
@@ -249,7 +249,7 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   max-width: 34rem;
   padding: 0.75rem 1.125rem 0.875rem;
   /* Small top-left corner "points" the bubble at the avatar, the way chat
-     apps do it — no pseudo-element tail needed. */
+     apps do it, no pseudo-element tail needed. */
   border-radius: 0.3rem 1.25rem 1.25rem 1.25rem;
   border: 1px solid rgb(167 139 250 / 0.18);
   background-color: rgb(167 139 250 / 0.07);

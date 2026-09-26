@@ -3,7 +3,7 @@
 // filled by `format()` in lib/dictionaries/index.ts.
 export const enUs = {
   site: {
-    title: "gsantana.dev — AI, programming & technology",
+    title: "gsantana.dev | AI, programming & technology",
     description:
       "Gabriel Santana writes about applied AI, software engineering, and technology.",
     feedDescription: "AI, programming, and technology notes from Gabriel Santana.",
@@ -28,7 +28,7 @@ export const enUs = {
       "the modern web",
     ],
     intro:
-      "I'm Gabriel Santana. I write about applied AI, systems engineering, and the tools shaping how we build software — notes from the field, not just theory.",
+      "I'm Gabriel Santana. I write about applied AI, systems engineering, and the tools shaping how we build software. Notes from the field, not just theory.",
     readBlog: "Read the blog",
     aboutMe: "About me",
   },
@@ -82,7 +82,7 @@ export const enUs = {
   about: {
     eyebrow: "About",
     metaDescription:
-      "Gabriel Santana — AI Solutions Architect, Microsoft Certified Azure Solutions Architect Expert.",
+      "Gabriel Santana, AI Solutions Architect and Microsoft Certified Azure Solutions Architect Expert.",
     introFocus:
       "I design and build cloud systems, lately with a focus on AI agents: distributed agent platforms, enterprise RAG, and the infrastructure that keeps them running across clouds.",
     introSiteBefore:

@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
 
   return {
     metadataBase: new URL(siteUrl),
-    title: { default: dict.site.title, template: "%s — gsantana.dev" },
+    title: { default: dict.site.title, template: "%s | gsantana.dev" },
     description: dict.site.description,
     openGraph: {
       type: "website",

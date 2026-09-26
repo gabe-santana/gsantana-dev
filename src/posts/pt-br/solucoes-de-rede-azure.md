@@ -16,15 +16,15 @@ Imagine um **grande condomínio**: cada apartamento é um recurso (VM, pod, banc
 
 Agora, se temos vários prédios dentro do mesmo condomínio, precisamos garantir que eles consigam se comunicar, seja para visitar um vizinho de outro bloco, acessar a administração ou simplesmente usar áreas comuns. É aqui que entram os **roteadores**, que funcionam como as portarias internas que direcionam quem vai pra qual prédio, garantindo que o tráfego saia do lugar certo e chegue ao destino correto.
 
-Mas não basta apenas circular pelo condomínio: também é necessário controle de acesso. Em um prédio real, ninguém quer estranhos entrando nos apartamentos — e no mundo digital isso é ainda mais crítico. Por isso, existem os “porteiros digitais” como firewalls e NSGs, que determinam quem pode ou não acessar um recurso. Eles são as regras do tipo: “só entra quem está na lista”.
+Mas não basta apenas circular pelo condomínio: também é necessário controle de acesso. Em um prédio real, ninguém quer estranhos entrando nos apartamentos, e no mundo digital isso é ainda mais crítico. Por isso, existem os “porteiros digitais” como firewalls e NSGs, que determinam quem pode ou não acessar um recurso. Eles são as regras do tipo: “só entra quem está na lista”.
 
-Além disso, alguns prédios possuem acesso exclusivo, como garagens privativas ou elevadores que só abrem com chave eletrônica. Na Azure, isso equivale a recursos como Private Link, que permitem que serviços sensíveis sejam acessados por dentro da rede, sem precisar usar a internet pública — como se houvesse um corredor secreto direto para o apartamento.
+Além disso, alguns prédios possuem acesso exclusivo, como garagens privativas ou elevadores que só abrem com chave eletrônica. Na Azure, isso equivale a recursos como Private Link, que permitem que serviços sensíveis sejam acessados por dentro da rede, sem precisar usar a internet pública, como se houvesse um corredor secreto direto para o apartamento.
 
-E quando o condomínio cresce demais? Quando já existem tantos prédios que fica difícil organizar tudo? A solução é criar um modelo de Hub & Spoke, onde existe um prédio central (Hub) que concentra os serviços compartilhados — como segurança, monitoramento e conectividade externa — enquanto os demais prédios (Spokes) só se conectam a ele, sem falar diretamente entre si, evitando bagunça e reduzindo riscos.
+E quando o condomínio cresce demais? Quando já existem tantos prédios que fica difícil organizar tudo? A solução é criar um modelo de Hub & Spoke, onde existe um prédio central (Hub) que concentra os serviços compartilhados (como segurança, monitoramento e conectividade externa), enquanto os demais prédios (Spokes) só se conectam a ele, sem falar diretamente entre si, evitando bagunça e reduzindo riscos.
 
  e se você não define esse padrão claramente, tudo vira confusão quando quiser conectar prédios (VNets) ou abrir passagens (peering, VPN, ExpressRoute).
 
-Primeiro conceito firme: sem máscara o IP é ambíguo. `10.50.12.34` sozinho não diz qual bloco ele ocupa — tal como um número de apartamento sem saber se os dois primeiros dígitos representam o andar ou não. A máscara `/20`, por exemplo, delimita o espaço disponível e evita colisões ao expandir.
+Primeiro conceito firme: sem máscara o IP é ambíguo. `10.50.12.34` sozinho não diz qual bloco ele ocupa, tal como um número de apartamento sem saber se os dois primeiros dígitos representam o andar ou não. A máscara `/20`, por exemplo, delimita o espaço disponível e evita colisões ao expandir.
 
 <div class="junior-card">
   <img src="/shared/jrdev-avatar.webp" alt="Dev Júnior inquisitivo" class="junior-card-img" />

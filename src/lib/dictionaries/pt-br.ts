@@ -2,7 +2,7 @@ import type { Dictionary } from "@/lib/dictionaries/en-us";
 
 export const ptBr: Dictionary = {
   site: {
-    title: "gsantana.dev — IA, programação e tecnologia",
+    title: "gsantana.dev | IA, programação e tecnologia",
     description:
       "Gabriel Santana escreve sobre IA aplicada, engenharia de software e tecnologia.",
     feedDescription: "Notas de Gabriel Santana sobre IA, programação e tecnologia.",
@@ -27,7 +27,7 @@ export const ptBr: Dictionary = {
       "a web moderna",
     ],
     intro:
-      "Sou Gabriel Santana. Escrevo sobre IA aplicada, engenharia de sistemas e as ferramentas que estão mudando como construímos software — notas de quem está na prática, não só teoria.",
+      "Sou Gabriel Santana. Escrevo sobre IA aplicada, engenharia de sistemas e as ferramentas que estão mudando como construímos software. Notas de quem está na prática, não só teoria.",
     readBlog: "Ler o blog",
     aboutMe: "Sobre mim",
   },
@@ -81,7 +81,7 @@ export const ptBr: Dictionary = {
   about: {
     eyebrow: "Sobre",
     metaDescription:
-      "Gabriel Santana — Arquiteto de Soluções de IA, Microsoft Certified Azure Solutions Architect Expert.",
+      "Gabriel Santana, Arquiteto de Soluções de IA e Microsoft Certified Azure Solutions Architect Expert.",
     introFocus:
       "Projeto e construo sistemas em nuvem, ultimamente com foco em agentes de IA: plataformas distribuídas de agentes, RAG corporativo e a infraestrutura que os mantém rodando entre nuvens.",
     introSiteBefore:
