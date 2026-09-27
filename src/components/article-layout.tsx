@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { AuthorCard } from "@/components/author-card";
 import { Comments } from "@/components/comments";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
@@ -12,6 +13,28 @@ import { localeConfig, type Locale } from "@/lib/i18n";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 import type { RelatedItem } from "@/lib/related-items";
 
+export interface ContentInsert {
+  marker: string;
+  content: React.ReactNode;
+}
+
+type ContentPart = { html: string } | { insert: React.ReactNode };
+
+function splitContent(contentHtml: string, inserts: ContentInsert[]): ContentPart[] {
+  const found = inserts
+    .map((insert) => ({ ...insert, index: contentHtml.indexOf(insert.marker) }))
+    .filter((insert) => insert.index >= 0)
+    .sort((a, b) => a.index - b.index);
+  const parts: ContentPart[] = [];
+  let cursor = 0;
+  for (const insert of found) {
+    parts.push({ html: contentHtml.slice(cursor, insert.index) }, { insert: insert.content });
+    cursor = insert.index + insert.marker.length;
+  }
+  parts.push({ html: contentHtml.slice(cursor) });
+  return parts;
+}
+
 interface ArticleLayoutProps {
   locale: Locale;
   dict: Dictionary;
@@ -19,7 +42,8 @@ interface ArticleLayoutProps {
   /** Rendered between the header and the body, e.g. a cover image. */
   lead?: React.ReactNode;
   contentHtml: string;
-  contentInsert?: { marker: string; content: React.ReactNode };
+  /** Client components (e.g. canvas diagrams) spliced into the HTML where each marker appears. */
+  contentInserts?: ContentInsert[];
   headings: TocHeading[];
   /**
    * Stable, locale-independent article key: reading progress is saved under
@@ -38,14 +62,14 @@ export function ArticleLayout({
   header,
   lead,
   contentHtml,
-  contentInsert,
+  contentInserts = [],
   headings,
   articleKey,
   tldr,
   relatedItems = [],
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
-  const markerIndex = contentInsert ? contentHtml.indexOf(contentInsert.marker) : -1;
+  const parts = splitContent(contentHtml, contentInserts);
   const tocLabels = {
     onThisPage: dict.article.onThisPage,
     backToTop: dict.article.backToTop,
@@ -105,19 +129,19 @@ export function ArticleLayout({
           label={dict.article.readingProgress}
         />
 
-        {contentInsert && markerIndex >= 0 ? (
+        {parts.length > 1 ? (
           <div
             id="post-content"
             data-pagefind-body
             className="prose-post prose prose-lg prose-invert max-w-none"
           >
-            <div dangerouslySetInnerHTML={{ __html: contentHtml.slice(0, markerIndex) }} />
-            {contentInsert.content}
-            <div
-              dangerouslySetInnerHTML={{
-                __html: contentHtml.slice(markerIndex + contentInsert.marker.length),
-              }}
-            />
+            {parts.map((part, index) =>
+              "html" in part ? (
+                <div key={index} dangerouslySetInnerHTML={{ __html: part.html }} />
+              ) : (
+                <Fragment key={index}>{part.insert}</Fragment>
+              )
+            )}
           </div>
         ) : (
           <div

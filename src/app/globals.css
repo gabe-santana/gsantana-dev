@@ -283,6 +283,23 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   }
 }
 
+.prose-post .sightline-diagram {
+  margin: 2rem 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: #0b1018;
+}
+
+/* Height comes from the aspect ratio the component sets for the layout it
+   draws (desktop or phone), so the canvas never stretches its labels. */
+.prose-post .sightline-diagram canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
 .prose-post .project-repo-card {
   margin: 2.5rem 0 0;
   padding: 1.25rem 1.5rem;

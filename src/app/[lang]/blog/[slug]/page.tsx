@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArticleLayout } from "@/components/article-layout";
+import { ArticleLayout, type ContentInsert } from "@/components/article-layout";
 import { AgenticMeshDiagram } from "@/components/agentic-mesh-diagram";
+import { SightlineDiagram } from "@/components/sightline-diagram";
 import { TagBadge } from "@/components/tag-badge";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
@@ -10,6 +11,7 @@ import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { getAllPostSummaries, getPostBySlug, getPostSlugs } from "@/lib/posts";
 import { getRelatedItems } from "@/lib/related-items";
+import { SIGHTLINE_DIAGRAMS, sightlineDiagramMarker } from "@/lib/sightline-diagrams";
 import {
   alternatesFor,
   articleSocialMetadata,
@@ -24,6 +26,20 @@ export const dynamicParams = false;
 
 export function generateStaticParams() {
   return locales.flatMap((lang) => getPostSlugs(lang).map((slug) => ({ lang, slug })));
+}
+
+/** Canvas diagrams that replace `<div id="...-slot"></div>` markers in a post's markdown. */
+function diagramInserts(lang: Locale, slug: string): ContentInsert[] {
+  if (slug === "agentic-mesh-architecture-rag-agents") {
+    return [{ marker: '<div id="agentic-mesh-canvas-slot"></div>', content: <AgenticMeshDiagram locale={lang} /> }];
+  }
+  if (slug === "sightline-video-compliance-intelligence") {
+    return SIGHTLINE_DIAGRAMS.map((kind) => ({
+      marker: sightlineDiagramMarker(kind),
+      content: <SightlineDiagram locale={lang} kind={kind} />,
+    }));
+  }
+  return [];
 }
 
 function isPublished(lang: Locale, slug: string): boolean {
@@ -68,10 +84,11 @@ export default async function BlogPostPage({ params }: PageProps) {
   const dict = getDictionary(lang);
   const post = await getPostBySlug(lang, slug);
   const cover = post.cover ?? `/posts/${slug}/cover.webp`;
-  const diagramMarker = '<div id="agentic-mesh-canvas-slot"></div>';
-  const hasDiagram = slug === "agentic-mesh-architecture-rag-agents";
-  if (hasDiagram && !post.contentHtml.includes(diagramMarker)) {
-    throw new Error("AgenticMesh diagram marker missing from rendered article");
+  const inserts = diagramInserts(lang, slug);
+  for (const { marker } of inserts) {
+    if (!post.contentHtml.includes(marker)) {
+      throw new Error(`Diagram marker ${marker} missing from the rendered ${slug} article`);
+    }
   }
 
   return (
@@ -83,11 +100,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       tldr={post.tldr}
       headings={post.headings}
       contentHtml={post.contentHtml}
-      contentInsert={
-        hasDiagram
-          ? { marker: diagramMarker, content: <AgenticMeshDiagram locale={lang} /> }
-          : undefined
-      }
+      contentInserts={inserts}
       header={
         <>
           <div data-pagefind-ignore className="mb-4 flex items-center gap-3 text-sm text-muted">
