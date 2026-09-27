@@ -30,8 +30,9 @@ describe("related items", () => {
       expect(items.some((item) => unfinished.has(item.path)), key).toBe(false);
     }
 
+    // Every principle may be written; the placeholder case only applies while one exists.
     const wip = getAllPrinciples(locale).find((item) => item.isWip);
-    expect(getRelatedItems(locale, wip!.key)).toHaveLength(3);
+    if (wip) expect(getRelatedItems(locale, wip.key)).toHaveLength(3);
     expect(getRelatedItems(locale, "certifications/az-305-sql-server-cloud-migration").some((item) =>
       item.path === "/blog/strangler-fig-migration"
     )).toBe(true);
