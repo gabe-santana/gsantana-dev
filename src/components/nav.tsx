@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/container";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { NavLink } from "@/components/nav-link";
 import { UserMenu } from "@/components/user-menu";
 import type { Dictionary } from "@/lib/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
@@ -35,11 +36,7 @@ export function Nav({
         <div className="contents lg:flex lg:items-center lg:gap-6">
           <nav className="order-3 mt-3 flex w-full flex-wrap items-center justify-start gap-x-3 gap-y-3 border-t border-border/60 pt-3 text-sm text-muted lg:order-none lg:mt-0 lg:w-auto lg:flex-nowrap lg:gap-6 lg:border-0 lg:pt-0">
             {links.map((link) => (
-              <Link
-                key={link.href}
-                href={localePath(locale, link.href)}
-                className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
-              >
+              <NavLink key={link.href} href={localePath(locale, link.href)}>
                 {link.href === "/news" ? (
                   <span
                     aria-hidden="true"
@@ -47,7 +44,7 @@ export function Nav({
                   />
                 ) : null}
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
           </nav>
           <div className="order-2 flex items-center gap-2 lg:order-none">
