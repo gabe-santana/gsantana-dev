@@ -18,7 +18,7 @@ export function absoluteUrl(path: string): string {
 }
 
 export function defaultOgImage(locale: Locale): string {
-  return `/og/${locale}/default.svg`;
+  return `/og/${locale}/default.png`;
 }
 
 export function pageUrl(locale: Locale, path = "/"): string {
