@@ -41,15 +41,7 @@ That is why this post evaluates retrieval and generation separately. Retrieval i
 
 The whole setup has four parts: a golden dataset, a retrieval scorer, a faithfulness scorer and a test runner that turns scores into pass or fail.
 
-```text
- golden/v1.jsonl ──> load + validate ──> for each question:
-   (question,                               retriever.search(q, k) ──> recall@k, hit rate, MRR
-    expected ids,                           generate(q, chunks)    ──> faithfulness (claims vs chunks)
-    source)                                                            optional LLM judge
-                                                         │
-                                                         v
-                                    pytest thresholds ──> CI pass / fail + JSON report
-```
+<div id="rag-evaluation-slot"></div>
 
 ### The golden dataset
 

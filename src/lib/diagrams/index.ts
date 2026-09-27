@@ -1,0 +1,51 @@
+import type { Locale } from "@/lib/i18n";
+import { agentHandoff, agentPipeline, mcpIntegrations, mcpTrustBoundaries, supervisorPattern, toolCallGates } from "@/lib/diagrams/agents";
+import { costControlLoop, idempotencyFlow, multiCloudReference, pollyPipeline, stranglerFigFlow } from "@/lib/diagrams/architecture";
+import { messagingServices, serviceBusOrderStatus } from "@/lib/diagrams/messaging";
+import { chunkingPipeline, containerAppsRagApi, hnswLayers, hybridSearch, ragEvaluation } from "@/lib/diagrams/rag";
+import { sightlineDiagrams } from "@/lib/diagrams/sightline";
+import type { Diagram } from "@/lib/diagrams/types";
+
+/**
+ * Every canvas diagram, by id. A post places one with a marker on its own
+ * line in the markdown: <div id="<id>-slot"></div>. The blog page swaps each
+ * marker for the rendered diagram and fails the build on an unknown id.
+ */
+const registry: Record<string, (locale: Locale) => Diagram> = {
+  ...sightlineDiagrams,
+  "service-bus-order-status": serviceBusOrderStatus,
+  "messaging-services": messagingServices,
+  "chunking-pipeline": chunkingPipeline,
+  "hybrid-search": hybridSearch,
+  "rag-evaluation": ragEvaluation,
+  "container-apps-rag-api": containerAppsRagApi,
+  "hnsw-layers": hnswLayers,
+  "tool-call-gates": toolCallGates,
+  "supervisor-pattern": supervisorPattern,
+  "agent-pipeline": agentPipeline,
+  "agent-handoff": agentHandoff,
+  "mcp-integrations": mcpIntegrations,
+  "mcp-trust-boundaries": mcpTrustBoundaries,
+  "multi-cloud-reference": multiCloudReference,
+  "polly-pipeline": pollyPipeline,
+  "cost-control-loop": costControlLoop,
+  "strangler-fig-flow": stranglerFigFlow,
+  "idempotency-flow": idempotencyFlow,
+};
+
+export const diagramIds = Object.keys(registry);
+
+export function getDiagram(id: string, locale: Locale): Diagram | undefined {
+  return registry[id]?.(locale);
+}
+
+const MARKER = /<div id="([a-z0-9-]+)-slot"><\/div>/g;
+
+/** Ids of every diagram marker in a rendered article, in order. */
+export function diagramMarkerIds(html: string): string[] {
+  return [...html.matchAll(MARKER)].map((match) => match[1] ?? "");
+}
+
+export function diagramMarker(id: string): string {
+  return `<div id="${id}-slot"></div>`;
+}

@@ -56,35 +56,7 @@ O ponto ideal para quase todo mundo é o **nível 2**. Cada workload usa sua clo
 
 Assim é o nível 2 para uma organização típica rodando na Azure e na AWS:
 
-```text
-                          +-----------------------------+
-                          |  GitHub (repos + Actions)   |
-                          |  OIDC tokens, no cloud keys |
-                          +--------------+--------------+
-                                         |
-                    federated trust      |      federated trust
-              +--------------------------+--------------------------+
-              v                                                     v
-+-----------------------------+                       +-----------------------------+
-|  AZURE                      |                       |  AWS                        |
-|  Hub VNet (firewall, DNS)   |<===== private =======>|  Transit GW / hub VPC       |
-|    |          |             |     interconnect      |    |          |             |
-|  Spoke:     Spoke:          |   (ExpressRoute  <->  |  Spoke:     Spoke:          |
-|  ERP +      AI platform     |    Direct Connect     |  E-commerce Analytics       |
-|  identity   (Azure OpenAI)  |    via colo/partner)  |  (EKS)      (data lake)     |
-|                             |                       |                             |
-|  Key Vault (Azure secrets)  |                       |  Secrets Manager (AWS)      |
-|  Entra ID (workforce IdP) --+------ SAML/OIDC ----->|  IAM Identity Center        |
-+--------------+--------------+                       +--------------+--------------+
-               |                                                     |
-               |          OpenTelemetry collectors in each cloud     |
-               +-----------------------+-----------------------------+
-                                       v
-                        +-------------------------------+
-                        |  One observability backend    |
-                        |  logs, metrics, traces, SLOs  |
-                        +-------------------------------+
-```
+<div id="multi-cloud-reference-slot"></div>
 
 Repare no que é compartilhado e no que não é. Segredos, rede e compute são **por cloud**. Identidade, entrega e observabilidade são **um plano só** para as duas.
 

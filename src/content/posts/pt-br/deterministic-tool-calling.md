@@ -46,31 +46,7 @@ Então o modelo mental é simples: **trate toda chamada de tool exatamente como 
 
 Entre "o modelo emitiu uma chamada de tool" e "algo aconteceu no mundo real" existe um pipeline de checagens baratas e determinísticas. Cada etapa pode rejeitar a chamada com um erro estruturado, e nada chega ao backend a menos que todas as etapas passem.
 
-```text
- model output: name + raw JSON arguments
-        |
-        v
- [0] loop guard ........ step budget for the session exceeded?   -> STEP_LIMIT
-        |
- [1] resolve ........... known tool? on this caller's allowlist?  -> UNKNOWN_TOOL / TOOL_NOT_ALLOWED
-        |
- [2] parse ............. valid JSON object?                       -> INVALID_JSON
-        |
- [3] schema ............ types, enums, patterns, units, no extras -> INVALID_ARGUMENTS
-        |
- [4] idempotency ....... same call already done? repeated too often? -> replay / LOOP_DETECTED
-        |
- [5] business rules .... order exists? currency matches? amount ok? -> ORDER_NOT_FOUND / ...
-        |
- [6] policy ............ within this caller's limits?             -> POLICY_LIMIT
-        |
- [7] confirmation ...... high-risk and not approved by a human?   -> CONFIRMATION_REQUIRED
-        |
- [8] execute ........... handler + bounded retries, same key      -> UPSTREAM_UNAVAILABLE
-        |
-        v
- ToolResult {ok, code, message, data}  ->  back to the model (and the audit log)
-```
+<div id="tool-call-gates-slot"></div>
 
 A ordem é proposital. Checagens baratas que não precisam dos argumentos vêm primeiro. A validação de schema roda antes de qualquer coisa tocar nos seus dados, então as regras de negócio sempre recebem objetos tipados e bem formados. A checagem de idempotência fica logo depois da validação de schema, porque a chave é derivada dos argumentos *validados*: `{"amount_cents": 2590}` e `{ "amount_cents" : 2590 }` são a mesma chamada. A confirmação vem por último antes da execução, para que um humano só seja chamado a aprovar chamadas que realmente dariam certo.
 

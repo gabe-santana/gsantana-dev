@@ -46,31 +46,7 @@ So the mental model is simple: **treat every tool call exactly like an HTTP requ
 
 Between "the model emitted a tool call" and "something happened in the real world" sits a pipeline of cheap, deterministic checks. Each stage can reject the call with a structured error, and nothing reaches the backend unless every stage passes.
 
-```text
- model output: name + raw JSON arguments
-        |
-        v
- [0] loop guard ........ step budget for the session exceeded?   -> STEP_LIMIT
-        |
- [1] resolve ........... known tool? on this caller's allowlist?  -> UNKNOWN_TOOL / TOOL_NOT_ALLOWED
-        |
- [2] parse ............. valid JSON object?                       -> INVALID_JSON
-        |
- [3] schema ............ types, enums, patterns, units, no extras -> INVALID_ARGUMENTS
-        |
- [4] idempotency ....... same call already done? repeated too often? -> replay / LOOP_DETECTED
-        |
- [5] business rules .... order exists? currency matches? amount ok? -> ORDER_NOT_FOUND / ...
-        |
- [6] policy ............ within this caller's limits?             -> POLICY_LIMIT
-        |
- [7] confirmation ...... high-risk and not approved by a human?   -> CONFIRMATION_REQUIRED
-        |
- [8] execute ........... handler + bounded retries, same key      -> UPSTREAM_UNAVAILABLE
-        |
-        v
- ToolResult {ok, code, message, data}  ->  back to the model (and the audit log)
-```
+<div id="tool-call-gates-slot"></div>
 
 The order is deliberate. Cheap checks that need no arguments come first. Schema validation runs before anything touches your data, so business rules always receive typed, well-formed objects. The idempotency check sits right after schema validation, because the key is derived from the *validated* arguments: `{"amount_cents": 2590}` and `{ "amount_cents" : 2590 }` are the same call. Confirmation comes last before execution, so a human is only asked to approve calls that would actually succeed.
 

@@ -115,7 +115,28 @@ in `app/[lang]/news/page.tsx`.
 
 ### Diagrams in articles
 
-Never ASCII art. Diagrams are inline SVG inside
+Never ASCII art or box-drawing characters in a code block
+(`tests/diagrams.test.ts` fails the build on one).
+
+**Blog posts use canvas diagrams** (`src/lib/diagrams/`). A post places one
+with a marker on its own line, `<div id="<diagram-id>-slot"></div>`, and the
+blog page swaps it for `components/canvas-diagram.tsx`; an unknown id fails
+the build. Each diagram is a spec in `lib/diagrams/<topic>.ts`, registered
+in `lib/diagrams/index.ts`, written once for both locales with
+`defineDiagram((t) => ...)` and `t(en, pt)` for every label. Specs describe
+a grid, not pixels: `n(id, col, row, tone, title, detail)` nodes (fractional
+cols/rows center a box between cells, `span` widens it), zones, and
+`e(from, to)` edges whose `route` (`auto`, `hv`, `vh`, `hvh`, `straight`,
+`u-right`...) `lib/diagrams/grid.ts` turns into paths. Every spec has a
+desktop layout (760 wide) and a phone one (360 wide, drawn below 560px), plus
+an `accessible` description that is the canvas's label and no-JS fallback.
+The specs run on the server and the page receives plain data, so only the
+renderer (`lib/diagrams/render.ts`) ships to the browser. The test checks
+every layout for overlapping boxes and content outside the canvas; for the
+rest, look at it: render it at both widths before you ship it. Keep a label
+off lines and zone borders (move it into the box's detail if it won't fit).
+
+**Principles use inline SVG** inside
 `<figure class="diagram" data-pagefind-ignore><div class="diagram-canvas"><svg ...>`,
 painted only with the `d-*` classes from the "Diagrams" block in
 `app/globals.css` (boxes, lines, fills, text sizes on the site tokens), so

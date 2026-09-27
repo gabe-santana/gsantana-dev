@@ -19,17 +19,7 @@ Picture a company with three AI hosts: a chat assistant, a coding assistant insi
 
 Without a shared protocol, every host needs its own integration with every system. That's the classic **N-by-M problem**: 3 hosts times 5 systems means 15 integrations, each with its own auth handling, schema format, error conventions and bugs. Add a host, and you owe five more integrations. Add a system, and you owe three.
 
-```text
-Without MCP (N x M)                 With MCP (N + M)
-
-Host A ──┬── Docs                   Host A ─┐            ┌─ Docs server
-         ├── Tickets                Host B ─┼── MCP ─────┼─ Tickets server
-         └── CRM                    Host C ─┘            └─ CRM server
-Host B ──┬── Docs
-         ├── Tickets
-         └── CRM
-Host C ── ... (again)
-```
+<div id="mcp-integrations-slot"></div>
 
 MCP turns this into an **N-plus-M problem**. Each system gets wrapped once, as an MCP server. Each host implements the MCP client side once. From then on, any host can talk to any server. If you're old enough to remember life before USB, the analogy writes itself: instead of a different cable for every printer, keyboard and camera, you get one port and one plug.
 

@@ -50,17 +50,7 @@ With **Streamable HTTP**, the server is a network service and anyone who can rea
 
 ### Where the boundaries are
 
-```text title="trust-boundaries.txt"
-                 untrusted text: web pages, tickets,
-                 tool outputs, tool descriptions
-                              |
-                              v
- user --> host (model + MCP client) --HTTP + bearer token--> MCP server --own credential--> downstream API
-                                                                  |
-                                                     enforcement layer: scopes,
-                                                     validation, approvals,
-                                                     rate limits, audit log
-```
+<div id="mcp-trust-boundaries-slot"></div>
 
 Everything left of the MCP server can be influenced by text, including the model. The server is the first component that acts only on structured, authenticated input, so that's where the rules live. It calls downstream APIs with its own credential, never with the token it received.
 

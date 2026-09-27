@@ -50,30 +50,7 @@ Here is how the common strategies compare:
 
 The design has three ideas: parse the document into structural blocks, pack blocks into chunks without crossing section boundaries, and separate what you index from what you give the model.
 
-```text
- PDF / DOCX / HTML
-        │
-        ▼
- ┌────────────────────────┐
- │ Layout-aware extraction│  (its own problem: OCR, reading order, tables)
- └───────────┬────────────┘
-             │ Markdown
-             ▼
- ┌────────────────────────┐     ┌──────────────────────────────┐
- │ Block parser           │ ──▶ │ Section tree (heading paths) │
- └────────────────────────┘     └──────────────┬───────────────┘
-                                               │
-                     ┌─────────────────────────┴─────────────────────┐
-                     ▼                                               ▼
-        ┌─────────────────────────┐                    ┌──────────────────────────┐
-        │ Child chunks            │                    │ Parent sections          │
-        │ breadcrumb + blocks     │                    │ full text, keyed by id   │
-        │ + metadata + parent_id  │                    │ (document store)         │
-        └────────────┬────────────┘                    └────────────▲─────────────┘
-                     │ embed + index                                │ fetch by parent_id
-                     ▼                                              │
- query ──▶ search children ──▶ top-k child hits ──▶ dedupe parent ids
-```
+<div id="chunking-pipeline-slot"></div>
 
 ### Convert upstream, chunk Markdown
 

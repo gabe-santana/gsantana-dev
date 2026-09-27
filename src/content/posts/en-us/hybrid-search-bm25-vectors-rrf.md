@@ -68,26 +68,7 @@ The IDF part is why keyword search is so good at identifiers: the rarer the toke
 
 The architecture is two retrievers running in parallel over the same chunks, a fusion step, an optional reranker, and then the LLM:
 
-```text
-                        ┌──────────────────────┐
-                   ┌──▶ │  BM25 / full text    │ ── top 50 ids (ranked) ──┐
-                   │    └──────────────────────┘                          │
- user query ───────┤                                                      ▼
-                   │    ┌──────────────────────┐                  ┌───────────────┐
-                   └──▶ │  Vector (ANN) search │ ── top 50 ids ─▶ │  RRF fusion   │
-                        └──────────────────────┘    (ranked)      └───────┬───────┘
-                                                                          │ top 20-30
-                                                                          ▼
-                                                                ┌───────────────────┐
-                                                                │ Cross-encoder     │
-                                                                │ reranker (opt.)   │
-                                                                └─────────┬─────────┘
-                                                                          │ top 5-8
-                                                                          ▼
-                                                                ┌───────────────────┐
-                                                                │ LLM with context  │
-                                                                └───────────────────┘
-```
+<div id="hybrid-search-slot"></div>
 
 Both retrievers are cheap and independent, so you run them concurrently. The interesting question is the box in the middle: how do you merge two ranked lists that were produced by completely different scoring functions?
 

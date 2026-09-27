@@ -51,41 +51,7 @@ Então o mapeamento na Azure fica assim:
 
 Este é o fluxo de compra com cada serviço fazendo aquilo em que é bom:
 
-```text
-                    +------------------+
-  Customer  ----->  |  Orders API      |  (writes order + outbox row in one DB tx)
-                    +--------+---------+
-                             | outbox relay
-                             v
-              +------------------------------+
-              |  Service Bus                 |
-              |  queue: payments   (command) |
-              |  topic: orders     (pub/sub) |
-              +------+----------------+------+
-                     |                |
-          PeekLock   v                v  subscription "high-value" (SQL filter)
-          +----------------+   +----------------+
-          | Payments svc   |   | Fraud review   |
-          +-------+--------+   +----------------+
-                  | PaymentCaptured
-                  v
-          +----------------+     +-------------------------------+
-          | Inventory svc  | --> | Event Grid topic              |
-          +----------------+     | "inventory.stock.low"         |
-                                 +-------+---------------+-------+
-                                         | push          | push
-                                         v               v
-                                 +--------------+  +--------------+
-                                 | Purchasing   |  | Notification |
-                                 | (webhook)    |  | Function     |
-                                 +--------------+  +--------------+
-
-  Web/mobile clicks  ---->  Event Hubs "clickstream" (8 partitions, key = sessionId)
-                                 |                 |
-                   consumer group "analytics"   consumer group "recommendations"
-                                 v                 v
-                          Stream Analytics     ML feature pipeline
-```
+<div id="messaging-services-slot"></div>
 
 **Pagamento é um comando.** Ele vai para uma queue do Service Bus. Várias instâncias do serviço de Pagamentos disputam as mensagens (o padrão *competing consumers*), cada mensagem fica travada enquanto é processada (PeekLock) e, se der falha, volta a ficar visível. Depois de tentativas demais, ela cai na **dead-letter queue** em vez de ficar em loop para sempre.
 

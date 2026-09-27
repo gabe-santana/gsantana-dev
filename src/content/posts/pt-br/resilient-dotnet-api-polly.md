@@ -104,20 +104,7 @@ Uma chamada HTTP resiliente combina quatro ideias:
 
 No Polly v8, as estratégias são adicionadas de fora para dentro: a primeira que você adiciona envolve todas as seguintes. A ordem recomendada é:
 
-```text
-request
-  │
-  ▼
-┌─────────────────────────── Total timeout (8s) ───────────────────────────┐
-│  ┌────────────────────── Retry (3x, exp + jitter) ─────────────────────┐ │
-│  │  ┌────────────────── Circuit breaker (50% / 30s) ────────────────┐  │ │
-│  │  │  ┌────────────── Per-attempt timeout (2s) ─────────────────┐  │  │ │
-│  │  │  │                 HTTP call to pricing                    │  │  │ │
-│  │  │  └─────────────────────────────────────────────────────────┘  │  │ │
-│  │  └───────────────────────────────────────────────────────────────┘  │ │
-│  └─────────────────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────────────────┘
-```
+<div id="polly-pipeline-slot"></div>
 
 Cada posição tem um motivo:
 

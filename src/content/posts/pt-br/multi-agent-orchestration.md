@@ -52,24 +52,7 @@ Quando você realmente precisa de vários agents, torne o fluxo de controle **ex
 
 Um supervisor recebe a requisição, decide quais especialistas chamar, envia a cada um uma tarefa com escopo definido, coleta os resultados e os agrega. Especialistas nunca conversam entre si; só respondem ao supervisor.
 
-```text
-                  request
-                     |
-                     v
-              +-------------+
-              |  supervisor |  owns state, budgets, trace id
-              +-------------+
-               /     |     \
-          task/  task|      \task        (parallel when independent)
-             v       v       v
-         [logs]  [metrics] [deploys]     specialists: no peer calls
-             \       |       /
-        result\ result|     /result
-               v     v     v
-              +-------------+
-              |  aggregate  | --> finalizer --> report
-              +-------------+
-```
+<div id="supervisor-pattern-slot"></div>
 
 Roteamento, orçamentos e tratamento de falhas moram num lugar só. A decisão de roteamento pode vir de um LLM ("quais checagens este incidente precisa?"), mas o supervisor valida e executa o plano em código. O trade-off: o supervisor vira um gargalo de design, e uma decisão de roteamento ruim significa que o especialista certo nunca é chamado.
 
@@ -77,10 +60,7 @@ Roteamento, orçamentos e tratamento de falhas moram num lugar só. A decisão d
 
 Etapas fixas, cada uma consumindo a saída tipada da anterior. Nenhum roteamento dinâmico.
 
-```text
- request -> [extract] -> [classify] -> [draft reply] -> [policy check] -> output
-             typed        typed          typed             typed
-```
+<div id="agent-pipeline-slot"></div>
 
 É o padrão mais previsível e o mais fácil de testar, porque cada etapa tem um contrato claro. Serve para processamento de documentos, triagem e qualquer procedimento conhecido. O trade-off é a rigidez: trabalho que não segue sempre os mesmos passos deixa etapas ociosas, e a latência total é a soma de todas as etapas.
 
@@ -88,11 +68,7 @@ Etapas fixas, cada uma consumindo a saída tipada da anterior. Nenhum roteamento
 
 Um agent fica ativo por vez e transfere explicitamente o controle, junto com um resumo compacto, para outro. Pense num agent de recepção que passa a conversa para um agent de cobrança.
 
-```text
- user <-> [triage agent] --handoff(billing, summary)--> [billing agent] <-> user
-                                                              |
-                                          handoff(triage, summary) or finish
-```
+<div id="agent-handoff-slot"></div>
 
 Handoffs combinam com produtos conversacionais em que as fases precisam de tools diferentes. Também são o jeito mais fácil de criar ciclos. Mantenha-os explícitos (uma ação `handoff` estruturada, nunca "o agent decide mandar mensagem para alguém"), conte-os contra um orçamento e proíba devolver o controle a um agent que já o teve no mesmo turno.
 

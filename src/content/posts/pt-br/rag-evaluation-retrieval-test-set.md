@@ -41,15 +41,7 @@ Dá, por mais ou menos uma semana. Ler respostas não escala além de algumas de
 
 O setup inteiro tem quatro partes: um golden dataset, um avaliador de retrieval, um avaliador de fidelidade e um executor de testes que transforma notas em aprovado ou reprovado.
 
-```text
- golden/v1.jsonl ──> load + validate ──> for each question:
-   (question,                               retriever.search(q, k) ──> recall@k, hit rate, MRR
-    expected ids,                           generate(q, chunks)    ──> faithfulness (claims vs chunks)
-    source)                                                            optional LLM judge
-                                                         │
-                                                         v
-                                    pytest thresholds ──> CI pass / fail + JSON report
-```
+<div id="rag-evaluation-slot"></div>
 
 ### O golden dataset
 

@@ -56,35 +56,7 @@ The sweet spot for almost everyone is **level 2**. Each workload uses its cloud 
 
 Here is what level 2 looks like for a typical organization running on Azure and AWS:
 
-```text
-                          +-----------------------------+
-                          |  GitHub (repos + Actions)   |
-                          |  OIDC tokens, no cloud keys |
-                          +--------------+--------------+
-                                         |
-                    federated trust      |      federated trust
-              +--------------------------+--------------------------+
-              v                                                     v
-+-----------------------------+                       +-----------------------------+
-|  AZURE                      |                       |  AWS                        |
-|  Hub VNet (firewall, DNS)   |<===== private =======>|  Transit GW / hub VPC       |
-|    |          |             |     interconnect      |    |          |             |
-|  Spoke:     Spoke:          |   (ExpressRoute  <->  |  Spoke:     Spoke:          |
-|  ERP +      AI platform     |    Direct Connect     |  E-commerce Analytics       |
-|  identity   (Azure OpenAI)  |    via colo/partner)  |  (EKS)      (data lake)     |
-|                             |                       |                             |
-|  Key Vault (Azure secrets)  |                       |  Secrets Manager (AWS)      |
-|  Entra ID (workforce IdP) --+------ SAML/OIDC ----->|  IAM Identity Center        |
-+--------------+--------------+                       +--------------+--------------+
-               |                                                     |
-               |          OpenTelemetry collectors in each cloud     |
-               +-----------------------+-----------------------------+
-                                       v
-                        +-------------------------------+
-                        |  One observability backend    |
-                        |  logs, metrics, traces, SLOs  |
-                        +-------------------------------+
-```
+<div id="multi-cloud-reference-slot"></div>
 
 Notice what is shared and what is not. Secrets, networking and compute are **per cloud**. Identity, delivery and observability are **one plane** across both.
 

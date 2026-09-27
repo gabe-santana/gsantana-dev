@@ -41,16 +41,7 @@ Most vector databases today default to HNSW (Hierarchical Navigable Small World)
 
 HNSW builds a graph where every vector is a node linked to some of its near neighbors. On top of that base layer it adds sparser layers, each holding a random subset of the nodes, like express lanes on a highway.
 
-```text
- Layer 2   A ─────────────────────────── F            few nodes, long jumps
-           │                              │
- Layer 1   A ────── C ──────── E ──────── F ─── H     more nodes, medium jumps
-           │        │          │          │     │
- Layer 0   A ─ B ─ C ─ D ─ E ─ F ─ G ─ H ─ I ─ J      every node, short links
-
- Search: enter at the top, hop greedily toward the query,
-         drop a layer, repeat, then explore a candidate list on layer 0.
-```
+<div id="hnsw-layers-slot"></div>
 
 A search enters at the top layer and walks greedily toward the query until no neighbor is closer, then drops a layer and repeats with shorter hops. On the bottom layer it keeps a list of the best candidates found so far and keeps expanding them. The size of that list is the heart of the trade-off.
 

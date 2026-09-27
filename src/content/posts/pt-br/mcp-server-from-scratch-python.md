@@ -19,17 +19,7 @@ Imagine uma empresa com três hosts de IA: um assistente de chat, um assistente 
 
 Sem um protocolo comum, cada host precisa da sua própria integração com cada sistema. É o clássico **problema N por M**: 3 hosts vezes 5 sistemas dá 15 integrações, cada uma com seu tratamento de autenticação, formato de schema, convenção de erro e bugs. Adicionou um host, deve mais cinco integrações. Adicionou um sistema, deve mais três.
 
-```text
-Without MCP (N x M)                 With MCP (N + M)
-
-Host A ──┬── Docs                   Host A ─┐            ┌─ Docs server
-         ├── Tickets                Host B ─┼── MCP ─────┼─ Tickets server
-         └── CRM                    Host C ─┘            └─ CRM server
-Host B ──┬── Docs
-         ├── Tickets
-         └── CRM
-Host C ── ... (again)
-```
+<div id="mcp-integrations-slot"></div>
 
 O MCP transforma isso num **problema N mais M**. Cada sistema é embrulhado uma vez, como um server MCP. Cada host implementa o lado client do MCP uma vez. A partir daí, qualquer host conversa com qualquer server. Se você lembra da vida antes do USB, a analogia se escreve sozinha: em vez de um cabo diferente para cada impressora, teclado e câmera, você tem uma porta e um plugue.
 

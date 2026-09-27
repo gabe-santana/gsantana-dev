@@ -1,32 +1,8 @@
-"use client";
-
-import { useEffect, useRef } from "react";
 import type { Locale } from "@/lib/i18n";
-import type { SightlineDiagramKind } from "@/lib/sightline-diagrams";
+import type { Diagram, DiagramNode, Edge, Label, Layout, Tone } from "@/lib/diagrams/types";
 
-type Tone = "accent" | "amber" | "blue" | "muted" | "danger";
-type Point = [number, number];
-
-interface Zone { x: number; y: number; w: number; h: number; tone: Tone; label?: string; dashed?: boolean; filled?: boolean }
-interface Node { x: number; y: number; w: number; h: number; tone: Tone; title: string; detail?: string; pill?: string }
-interface Edge { points: Point[]; tone: Tone; dashed?: boolean }
-interface Label { x: number; y: number; text: string; tone?: Tone | "text"; size?: number; weight?: number; align?: CanvasTextAlign; vertical?: boolean }
-
-/** Coordinates are in a virtual space `width` wide; the canvas scales it to fit. */
-interface Layout { width: number; height: number; zones: Zone[]; nodes: Node[]; edges: Edge[]; labels: Label[] }
-interface Diagram { heading: string; accessible: string; desktop: Layout; mobile: Layout }
-
-const colors = {
-  background: "#0b1018",
-  surface: "#111923",
-  border: "#2b3442",
-  text: "#edf2f7",
-  muted: "#9ba7b8",
-  accent: "#5eead4",
-  amber: "#f3bf70",
-  blue: "#60a5fa",
-  danger: "#f87171",
-};
+// Hand-placed layouts for the three diagrams in the Sightline post
+// (content/posts/*/sightline-video-compliance-intelligence.md).
 
 const copy = {
   "en-us": {
@@ -157,8 +133,8 @@ const copy = {
 
 type Pair = readonly [string, string] | string[];
 const hopTone = (i: number): Tone => (i === 0 ? "accent" : i === 1 ? "blue" : "amber");
-const node = (x: number, y: number, w: number, h: number, tone: Tone, [title, detail]: Pair, pill?: string): Node => ({
-  x, y, w, h, tone, title, detail: detail || undefined, pill,
+const node = (x: number, y: number, w: number, h: number, tone: Tone, [title, detail]: Pair, pill?: string): DiagramNode => ({
+  x, y, w, h, tone, title, detail: detail ? [detail] : undefined, pill,
 });
 
 function systemDiagram(locale: Locale): Diagram {
@@ -243,7 +219,7 @@ function systemDiagram(locale: Locale): Diagram {
       { x: 180, y: 640, text: c.note[1], tone: "muted", size: 11, align: "center" },
     ],
   };
-  return { heading: c.heading, accessible: c.accessible, desktop, mobile };
+  return { title: "SIGHTLINE", heading: c.heading, accessible: c.accessible, desktop, mobile };
 }
 
 function ingestionDiagram(locale: Locale): Diagram {
@@ -332,7 +308,7 @@ function ingestionDiagram(locale: Locale): Diagram {
       { x: left + 83, y: starts(2) - 16, text: c.publishes, tone: "muted", size: 10 },
     ],
   };
-  return { heading: c.heading, accessible: c.accessible, desktop, mobile };
+  return { title: "SIGHTLINE", heading: c.heading, accessible: c.accessible, desktop, mobile };
 }
 
 function queryDiagram(locale: Locale): Diagram {
@@ -403,267 +379,11 @@ function queryDiagram(locale: Locale): Diagram {
       { x: 180, y: 590, text: c.empty, tone: "muted", size: 10, align: "center" },
     ],
   };
-  return { heading: c.heading, accessible: c.accessible, desktop, mobile };
+  return { title: "SIGHTLINE", heading: c.heading, accessible: c.accessible, desktop, mobile };
 }
 
-const builders: Record<SightlineDiagramKind, (locale: Locale) => Diagram> = {
-  system: systemDiagram,
-  ingestion: ingestionDiagram,
-  query: queryDiagram,
+export const sightlineDiagrams: Record<string, (locale: Locale) => Diagram> = {
+  "sightline-system": systemDiagram,
+  "sightline-ingestion": ingestionDiagram,
+  "sightline-query": queryDiagram,
 };
-
-function toneColor(tone: Tone | "text" | undefined): string {
-  if (!tone || tone === "text") return colors.text;
-  return colors[tone];
-}
-
-function withAlpha(hex: string, alpha: number): string {
-  const value = parseInt(hex.slice(1), 16);
-  return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`;
-}
-
-function fitText(ctx: CanvasRenderingContext2D, value: string, maxWidth: number, size: number, weight: number, font: string) {
-  let current = size;
-  do {
-    ctx.font = `${weight} ${current}px ${font}`;
-    if (ctx.measureText(value).width <= maxWidth) break;
-    current -= 0.5;
-  } while (current > 8);
-}
-
-function drawZone(ctx: CanvasRenderingContext2D, zone: Zone, font: string) {
-  const color = colors[zone.tone];
-  ctx.beginPath();
-  ctx.roundRect(zone.x, zone.y, zone.w, zone.h, zone.filled ? 5 : 8);
-  ctx.fillStyle = withAlpha(color, zone.filled ? 0.14 : 0.035);
-  ctx.fill();
-  ctx.setLineDash(zone.dashed ? [5, 4] : []);
-  ctx.strokeStyle = withAlpha(color, zone.dashed ? 0.4 : 0.45);
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  ctx.setLineDash([]);
-  if (zone.label) {
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    fitText(ctx, zone.label, zone.w - 24, 10, 700, font);
-    ctx.fillStyle = color;
-    ctx.fillText(zone.label, zone.x + 12, zone.y + 16);
-  }
-}
-
-function drawNode(ctx: CanvasRenderingContext2D, item: Node, font: string) {
-  const accent = colors[item.tone];
-  ctx.beginPath();
-  ctx.roundRect(item.x, item.y, item.w, item.h, 6);
-  ctx.fillStyle = item.tone === "danger" ? withAlpha(accent, 0.1) : colors.surface;
-  ctx.fill();
-  ctx.strokeStyle = item.tone === "danger" ? withAlpha(accent, 0.6) : colors.border;
-  ctx.lineWidth = 1;
-  ctx.stroke();
-  if (item.tone !== "danger") {
-    ctx.fillStyle = accent;
-    ctx.fillRect(item.x + 1, item.y + 9, 2, item.h - 18);
-  }
-
-  const cx = item.x + item.w / 2;
-  const cy = item.y + item.h / 2;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  fitText(ctx, item.title, item.w - 18, 13, 700, font);
-  ctx.fillStyle = item.tone === "danger" ? accent : colors.text;
-  ctx.fillText(item.title, cx, item.detail ? cy - 9 : cy);
-  if (item.detail) {
-    fitText(ctx, item.detail, item.w - 16, 11, 400, font);
-    ctx.fillStyle = colors.muted;
-    ctx.fillText(item.detail, cx, cy + 11);
-  }
-
-  if (item.pill) {
-    ctx.font = `600 10px ${font}`;
-    const width = ctx.measureText(item.pill).width + 16;
-    const px = cx - width / 2;
-    const py = item.y + item.h + 6;
-    ctx.beginPath();
-    ctx.roundRect(px, py, width, 18, 9);
-    ctx.fillStyle = withAlpha(colors.danger, 0.1);
-    ctx.fill();
-    ctx.strokeStyle = withAlpha(colors.danger, 0.45);
-    ctx.stroke();
-    ctx.fillStyle = colors.danger;
-    ctx.fillText(item.pill, cx, py + 9.5);
-  }
-}
-
-function segments(points: Point[]): [Point, Point][] {
-  return points.slice(1).map((point, i) => [points[i] ?? point, point]);
-}
-
-function pathLength(points: Point[]): number {
-  return segments(points).reduce((total, [[x1, y1], [x2, y2]]) => total + Math.hypot(x2 - x1, y2 - y1), 0);
-}
-
-function pointAt(points: Point[], distance: number): Point {
-  let remaining = distance;
-  for (const [[x1, y1], [x2, y2]] of segments(points)) {
-    const length = Math.hypot(x2 - x1, y2 - y1);
-    if (remaining <= length) {
-      const t = length === 0 ? 0 : remaining / length;
-      return [x1 + (x2 - x1) * t, y1 + (y2 - y1) * t];
-    }
-    remaining -= length;
-  }
-  return points[points.length - 1] ?? [0, 0];
-}
-
-function drawEdge(ctx: CanvasRenderingContext2D, edge: Edge, progress: number | null) {
-  const color = colors[edge.tone];
-  const points = edge.points;
-  const last = segments(points).at(-1);
-  if (!last) return;
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = 1.5;
-  ctx.globalAlpha = 0.75;
-  ctx.setLineDash(edge.dashed ? [5, 4] : []);
-  ctx.beginPath();
-  points.forEach(([x, y], i) => (i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)));
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  const [[px, py], [ex, ey]] = last;
-  const angle = Math.atan2(ey - py, ex - px);
-  ctx.beginPath();
-  ctx.moveTo(ex, ey);
-  ctx.lineTo(ex - 5 * Math.cos(angle - 0.5), ey - 5 * Math.sin(angle - 0.5));
-  ctx.lineTo(ex - 5 * Math.cos(angle + 0.5), ey - 5 * Math.sin(angle + 0.5));
-  ctx.closePath();
-  ctx.fill();
-
-  ctx.globalAlpha = 1;
-  if (progress !== null && !edge.dashed) {
-    const [dx, dy] = pointAt(points, pathLength(points) * progress);
-    ctx.beginPath();
-    ctx.arc(dx, dy, 2.25, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-function drawLabel(ctx: CanvasRenderingContext2D, label: Label, font: string) {
-  ctx.save();
-  ctx.font = `${label.weight ?? 400} ${label.size ?? 11}px ${font}`;
-  ctx.fillStyle = toneColor(label.tone);
-  ctx.textAlign = label.align ?? "left";
-  ctx.textBaseline = "middle";
-  ctx.translate(label.x, label.y);
-  if (label.vertical) ctx.rotate(-Math.PI / 2);
-  ctx.fillText(label.text, 0, 0);
-  ctx.restore();
-}
-
-function drawLayout(ctx: CanvasRenderingContext2D, diagram: Diagram, layout: Layout, time: number | null, font: string) {
-  ctx.clearRect(0, 0, layout.width, layout.height);
-  ctx.fillStyle = colors.background;
-  ctx.fillRect(0, 0, layout.width, layout.height);
-
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "left";
-  ctx.font = `700 12px ${font}`;
-  ctx.fillStyle = colors.text;
-  ctx.fillText("SIGHTLINE", 16, 26);
-  ctx.textAlign = "right";
-  fitText(ctx, diagram.heading, layout.width - 130, 10, 500, font);
-  ctx.fillStyle = colors.muted;
-  ctx.fillText(diagram.heading, layout.width - 16, 26);
-
-  layout.zones.forEach((zone) => drawZone(ctx, zone, font));
-  const phase = time === null ? null : (time / 1800) % 1;
-  layout.edges.forEach((edge, index) => drawEdge(ctx, edge, phase === null ? null : (phase + index * 0.17) % 1));
-  layout.nodes.forEach((item) => drawNode(ctx, item, font));
-  layout.labels.forEach((label) => drawLabel(ctx, label, font));
-}
-
-export function SightlineDiagram({ locale, kind }: { locale: Locale; kind: SightlineDiagramKind }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const diagram = builders[kind](locale);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-
-    const current = builders[kind](locale);
-    const font = getComputedStyle(canvas).fontFamily;
-    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let visible = true;
-    let active = true;
-    let frame = 0;
-    let lastPaint = 0;
-
-    const paint = (time: number) => {
-      const width = canvas.getBoundingClientRect().width;
-      if (width === 0) return;
-      const layout = width < 560 ? current.mobile : current.desktop;
-      // Only the aspect ratio is set, so resizing never feeds back into the
-      // width the ResizeObserver is watching.
-      const ratio = `${layout.width} / ${layout.height}`;
-      if (canvas.style.aspectRatio !== ratio) canvas.style.aspectRatio = ratio;
-      const scale = width / layout.width;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const pixelWidth = Math.round(width * dpr);
-      const pixelHeight = Math.round(layout.height * scale * dpr);
-      if (canvas.width !== pixelWidth || canvas.height !== pixelHeight) {
-        canvas.width = pixelWidth;
-        canvas.height = pixelHeight;
-      }
-      ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0);
-      drawLayout(ctx, current, layout, motion.matches ? null : time, font);
-    };
-
-    const tick = (time: number) => {
-      if (time - lastPaint >= 33) {
-        paint(time);
-        lastPaint = time;
-      }
-      frame = requestAnimationFrame(tick);
-    };
-
-    const sync = () => {
-      if (!active) return;
-      cancelAnimationFrame(frame);
-      paint(performance.now());
-      if (visible && !motion.matches) frame = requestAnimationFrame(tick);
-    };
-
-    const resize = new ResizeObserver(sync);
-    resize.observe(canvas);
-    const intersection = new IntersectionObserver(([entry]) => {
-      visible = entry?.isIntersecting ?? false;
-      sync();
-    });
-    intersection.observe(canvas);
-    motion.addEventListener("change", sync);
-    document.fonts.ready.then(sync);
-    sync();
-
-    return () => {
-      active = false;
-      cancelAnimationFrame(frame);
-      resize.disconnect();
-      intersection.disconnect();
-      motion.removeEventListener("change", sync);
-    };
-  }, [locale, kind]);
-
-  return (
-    <figure className="sightline-diagram" data-pagefind-ignore>
-      <canvas
-        ref={canvasRef}
-        role="img"
-        aria-label={diagram.accessible}
-        style={{ aspectRatio: `${diagram.desktop.width} / ${diagram.desktop.height}` }}
-      >
-        {diagram.accessible}
-      </canvas>
-    </figure>
-  );
-}

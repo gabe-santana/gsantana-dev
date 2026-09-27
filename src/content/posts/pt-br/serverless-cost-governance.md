@@ -62,23 +62,7 @@ Nenhum desses é um problema de otimização. São problemas de **controle**, re
 
 Governança de custo em serverless é um loop de feedback, não um relatório mensal. Limites restringem o raio de impacto, a telemetria mostra o que está acontecendo, os budgets pegam o que os limites deixaram passar e os alertas chegam a uma pessoa ou a uma automação que pode agir.
 
-```text
-+---------------------------+      +----------------------------+
-|  1. LIMITS (preventive)   |      |  2. TELEMETRY (detective)  |
-|  concurrency caps         |----->|  invocations, duration     |
-|  max instances            |      |  throttles, errors, DLQ    |
-|  bounded retries + DLQ    |      |  log volume                |
-|  log retention/sampling   |      |  cost per 1,000 requests   |
-+-------------^-------------+      +--------------+-------------+
-              |                                   |
-              |                                   v
-+-------------+-------------+      +----------------------------+
-|  4. OWNERS + AUTOMATION   |      |  3. BUDGETS (backstop)     |
-|  on-call gets paged       |<-----|  forecasted + actual       |
-|  runbook: lower caps,     |      |  alerts per tag / scope    |
-|  disable trigger, fix bug |      |  action groups / SNS       |
-+---------------------------+      +----------------------------+
-```
+<div id="cost-control-loop-slot"></div>
 
 O loop só funciona se cada seta for real. Um alerta de budget enviado para uma caixa de e-mail que ninguém lê é uma seta quebrada.
 

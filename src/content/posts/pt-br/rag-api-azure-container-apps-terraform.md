@@ -41,31 +41,7 @@ Funciona de primeira, e essa é a armadilha. O usuário admin é uma única cred
 
 A arquitetura alvo cabe em uma figura:
 
-```text
-                         Internet (HTTPS)
-                               |
-                               v
-  +---------------------------------------------------------------+
-  | Container Apps environment            ---> Log Analytics      |
-  |                                            (console + system  |
-  |  +---------------------------------------+  logs)             |
-  |  | Container app "rag-api"               |                    |
-  |  |  ingress :8000, probes on /healthz    |                    |
-  |  |  scale: 1..5 replicas, HTTP rule      |                    |
-  |  |  user-assigned managed identity ------+----+               |
-  |  +-------------------+-------------------+    |               |
-  +----------------------|------------------------|---------------+
-                         |                        |
-      pulls image (AcrPull)          reads secret (Key Vault Secrets User)
-                         |                        |
-                         v                        v
-            +----------------------+   +------------------------+
-            | Azure Container      |   | Key Vault (RBAC mode)  |
-            | Registry, admin off  |   | secret: model-api-key  |
-            +----------------------+   +------------------------+
-
-  rag-api --HTTPS--> external model / search endpoint (MODEL_ENDPOINT)
-```
+<div id="container-apps-rag-api-slot"></div>
 
 Cinco decisões sustentam tudo.
 

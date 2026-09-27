@@ -52,24 +52,7 @@ Once you do need several agents, make the control flow **explicit**. Somebody, c
 
 A supervisor receives the request, decides which specialists to call, sends each one a scoped task, collects the results and aggregates them. Specialists never talk to each other; they only answer the supervisor.
 
-```text
-                  request
-                     |
-                     v
-              +-------------+
-              |  supervisor |  owns state, budgets, trace id
-              +-------------+
-               /     |     \
-          task/  task|      \task        (parallel when independent)
-             v       v       v
-         [logs]  [metrics] [deploys]     specialists: no peer calls
-             \       |       /
-        result\ result|     /result
-               v     v     v
-              +-------------+
-              |  aggregate  | --> finalizer --> report
-              +-------------+
-```
+<div id="supervisor-pattern-slot"></div>
 
 Routing, budgets and failure handling live in one place. The routing decision can come from an LLM ("which checks does this incident need?"), but the supervisor validates and executes the plan in code. The trade-off: the supervisor becomes a design bottleneck, and a bad routing decision means the right specialist is never asked.
 
@@ -77,10 +60,7 @@ Routing, budgets and failure handling live in one place. The routing decision ca
 
 Fixed stages, each consuming the previous stage's typed output. No dynamic routing at all.
 
-```text
- request -> [extract] -> [classify] -> [draft reply] -> [policy check] -> output
-             typed        typed          typed             typed
-```
+<div id="agent-pipeline-slot"></div>
 
 The most predictable pattern, and the easiest to test, because every stage has a clear contract. It fits document processing, triage and any known procedure. The trade-off is rigidity: work that doesn't follow the same steps every time leaves stages idle, and total latency is the sum of all stages.
 
@@ -88,11 +68,7 @@ The most predictable pattern, and the easiest to test, because every stage has a
 
 One agent is active at a time and explicitly transfers control, plus a compact summary, to another. Think of a front-desk agent that hands the conversation to a billing agent.
 
-```text
- user <-> [triage agent] --handoff(billing, summary)--> [billing agent] <-> user
-                                                              |
-                                          handoff(triage, summary) or finish
-```
+<div id="agent-handoff-slot"></div>
 
 Handoffs fit conversational products where phases need different tools. They are also the easiest way to build cycles. Keep them explicit (a structured `handoff` action, never "the agent decides to message someone"), count them against a budget, and forbid handing back to an agent that already had control in the same turn.
 

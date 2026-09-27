@@ -68,26 +68,7 @@ A parte do IDF é o motivo de a busca por palavra-chave ser tão boa com identif
 
 A arquitetura são dois retrievers rodando em paralelo sobre os mesmos chunks, uma etapa de fusão, um reranker opcional e, por fim, o LLM:
 
-```text
-                        ┌──────────────────────┐
-                   ┌──▶ │  BM25 / full text    │ ── top 50 ids (ranked) ──┐
-                   │    └──────────────────────┘                          │
- user query ───────┤                                                      ▼
-                   │    ┌──────────────────────┐                  ┌───────────────┐
-                   └──▶ │  Vector (ANN) search │ ── top 50 ids ─▶ │  RRF fusion   │
-                        └──────────────────────┘    (ranked)      └───────┬───────┘
-                                                                          │ top 20-30
-                                                                          ▼
-                                                                ┌───────────────────┐
-                                                                │ Cross-encoder     │
-                                                                │ reranker (opt.)   │
-                                                                └─────────┬─────────┘
-                                                                          │ top 5-8
-                                                                          ▼
-                                                                ┌───────────────────┐
-                                                                │ LLM with context  │
-                                                                └───────────────────┘
-```
+<div id="hybrid-search-slot"></div>
 
 Os dois retrievers são baratos e independentes, então você roda os dois em paralelo. A pergunta interessante é a caixa do meio: como juntar duas listas ranqueadas que foram produzidas por funções de pontuação completamente diferentes?
 

@@ -50,17 +50,7 @@ Com **Streamable HTTP**, o servidor é um serviço de rede e qualquer um que alc
 
 ### Onde ficam as fronteiras
 
-```text title="trust-boundaries.txt"
-                 untrusted text: web pages, tickets,
-                 tool outputs, tool descriptions
-                              |
-                              v
- user --> host (model + MCP client) --HTTP + bearer token--> MCP server --own credential--> downstream API
-                                                                  |
-                                                     enforcement layer: scopes,
-                                                     validation, approvals,
-                                                     rate limits, audit log
-```
+<div id="mcp-trust-boundaries-slot"></div>
 
 Tudo à esquerda do servidor MCP pode ser influenciado por texto, inclusive o modelo. O servidor é o primeiro componente que age só sobre entrada estruturada e autenticada, então é ali que as regras moram. Ele chama APIs downstream com a própria credencial, nunca com o token que recebeu.
 

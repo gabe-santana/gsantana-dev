@@ -283,7 +283,7 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   }
 }
 
-.prose-post .sightline-diagram {
+.prose-post .canvas-diagram {
   margin: 2rem 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
@@ -293,7 +293,7 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
 
 /* Height comes from the aspect ratio the component sets for the layout it
    draws (desktop or phone), so the canvas never stretches its labels. */
-.prose-post .sightline-diagram canvas {
+.prose-post .canvas-diagram canvas {
   display: block;
   width: 100%;
   height: auto;

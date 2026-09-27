@@ -44,28 +44,7 @@ Em software: você constrói o sistema novo pelas bordas do antigo, migra funcio
 
 O padrão tem três peças: uma **facade** que decide para onde vai cada requisição, **serviços novos** que assumem fatias da funcionalidade e uma **estratégia de dados** que permite a cada fatia ser dona dos seus dados sem quebrar o monólito.
 
-```text title="request flow"
-                        clients (web, mobile, partners)
-                                      |
-                                      v
-                   +--------------------------------------+
-                   |  facade: gateway / reverse proxy     |
-                   |  route table, canary %, rollback     |
-                   +--------------------------------------+
-                      |                              |
-         /api/orders/*, everything else        /api/customers/*
-                      |                    (10% modern, 90% legacy)
-                      v                              v
-              +---------------+            +--------------------+
-              |   monolith    |            |  customers service |
-              |               |            |  + anti-corruption |
-              +-------+-------+            |    layer           |
-                      |                    +---------+----------+
-                      v                              ^
-              +---------------+      CDC events      |
-              |  legacy DB    |----------------------+
-              +---------------+
-```
+<div id="strangler-fig-flow-slot"></div>
 
 ### A facade
 

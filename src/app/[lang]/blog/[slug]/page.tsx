@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArticleLayout, type ContentInsert } from "@/components/article-layout";
 import { AgenticMeshDiagram } from "@/components/agentic-mesh-diagram";
-import { SightlineDiagram } from "@/components/sightline-diagram";
+import { CanvasDiagram } from "@/components/canvas-diagram";
 import { TagBadge } from "@/components/tag-badge";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
@@ -11,7 +11,7 @@ import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { getAllPostSummaries, getPostBySlug, getPostSlugs } from "@/lib/posts";
 import { getRelatedItems } from "@/lib/related-items";
-import { SIGHTLINE_DIAGRAMS, sightlineDiagramMarker } from "@/lib/sightline-diagrams";
+import { diagramMarker, diagramMarkerIds, getDiagram } from "@/lib/diagrams";
 import {
   alternatesFor,
   articleSocialMetadata,
@@ -28,18 +28,16 @@ export function generateStaticParams() {
   return locales.flatMap((lang) => getPostSlugs(lang).map((slug) => ({ lang, slug })));
 }
 
-/** Canvas diagrams that replace `<div id="...-slot"></div>` markers in a post's markdown. */
-function diagramInserts(lang: Locale, slug: string): ContentInsert[] {
-  if (slug === "agentic-mesh-architecture-rag-agents") {
-    return [{ marker: '<div id="agentic-mesh-canvas-slot"></div>', content: <AgenticMeshDiagram locale={lang} /> }];
-  }
-  if (slug === "sightline-video-compliance-intelligence") {
-    return SIGHTLINE_DIAGRAMS.map((kind) => ({
-      marker: sightlineDiagramMarker(kind),
-      content: <SightlineDiagram locale={lang} kind={kind} />,
-    }));
-  }
-  return [];
+/** Swaps every `<div id="<id>-slot"></div>` marker in the post for its canvas diagram. */
+function diagramInserts(lang: Locale, slug: string, html: string): ContentInsert[] {
+  return diagramMarkerIds(html).map((id) => {
+    if (id === "agentic-mesh-canvas") {
+      return { marker: diagramMarker(id), content: <AgenticMeshDiagram locale={lang} /> };
+    }
+    const diagram = getDiagram(id, lang);
+    if (!diagram) throw new Error(`Unknown diagram "${id}" in the ${lang} ${slug} article`);
+    return { marker: diagramMarker(id), content: <CanvasDiagram diagram={diagram} /> };
+  });
 }
 
 function isPublished(lang: Locale, slug: string): boolean {
@@ -84,12 +82,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const dict = getDictionary(lang);
   const post = await getPostBySlug(lang, slug);
   const cover = post.cover ?? `/posts/${slug}/cover.webp`;
-  const inserts = diagramInserts(lang, slug);
-  for (const { marker } of inserts) {
-    if (!post.contentHtml.includes(marker)) {
-      throw new Error(`Diagram marker ${marker} missing from the rendered ${slug} article`);
-    }
-  }
+  const inserts = diagramInserts(lang, slug, post.contentHtml);
 
   return (
     <ArticleLayout

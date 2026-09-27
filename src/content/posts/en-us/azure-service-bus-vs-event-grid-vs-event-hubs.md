@@ -51,41 +51,7 @@ So the mapping for Azure is:
 
 Here is the purchase flow with each service doing what it is good at:
 
-```text
-                    +------------------+
-  Customer  ----->  |  Orders API      |  (writes order + outbox row in one DB tx)
-                    +--------+---------+
-                             | outbox relay
-                             v
-              +------------------------------+
-              |  Service Bus                 |
-              |  queue: payments   (command) |
-              |  topic: orders     (pub/sub) |
-              +------+----------------+------+
-                     |                |
-          PeekLock   v                v  subscription "high-value" (SQL filter)
-          +----------------+   +----------------+
-          | Payments svc   |   | Fraud review   |
-          +-------+--------+   +----------------+
-                  | PaymentCaptured
-                  v
-          +----------------+     +-------------------------------+
-          | Inventory svc  | --> | Event Grid topic              |
-          +----------------+     | "inventory.stock.low"         |
-                                 +-------+---------------+-------+
-                                         | push          | push
-                                         v               v
-                                 +--------------+  +--------------+
-                                 | Purchasing   |  | Notification |
-                                 | (webhook)    |  | Function     |
-                                 +--------------+  +--------------+
-
-  Web/mobile clicks  ---->  Event Hubs "clickstream" (8 partitions, key = sessionId)
-                                 |                 |
-                   consumer group "analytics"   consumer group "recommendations"
-                                 v                 v
-                          Stream Analytics     ML feature pipeline
-```
+<div id="messaging-services-slot"></div>
 
 **Payment is a command.** It goes to a Service Bus queue. Several instances of the Payments service compete for messages (the *competing consumers* pattern), each message is locked while processed (PeekLock), and a failure makes it visible again. After too many attempts it lands in the **dead-letter queue** instead of looping forever.
 

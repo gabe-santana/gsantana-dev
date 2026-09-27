@@ -44,28 +44,7 @@ In software: you build the new system around the edges of the old one, move func
 
 The pattern has three moving parts: a **facade** that decides where each request goes, **new services** that take over slices of functionality, and a **data strategy** that lets each slice own its data without breaking the monolith.
 
-```text title="request flow"
-                        clients (web, mobile, partners)
-                                      |
-                                      v
-                   +--------------------------------------+
-                   |  facade: gateway / reverse proxy     |
-                   |  route table, canary %, rollback     |
-                   +--------------------------------------+
-                      |                              |
-         /api/orders/*, everything else        /api/customers/*
-                      |                    (10% modern, 90% legacy)
-                      v                              v
-              +---------------+            +--------------------+
-              |   monolith    |            |  customers service |
-              |               |            |  + anti-corruption |
-              +-------+-------+            |    layer           |
-                      |                    +---------+----------+
-                      v                              ^
-              +---------------+      CDC events      |
-              |  legacy DB    |----------------------+
-              +---------------+
-```
+<div id="strangler-fig-flow-slot"></div>
 
 ### The facade
 

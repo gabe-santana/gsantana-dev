@@ -41,32 +41,7 @@ Menos peças móveis e zero segurança. No modo ReceiveAndDelete, o broker apaga
 
 O sistema inteiro cabe em uma figura:
 
-```text
-  Checkout / Payments / Warehouse / Carrier
-                  |
-                  |  OrderStatusPublisher
-                  |  SessionId = orderId, MessageId = orderId:sequence
-                  v
-   +-------------------------------------------+
-   | Service Bus queue "order-status"          |
-   | sessions on, max delivery 5, lock 1 min,  |
-   | duplicate detection 10 min                |
-   |                                           |
-   |  scheduled: PaymentTimeoutCheck (+30 min) |
-   +-------------------+-----------------------+
-                       |  ServiceBusSessionProcessor (PeekLock)
-                       v
-   +-------------------------------------------+       +-------------------+
-   | OrderStatusWorker (BackgroundService)     | ----> | Order status store|
-   |  Complete / Abandon / DeadLetter          |       | (LastSequence per |
-   +-------------------+-----------------------+       |  order)           |
-                       | dead-lettered                 +-------------------+
-                       v
-   +-------------------------------------------+
-   | order-status/$DeadLetterQueue             |
-   |   <- DeadLetterReprocessor (manual run)   |
-   +-------------------------------------------+
-```
+<div id="service-bus-order-status-slot"></div>
 
 Quatro decisões de design sustentam tudo.
 

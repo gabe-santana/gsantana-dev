@@ -41,16 +41,7 @@ A maioria dos bancos vetoriais hoje usa HNSW (Hierarchical Navigable Small World
 
 O HNSW monta um grafo em que cada vetor é um nó ligado a alguns dos seus vizinhos próximos. Em cima dessa camada base ele adiciona camadas mais esparsas, cada uma com um subconjunto aleatório dos nós, como faixas expressas numa rodovia.
 
-```text
- Layer 2   A ─────────────────────────── F            few nodes, long jumps
-           │                              │
- Layer 1   A ────── C ──────── E ──────── F ─── H     more nodes, medium jumps
-           │        │          │          │     │
- Layer 0   A ─ B ─ C ─ D ─ E ─ F ─ G ─ H ─ I ─ J      every node, short links
-
- Search: enter at the top, hop greedily toward the query,
-         drop a layer, repeat, then explore a candidate list on layer 0.
-```
+<div id="hnsw-layers-slot"></div>
 
 A busca entra pela camada do topo e caminha de forma gulosa em direção à consulta até nenhum vizinho estar mais perto, depois desce uma camada e repete com saltos menores. Na camada de baixo ela mantém uma lista dos melhores candidatos encontrados até ali e continua expandindo essa lista. O tamanho dela é o coração do trade-off.
 

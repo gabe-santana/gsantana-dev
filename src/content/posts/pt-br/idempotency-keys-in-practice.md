@@ -62,22 +62,7 @@ APIs de pagamento como a da Stripe popularizaram esse padrão, e o grupo de trab
 
 Para toda requisição a um endpoint que exige chave, o servidor faz o seguinte:
 
-```text title="idempotency flow"
-request (scope, key, body)
-   |
-   v
-fingerprint = SHA-256(method, path, query, body)
-   |
-   v
-try to INSERT (scope, key, fingerprint, state = in_progress)   <- atomic, unique (scope, key)
-   |
-   +-- inserted --------> run handler --> 2xx/4xx: store response, state = completed
-   |                                  --> 5xx/exception: delete the row (key can be retried)
-   |
-   +-- row exists, other fingerprint --> 422 Unprocessable Content
-   +-- row exists, in_progress ---------> 409 Conflict + Retry-After
-   +-- row exists, completed -----------> replay stored status, headers and body
-```
+<div id="idempotency-flow-slot"></div>
 
 Quatro detalhes decidem se isso funciona ou não.
 

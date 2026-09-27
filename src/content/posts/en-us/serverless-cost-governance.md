@@ -62,23 +62,7 @@ None of these is an optimization problem. They are **control** problems, fixed w
 
 Cost governance for serverless is a feedback loop, not a monthly report. Limits bound the blast radius, telemetry shows what is happening, budgets catch what the limits did not, and alerts reach a person or an automation that can act.
 
-```text
-+---------------------------+      +----------------------------+
-|  1. LIMITS (preventive)   |      |  2. TELEMETRY (detective)  |
-|  concurrency caps         |----->|  invocations, duration     |
-|  max instances            |      |  throttles, errors, DLQ    |
-|  bounded retries + DLQ    |      |  log volume                |
-|  log retention/sampling   |      |  cost per 1,000 requests   |
-+-------------^-------------+      +--------------+-------------+
-              |                                   |
-              |                                   v
-+-------------+-------------+      +----------------------------+
-|  4. OWNERS + AUTOMATION   |      |  3. BUDGETS (backstop)     |
-|  on-call gets paged       |<-----|  forecasted + actual       |
-|  runbook: lower caps,     |      |  alerts per tag / scope    |
-|  disable trigger, fix bug |      |  action groups / SNS       |
-+---------------------------+      +----------------------------+
-```
+<div id="cost-control-loop-slot"></div>
 
 The loop only works if every arrow is real. A budget alert sent to a mailbox nobody reads is a broken arrow.
 
