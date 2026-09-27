@@ -7,7 +7,7 @@ import { getAllCertificationSummaries } from "@/lib/certifications";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
 import { isLocale, localePath } from "@/lib/i18n";
-import { alternatesFor } from "@/lib/seo";
+import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -20,6 +20,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: dict.certifications.title,
     description: dict.certifications.metaDescription,
+    ...pageSocialMetadata(
+      lang,
+      "/certifications",
+      dict.certifications.title,
+      dict.certifications.metaDescription,
+      localeSocialAlt(lang)
+    ),
     alternates: alternatesFor(lang, "/certifications"),
   };
 }

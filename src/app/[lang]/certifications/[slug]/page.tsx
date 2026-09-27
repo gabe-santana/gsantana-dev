@@ -7,7 +7,12 @@ import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
 import { isLocale, localePath, locales } from "@/lib/i18n";
 import { getRelatedItems } from "@/lib/related-items";
-import { alternatesFor } from "@/lib/seo";
+import {
+  alternatesFor,
+  articleSocialMetadata,
+  defaultOgImage,
+  localeSocialAlt,
+} from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -23,11 +28,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang, slug } = await params;
   if (!isLocale(lang) || !getAllCertificationSummaries(lang).some((article) => article.slug === slug)) return {};
   const article = await getCertificationBySlug(lang, slug);
+  const social = articleSocialMetadata(
+    lang,
+    `/certifications/${slug}`,
+    article.title,
+    article.description,
+    defaultOgImage(lang),
+    article.title,
+    localeSocialAlt(lang)
+  );
+
   return {
     title: article.title,
     description: article.description,
     alternates: alternatesFor(lang, `/certifications/${slug}`),
-    openGraph: { type: "article", publishedTime: article.date },
+    openGraph: { ...social.openGraph, publishedTime: article.date, authors: ["Gabriel Santana"] },
+    twitter: social.twitter,
   };
 }
 

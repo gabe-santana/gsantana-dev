@@ -10,7 +10,7 @@ import { formatDate } from "@/lib/format-date";
 import { isLocale, localeConfig, localePath, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { newsStories, type NewsStory } from "@/lib/news";
-import { alternatesFor } from "@/lib/seo";
+import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -23,6 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: dict.news.title,
     description: dict.news.metaDescription,
+    ...pageSocialMetadata(lang, "/news", dict.news.title, dict.news.metaDescription, localeSocialAlt(lang)),
     alternates: alternatesFor(lang, "/news"),
   };
 }

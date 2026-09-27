@@ -5,7 +5,7 @@ import { PrincipleCard } from "@/components/principle-card";
 import { format, getDictionary } from "@/lib/dictionaries";
 import { isLocale } from "@/lib/i18n";
 import { getAllPrinciples, PRINCIPLE_CATEGORIES } from "@/lib/principles";
-import { alternatesFor } from "@/lib/seo";
+import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -15,9 +15,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const dict = getDictionary(lang);
-  return {
+    return {
     title: dict.principles.eyebrow,
     description: dict.principles.metaDescription,
+    ...pageSocialMetadata(
+      lang,
+      "/principles",
+      dict.principles.eyebrow,
+      dict.principles.metaDescription,
+      localeSocialAlt(lang)
+    ),
     alternates: alternatesFor(lang, "/principles"),
   };
 }

@@ -10,7 +10,11 @@ import { renderMarkdown } from "@/lib/markdown";
 import { mediaUrl } from "@/lib/media";
 import { getNewsStory, newsStories } from "@/lib/news";
 import { getRelatedItems } from "@/lib/related-items";
-import { alternatesFor } from "@/lib/seo";
+import {
+  alternatesFor,
+  articleSocialMetadata,
+  localeSocialAlt,
+} from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -27,11 +31,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!isLocale(lang)) return {};
   const story = getNewsStory(slug);
   if (!story) return {};
+  const title = story.copy[lang].title;
+  const description = story.copy[lang].summary;
+  const social = articleSocialMetadata(
+    lang,
+    `/news/${slug}`,
+    title,
+    description,
+    mediaUrl(story.image),
+    title,
+    localeSocialAlt(lang)
+  );
+
   return {
-    title: story.copy[lang].title,
-    description: story.copy[lang].summary,
+    title,
+    description,
     alternates: alternatesFor(lang, `/news/${slug}`),
-    openGraph: { type: "article", publishedTime: story.date, images: [mediaUrl(story.image)] },
+    openGraph: { ...social.openGraph, publishedTime: story.date, authors: ["Gabriel Santana"] },
+    twitter: social.twitter,
   };
 }
 

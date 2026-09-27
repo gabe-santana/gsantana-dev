@@ -8,7 +8,11 @@ import { isLocale, localePath, locales } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { findPrinciple, getAllPrinciples, getPrinciple } from "@/lib/principles";
 import { getRelatedItems } from "@/lib/related-items";
-import { alternatesFor } from "@/lib/seo";
+import {
+  alternatesFor,
+  articleSocialMetadata,
+  localeSocialAlt,
+} from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string; category: string; slug: string }>;
@@ -30,11 +34,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const dict = getDictionary(lang);
   const cover = `/principles/${category}/${slug}/cover.webp`;
 
+  const title = `${summary.title} · ${dict.principles.eyebrow}`;
+  const social = articleSocialMetadata(
+    lang,
+    summary.path,
+    title,
+    summary.short,
+    mediaUrl(cover),
+    summary.title,
+    localeSocialAlt(lang)
+  );
+
   return {
-    title: `${summary.title} · ${dict.principles.eyebrow}`,
+    title,
     description: summary.short,
     alternates: alternatesFor(lang, summary.path),
-    openGraph: { title: summary.title, description: summary.short, type: "article", images: [mediaUrl(cover)] },
+    openGraph: { ...social.openGraph, authors: ["Gabriel Santana"] },
+    twitter: social.twitter,
   };
 }
 

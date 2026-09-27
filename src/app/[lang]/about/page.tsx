@@ -15,7 +15,7 @@ import { author, certifications } from "@/lib/author";
 import { getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
-import { alternatesFor } from "@/lib/seo";
+import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -27,9 +27,16 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const dict = getDictionary(lang);
-  return {
+    return {
     title: dict.about.eyebrow,
     description: dict.about.metaDescription,
+    ...pageSocialMetadata(
+      lang,
+      "/about",
+      dict.about.eyebrow,
+      dict.about.metaDescription,
+      localeSocialAlt(lang)
+    ),
     alternates: alternatesFor(lang, "/about"),
   };
 }

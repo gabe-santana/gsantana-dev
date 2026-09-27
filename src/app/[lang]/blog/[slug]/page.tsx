@@ -10,7 +10,11 @@ import { isLocale, locales, type Locale } from "@/lib/i18n";
 import { mediaUrl } from "@/lib/media";
 import { getAllPostSummaries, getPostBySlug, getPostSlugs } from "@/lib/posts";
 import { getRelatedItems } from "@/lib/related-items";
-import { alternatesFor } from "@/lib/seo";
+import {
+  alternatesFor,
+  articleSocialMetadata,
+  localeSocialAlt,
+} from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -33,17 +37,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const post = await getPostBySlug(lang, slug);
   const cover = post.cover ?? `/posts/${slug}/cover.webp`;
 
+  const social = articleSocialMetadata(
+    lang,
+    `/blog/${slug}`,
+    post.title,
+    post.description,
+    mediaUrl(cover),
+    post.title,
+    localeSocialAlt(lang)
+  );
+
   return {
     title: post.title,
     description: post.description,
     alternates: alternatesFor(lang, `/blog/${slug}`),
     openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
+      ...social.openGraph,
       publishedTime: post.date,
-      images: [mediaUrl(cover)],
+      authors: ["Gabriel Santana"],
+      tags: post.tags,
     },
+    twitter: social.twitter,
   };
 }
 

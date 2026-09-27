@@ -9,7 +9,12 @@ import { SessionInsights } from "@/components/session-insights";
 import { ParallaxProvider } from "@/components/parallax/parallax-provider";
 import { getDictionary } from "@/lib/dictionaries";
 import { isLocale, localeConfig, localePath, locales } from "@/lib/i18n";
-import { alternatesFor, siteUrl } from "@/lib/seo";
+import {
+  alternatesFor,
+  localeSocialAlt,
+  pageSocialMetadata,
+  siteUrl,
+} from "@/lib/seo";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -43,13 +48,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
     metadataBase: new URL(siteUrl),
     title: { default: dict.site.title, template: "%s | gsantana.dev" },
     description: dict.site.description,
-    openGraph: {
-      type: "website",
-      siteName: "gsantana.dev",
-      locale: localeConfig[lang].tag.replace("-", "_"),
-      url: localePath(lang),
-    },
-    twitter: { card: "summary_large_image" },
+    ...pageSocialMetadata(lang, "/", dict.site.title, dict.site.description, localeSocialAlt(lang)),
     alternates: {
       ...alternatesFor(lang, "/"),
       types: { "application/rss+xml": localePath(lang, "/feed.xml") },

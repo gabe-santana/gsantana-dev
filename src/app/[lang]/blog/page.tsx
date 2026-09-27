@@ -8,7 +8,7 @@ import { format, getDictionary } from "@/lib/dictionaries";
 import { formatDate } from "@/lib/format-date";
 import { isLocale, localePath } from "@/lib/i18n";
 import { getAllPostSummaries } from "@/lib/posts";
-import { alternatesFor } from "@/lib/seo";
+import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -18,9 +18,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { lang } = await params;
   if (!isLocale(lang)) return {};
   const dict = getDictionary(lang);
-  return {
+    return {
     title: dict.blog.title,
     description: dict.blog.description,
+    ...pageSocialMetadata(lang, "/blog", dict.blog.title, dict.blog.description, localeSocialAlt(lang)),
     alternates: alternatesFor(lang, "/blog"),
   };
 }
