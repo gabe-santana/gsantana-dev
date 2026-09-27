@@ -3,7 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { Locale } from "@/lib/i18n";
 import { renderMarkdown } from "@/lib/markdown";
-import { minutesToRead, POSTS_ROOT } from "@/lib/posts";
+import { CONTENT_ROOT, minutesToRead } from "@/lib/posts";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 
 export type CertificationKind = "question" | "training" | "guide";
@@ -29,7 +29,7 @@ export interface CertificationArticle extends CertificationSummary {
 }
 
 function directory(locale: Locale): string {
-  return path.join(POSTS_ROOT, locale, "certifications");
+  return path.join(CONTENT_ROOT, "certifications", locale);
 }
 
 export function getCertificationSlugs(locale: Locale): string[] {

@@ -3,11 +3,11 @@ import path from "node:path";
 import matter from "gray-matter";
 import type { Locale } from "@/lib/i18n";
 import { renderMarkdown } from "@/lib/markdown";
-import { minutesToRead, postsDirectory } from "@/lib/posts";
+import { CONTENT_ROOT, minutesToRead } from "@/lib/posts";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 
 export function principlesDirectory(locale: Locale): string {
-  return path.join(postsDirectory(locale), "principles");
+  return path.join(CONTENT_ROOT, "principles", locale);
 }
 
 // The folder a principle lives in is its category; this list sets the order.

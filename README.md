@@ -38,7 +38,8 @@ tests as a sibling folder at the repo root:
 │   ├── lib/              # markdown pipeline, post loading, helpers
 │   ├── functions/        # Cloudflare Pages Function: language redirect on "/"
 │   ├── lib/dictionaries/ # UI translations (en-us, pt-br)
-│   └── posts/            # content, one folder per language (en-us/, pt-br/)
+│   └── content/          # markdown: posts/, principles/, certifications/, news/
+│                         #   each with one folder per language (en-us/, pt-br/)
 ├── tests/                # Vitest test files
 ├── AGENTS.md             # conventions for AI coding agents working here
 ├── LICENSE
@@ -73,8 +74,8 @@ Open http://localhost:3000.
 ## Writing a post
 
 Add the post **in every language**, with the same file name in each
-language folder, e.g. `src/posts/en-us/my-new-post.md` and
-`src/posts/pt-br/my-new-post.md`:
+language folder, e.g. `src/content/posts/en-us/my-new-post.md` and
+`src/content/posts/pt-br/my-new-post.md`:
 
 ```markdown
 ---
@@ -102,7 +103,7 @@ language, because the language switcher keeps the slug and would land on a
 ## Writing a principle
 
 Principles are the site's special, long-lived articles, listed at
-`/principles`. Add one at `src/posts/<lang>/principles/<category>/<slug>.md`
+`/principles`. Add one at `src/content/principles/<lang>/<category>/<slug>.md`
 (in both languages), where the category folder is `cloud`, `enterprise`, or
 `solution`:
 
@@ -160,7 +161,8 @@ production if the function ever errors.
 - **UI text:** `src/lib/dictionaries/en-us.ts` is the source of truth;
   `pt-br.ts` must have exactly the same keys (a type error otherwise).
   Placeholders like `{minutes}` are filled by `format()`.
-- **Content:** `src/posts/<lang>/…`, same file names in each language.
+- **Content:** `src/content/<type>/<lang>/…` (posts, principles, certifications,
+  news), same file names in each language.
 - **Titles are always in English**, identical in every language (only
   descriptions and bodies are translated). A test enforces it.
 - **Adding a language:** add it to `locales` and `localeConfig` in

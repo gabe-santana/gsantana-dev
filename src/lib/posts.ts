@@ -6,13 +6,13 @@ import type { Locale } from "@/lib/i18n";
 import { renderMarkdown } from "@/lib/markdown";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 
-// Content lives in one folder per locale (posts/en-us, posts/pt-br). A post
-// keeps the same file name in every locale, so switching language maps to
-// the same slug.
-export const POSTS_ROOT = path.join(process.cwd(), "posts");
+// All markdown lives under content/<type>/<locale> (posts, principles,
+// certifications, news). An article keeps the same file name in every
+// locale, so switching language maps to the same slug.
+export const CONTENT_ROOT = path.join(process.cwd(), "content");
 
 export function postsDirectory(locale: Locale): string {
-  return path.join(POSTS_ROOT, locale);
+  return path.join(CONTENT_ROOT, "posts", locale);
 }
 
 export interface PostFrontmatter {
@@ -44,7 +44,7 @@ export function minutesToRead(content: string): number {
   return Math.max(1, Math.round(readingTime(content).minutes));
 }
 
-/** Top-level .md files only — subfolders (like principles/) are not posts. */
+/** Top-level .md files only, so a subfolder never turns into a post. */
 export function getPostSlugs(locale: Locale): string[] {
   const dir = postsDirectory(locale);
   if (!fs.existsSync(dir)) return [];

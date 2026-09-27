@@ -23,7 +23,8 @@ is the real `package.json`; there is no root-level one on purpose.
 │   ├── app/        # App Router routes
 │   ├── components/
 │   ├── lib/
-│   └── posts/      # content, one folder per locale: en-us/, pt-br/
+│   └── content/    # markdown: posts/, principles/, certifications/, news/,
+│                     each with one folder per locale (en-us/, pt-br/)
 ├── tests/          # Vitest test files (sibling of src/, not inside it)
 ├── AGENTS.md
 ├── LICENSE
@@ -57,10 +58,13 @@ root, because Vite's dev-server file guard otherwise refuses to serve
 
 ## Content model
 
-Content is split per locale: `src/posts/<locale>/*.md` are blog posts and
-`src/posts/<locale>/principles/…` are principles. **Every article exists in
+All markdown lives in `src/content/<type>/<locale>/`:
+`content/posts/` (blog), `content/principles/<category>/`,
+`content/certifications/` and `content/news/`. **Every article exists in
 every locale under the same file name** (`tests/i18n.test.ts` enforces it),
-because the language switcher keeps the slug. Post frontmatter:
+because the language switcher keeps the slug. The folders only hold the
+source: URLs come from the routes (`/<locale>/blog/<slug>/` for a post), so
+reorganizing `content/` never changes a public URL. Post frontmatter:
 
 ```yaml
 title: string
@@ -71,7 +75,7 @@ cover: string   # optional, root-relative path resolved via mediaUrl()
 draft: boolean  # optional, default false; drafts only render in `next dev`
 ```
 
-The pipeline: `src/lib/posts.ts` reads `src/posts/<locale>/`, `gray-matter` splits
+The pipeline: `src/lib/posts.ts` reads `src/content/posts/<locale>/`, `gray-matter` splits
 frontmatter from content, `src/lib/markdown.ts` renders the markdown body to
 HTML via a `unified`/`remark`/`rehype` pipeline (GFM, heading anchors,
 Shiki-based syntax highlighting through `rehype-pretty-code`) — entirely at
@@ -81,7 +85,7 @@ is no CMS, no database, and no runtime markdown parsing.
 
 ### Principles (second content type)
 
-`src/posts/<locale>/principles/<category>/<slug>.md` are architecture
+`src/content/principles/<locale>/<category>/<slug>.md` are architecture
 principles, shown at `/<locale>/principles/…`, loaded by
 `src/lib/principles.ts`. Frontmatter is `title` and `short` (no date/tags).
 The **folder is the category**; `PRINCIPLE_CATEGORIES` sets the order and
@@ -95,6 +99,19 @@ principles never leak into the blog list. Posts and principles share
 comments). Each article has one locale-independent key (the post slug, or
 `principles/<category>/<slug>`): reading progress and the giscus thread
 use it, so both are shared across languages.
+
+### News (third content type)
+
+`src/content/news/<locale>/<slug>.md`, shown at `/<locale>/news/<slug>/` and
+loaded by `src/lib/news.ts` into `newsStories` (newest first). The
+frontmatter holds `title`, `summary`, `lead` (the opening paragraphs),
+`sources` (`url` + a localized `label`) and the fields every locale shares:
+`date`, `category` (`ai`, `engineering` or `security`), `publisher`,
+`sourceUrl`, `image` and an optional `order` that breaks ties between
+stories on the same date (lower first). The markdown body is the analysis
+and starts with a `##` heading. `tests/news.test.ts` keeps the shared
+fields identical across locales. The news page picks its lead story by slug
+in `app/[lang]/news/page.tsx`.
 
 ### Diagrams in articles
 
@@ -202,7 +219,7 @@ result, so the cost of a search stays roughly flat as the site grows (a
   (`lib/search.ts`).
 - **`next dev` has no exported HTML**, so `npm run dev` first runs
   `scripts/build-dev-search-index.mjs` (`predev`): it indexes the markdown
-  and `lib/news.ts` directly into `public/pagefind/` (gitignored). Content
+  under `content/` directly into `public/pagefind/` (gitignored). Content
   edited during a dev session shows up in search after restarting `dev`.
   The production build deletes that copy and writes the real index, so the
   two never mix. If you add a content type, add it to the dev script too.
