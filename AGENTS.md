@@ -96,6 +96,21 @@ comments). Each article has one locale-independent key (the post slug, or
 `principles/<category>/<slug>`): reading progress and the giscus thread
 use it, so both are shared across languages.
 
+### Diagrams in articles
+
+Never ASCII art. Diagrams are inline SVG inside
+`<figure class="diagram" data-pagefind-ignore><div class="diagram-canvas"><svg ...>`,
+painted only with the `d-*` classes from the "Diagrams" block in
+`app/globals.css` (boxes, lines, fills, text sizes on the site tokens), so
+they need no JS and no hardcoded colors. The SVG keeps a 540px minimum
+width and scrolls sideways on phones. Give it `role="img"` with a `<title>`
+and `<desc>`, and prefix every id (markers, titles) with the article slug so
+two diagrams on a page never collide. **No blank lines inside the figure**:
+markdown ends the HTML block there and wraps the rest in `<p>` (a test in
+`tests/principles.test.ts` catches this). A diagram that needs interaction
+belongs in a client component mounted through `ArticleLayout`'s
+`contentInsert` marker, like `agentic-mesh-diagram.tsx`.
+
 ## Internationalization
 
 - Every page is under `app/[lang]/` (`en-us`, `pt-br`), which is also a

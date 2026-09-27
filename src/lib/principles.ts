@@ -21,6 +21,10 @@ export type PrincipleCategory = (typeof PRINCIPLE_CATEGORIES)[number];
 // pages (so shared links don't 404) but listed as "coming soon", not linked.
 const WIP_MARKERS = ["Em Construção", "Under Construction"];
 
+export function isPlaceholder(content: string): boolean {
+  return WIP_MARKERS.some((marker) => content.includes(marker));
+}
+
 interface PrincipleFrontmatter {
   title: string;
   short: string;
@@ -69,7 +73,7 @@ function toSummary(
     slug,
     category,
     readingMinutes: minutesToRead(content),
-    isWip: WIP_MARKERS.some((marker) => content.includes(marker)),
+    isWip: isPlaceholder(content),
     path: `/principles/${category}/${slug}`,
     key: `principles/${category}/${slug}`,
   };
