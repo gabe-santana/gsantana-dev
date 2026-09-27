@@ -23,8 +23,9 @@ describe("article covers", () => {
 
   it("covers every news story", () => {
     for (const story of newsStories) {
-      expect(story.image).toBe(`/news/${story.slug}/cover.webp`);
-      expect(fs.existsSync(path.join(publicRoot, story.image.slice(1)))).toBe(true);
+      const imagePath = new URL(story.image, "https://gsantana.dev").pathname;
+      expect(imagePath).toBe(`/news/${story.slug}/cover.webp`);
+      expect(fs.existsSync(path.join(publicRoot, imagePath.slice(1)))).toBe(true);
     }
   });
 });

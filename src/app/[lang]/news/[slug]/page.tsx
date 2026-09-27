@@ -89,8 +89,10 @@ export default async function NewsStoryPage({ params }: PageProps) {
           </nav>
           <p data-pagefind-ignore className="flex flex-wrap gap-x-3 text-sm text-muted">
             <time dateTime={story.date}>{formatDate(story.date, lang)}</time>
-            <span aria-hidden="true">&middot;</span>
-            <span>{story.publisher}</span>
+            {story.publisher && <>
+              <span aria-hidden="true">&middot;</span>
+              <span>{story.publisher}</span>
+            </>}
           </p>
           <h1 className="mt-4 break-words text-4xl font-bold leading-tight tracking-tight">{copy.title}</h1>
           <p className="mt-4 text-lg text-muted">{copy.summary}</p>

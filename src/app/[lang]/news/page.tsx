@@ -34,8 +34,10 @@ function StoryMeta({ story, locale }: { story: NewsStory; locale: Locale }) {
     <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] uppercase text-muted">
       <span className="text-accent">{dict.news.categories[story.category]}</span>
       <span aria-hidden="true" className="text-border">/</span>
-      <span>{story.publisher}</span>
-      <span aria-hidden="true" className="text-border">/</span>
+      {story.publisher && <>
+        <span>{story.publisher}</span>
+        <span aria-hidden="true" className="text-border">/</span>
+      </>}
       <time dateTime={story.date}>{formatDate(story.date, locale)}</time>
     </p>
   );
@@ -45,9 +47,9 @@ export default async function NewsPage({ params }: PageProps) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
-  const lead = newsStories.find((story) => story.slug === "gpt-6-sol-luna")!;
-  const side = newsStories.filter((story) =>
-    ["copilot-weekly-releases", "github-ships-more-css", "agentic-autofix-copilot-memory"].includes(story.slug)
+  const lead = newsStories.find((story) => story.slug === "jev-vs-laya-decision-models")!;
+  const side = ["gpt-6-sol-luna", "copilot-weekly-releases", "github-ships-more-css"].map((slug) =>
+    newsStories.find((story) => story.slug === slug)!
   );
   const latest = newsStories.filter((story) => story !== lead && !side.includes(story));
 
@@ -75,7 +77,7 @@ export default async function NewsPage({ params }: PageProps) {
               <div className="relative aspect-[16/9] overflow-hidden border border-border bg-surface">
                 <Image
                   src={mediaUrl(lead.image)}
-                  alt={dict.news.waferAlt}
+                  alt={lead.copy[lang].title}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 620px"
@@ -101,7 +103,7 @@ export default async function NewsPage({ params }: PageProps) {
                     <div className="relative mb-4 aspect-[16/8] overflow-hidden bg-surface">
                       <Image
                         src={mediaUrl(story.image)}
-                        alt={dict.news.codeAlt}
+                        alt={story.copy[lang].title}
                         fill
                         sizes="(max-width: 1024px) 100vw, 350px"
                         className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
