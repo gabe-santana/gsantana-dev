@@ -3,6 +3,8 @@ title: "Sightline: transformando horas de vídeo em respostas auditáveis na AWS
 description: "Como construí um pipeline orientado a eventos na AWS que transcreve, indexa e consulta vídeos longos, e por que o modelo nunca escreve as próprias citações."
 date: "2026-09-27"
 tags: [Software Architecture, AI Agents, RAG, AWS, Terraform]
+# ?v= busts the 404 some CDN edges cached before the image was uploaded.
+cover: "/posts/sightline-video-compliance-intelligence/cover.webp?v=2"
 tldr:
   - "O Sightline responde perguntas de compliance sobre vídeos gravados com JSON validado por schema: cada finding traz o ID do vídeo, o timestamp e um score de confiança."
   - "A ingestão são três etapas no EventBridge, cada uma com política de retry e dead-letter queue própria; a rota de consulta nunca deixa o modelo informar ID de vídeo ou timestamp."
@@ -20,6 +22,11 @@ Este texto segue o código: o que roda, por que tem esse formato e o que eu aind
 <div id="sightline-system-slot"></div>
 
 O desenho original tinha cinco VPCs, uma por responsabilidade: entrada, app, jobs, IA e armazenamento. O [Terraform](https://github.com/gabe-santana/sightline/tree/main/infra) cria **uma VPC com subnets privadas em camadas** no lugar delas. Cinco VPCs exigiriam uma malha de peering ou um Transit Gateway só para o app alcançar o armazenamento e os jobs alcançarem a IA: custo e infraestrutura de verdade para um isolamento que security groups já entregam dentro de um único workload. O isolamento que o diagrama defendia continua lá: os [security groups](https://github.com/gabe-santana/sightline/blob/main/infra/security_groups.tf) só liberam saída para o Postgres na porta 5432, para os VPC endpoints na 443 e para o S3 pela prefix list do gateway. Nada além disso.
+
+<figure style="margin:2rem 0;">
+  <img src="/posts/sightline-video-compliance-intelligence/infra.svg" alt="Infraestrutura do Sightline na AWS: uma VPC em duas zonas de disponibilidade com três subnets privadas. O app-service fica na primeira, o Amazon RDS na segunda e as Lambdas transcriber-job e embedding-job na terceira. Elas acessam o Amazon Bedrock, o Amazon EventBridge, o Amazon Transcribe e o armazenamento no S3, fora das subnets." width="671" height="681" style="display:block;width:100%;max-width:671px;height:auto;margin:0 auto;" />
+  <figcaption style="margin-top:8px;text-align:center;font-size:0.9rem;color:#8b93a7;font-style:italic;">A infraestrutura como foi implantada, no <a href="https://github.com/gabe-santana/sightline/blob/main/docs/res/img/infra.svg" target="_blank" rel="noopener noreferrer">diagrama draw.io</a> do repositório.</figcaption>
+</figure>
 
 Também **não existe NAT gateway**. Todo serviço da AWS de que a camada de computação precisa (Bedrock, Transcribe, EventBridge, Secrets Manager, S3 Vectors) é acessado por um interface endpoint, e o S3 por um gateway endpoint, tudo declarado no [`vpc.tf`](https://github.com/gabe-santana/sightline/blob/main/infra/vpc.tf). Uma Lambda dentro dessa VPC não alcança a internet aberta nem se o código quisesse. Com conteúdo regulado, prefiro essa garantia imposta pela rede a uma promessa feita pelo código.
 

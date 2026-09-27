@@ -3,6 +3,8 @@ title: "Sightline: turning hours of video into auditable answers on AWS"
 description: "How I built an event-driven AWS pipeline that transcribes, indexes, and queries long-form video, and why the model never gets to write its own citations."
 date: "2026-09-27"
 tags: [Software Architecture, AI Agents, RAG, AWS, Terraform]
+# ?v= busts the 404 some CDN edges cached before the image was uploaded.
+cover: "/posts/sightline-video-compliance-intelligence/cover.webp?v=2"
 tldr:
   - "Sightline answers compliance questions about recorded video with schema-validated JSON: every finding carries a video ID, a timestamp, and a confidence score."
   - "Ingestion is three EventBridge hops, each with its own retry policy and dead-letter queue; the query route never lets the model supply a video ID or a timestamp."
@@ -20,6 +22,11 @@ This walkthrough follows the code: what runs, why it is shaped this way, and wha
 <div id="sightline-system-slot"></div>
 
 The original design drew five VPCs, one per responsibility: inbound, app, jobs, AI, and storage. The [Terraform](https://github.com/gabe-santana/sightline/tree/main/infra) builds **one VPC with tiered private subnets** instead. Five VPCs would need a peering mesh or a Transit Gateway just so the app can reach storage and the jobs can reach AI, which is real cost and real infrastructure for isolation that security groups already give you inside a single workload. The isolation the diagram was arguing for survives: the [security groups](https://github.com/gabe-santana/sightline/blob/main/infra/security_groups.tf) only allow egress to Postgres on 5432, to the VPC endpoints on 443, and to S3 through its gateway prefix list. Nothing else.
+
+<figure style="margin:2rem 0;">
+  <img src="/posts/sightline-video-compliance-intelligence/infra.svg" alt="Sightline infrastructure on AWS: one VPC across two availability zones with three private subnets. app-service sits in the first, Amazon RDS in the second, and the transcriber-job and embedding-job Lambdas in the third. They reach Amazon Bedrock, Amazon EventBridge, Amazon Transcribe and S3 storage outside the subnets." width="671" height="681" style="display:block;width:100%;max-width:671px;height:auto;margin:0 auto;" />
+  <figcaption style="margin-top:8px;text-align:center;font-size:0.9rem;color:#8b93a7;font-style:italic;">The infrastructure as deployed, from the repository's <a href="https://github.com/gabe-santana/sightline/blob/main/docs/res/img/infra.svg" target="_blank" rel="noopener noreferrer">draw.io diagram</a>.</figcaption>
+</figure>
 
 There is also **no NAT gateway**. Every AWS service the compute layer needs (Bedrock, Transcribe, EventBridge, Secrets Manager, S3 Vectors) is reached through an interface endpoint, and S3 through a gateway endpoint, all declared in [`vpc.tf`](https://github.com/gabe-santana/sightline/blob/main/infra/vpc.tf). A Lambda inside this VPC cannot reach the open internet even if its code wanted to. For regulated content, that is a property I'd rather have enforced by the network than promised by the code.
 
