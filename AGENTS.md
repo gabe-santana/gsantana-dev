@@ -113,6 +113,19 @@ and starts with a `##` heading. `tests/news.test.ts` keeps the shared
 fields identical across locales. The news page picks its lead story by slug
 in `app/[lang]/news/page.tsx`.
 
+### Code blocks
+
+Every code fence renders as a VS Code style window:
+`lib/rehype-code-window.ts` (after rehype-pretty-code) adds a tab bar with
+the fence's `title` (or the language name), a language icon, a copy button
+and a gutter width for the line count; line numbers are CSS counters in
+`globals.css`. `components/code-blocks.tsx`, mounted by `ArticleLayout`,
+reveals and labels the copy button (it ships `hidden`, so no-JS readers
+never see a dead button) and handles the current line: click highlights a
+line, shift+click a range, arrow keys move it, Escape clears it. New
+languages get their name and icon color in `LANGUAGES`. Write
+`title="terminal"` for shell sessions.
+
 ### Diagrams in articles
 
 Never ASCII art or box-drawing characters in a code block

@@ -34,9 +34,25 @@ describe("renderMarkdown", () => {
     expect(html).toMatch(/<img[^>]*src="\/b\.png"[^>]*loading="eager"/);
   });
 
-  it("renders a file-name tab for titled code fences", async () => {
+  it("renders code fences as editor windows with a file tab and a copy button", async () => {
     const { html } = await renderMarkdown('```python title="app.py"\nprint("hi")\n```');
-    expect(html).toMatch(/<figcaption[^>]*data-rehype-pretty-code-title[^>]*>app\.py<\/figcaption>/);
+    expect(html).toMatch(/<figure[^>]*class="code-window"/);
+    expect(html).toContain('<span class="code-window-name">app.py</span>');
+    expect(html).toContain('<span class="code-window-lang">Python</span>');
+    expect(html).toContain('<button class="code-copy" type="button" hidden>');
+  });
+
+  it("names the tab after the language when a fence has no title, or no language", async () => {
+    const { html } = await renderMarkdown("```csharp\nvar x = 1;\n```\n\n```\nplain\n```");
+    expect(html).toContain('<span class="code-window-name">C#</span>');
+    expect(html).toContain('<span class="code-window-name">Plain Text</span>');
+    expect(html).not.toContain("code-window-lang");
+  });
+
+  it("sizes the line-number gutter to the line count", async () => {
+    const code = Array.from({ length: 120 }, (_, i) => `line ${i}`).join("\n");
+    const { html } = await renderMarkdown("```text\n" + code + "\n```");
+    expect(html).toContain("--code-digits:3");
   });
 
   it("extracts h2/h3 headings with ids matching the rendered anchors", async () => {

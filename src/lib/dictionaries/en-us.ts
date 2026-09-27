@@ -163,6 +163,8 @@ export const enUs = {
     backToTop: "Back to top ↑",
     tldr: "TL;DR",
     relatedItems: "Related Items",
+    copyCode: "Copy code",
+    codeCopied: "Copied",
   },
   principles: {
     eyebrow: "Principles",

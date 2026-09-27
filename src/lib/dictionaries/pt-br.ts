@@ -162,6 +162,8 @@ export const ptBr: Dictionary = {
     backToTop: "Voltar ao topo ↑",
     tldr: "TL;DR",
     relatedItems: "Conteúdos relacionados",
+    copyCode: "Copiar código",
+    codeCopied: "Copiado",
   },
   principles: {
     eyebrow: "Princípios",

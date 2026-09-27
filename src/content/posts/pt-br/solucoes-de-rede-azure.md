@@ -279,7 +279,9 @@ Filtro L4 (e parte de L3). Cada regra tem: prioridade (menor número = avaliada 
 Abrir tudo “temporariamente” vira regra esquecida. Use princípio do menor privilégio desde o início. Para depuração, crie regra específica com tempo de expiração documentado. Automatize limpeza em pipeline.
 
 Exemplo de regra simplificada (conceito):
-<div class="vscode-block"><div class="vscode-title">nsg-http.json</div><pre><code class="language-json">{
+
+```json title="nsg-http.json"
+{
   "name": "Allow-Web-In",
   "priority": 200,
   "direction": "Inbound",
@@ -290,7 +292,7 @@ Exemplo de regra simplificada (conceito):
   "destinationAddressPrefix": "VirtualNetwork",
   "access": "Allow"
 }
-</code></pre></div>
+```
 
 ### Route Table (UDR)
 

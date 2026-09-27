@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { AuthorCard } from "@/components/author-card";
+import { CodeBlocks } from "@/components/code-blocks";
 import { Comments } from "@/components/comments";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
 import { RelatedItems } from "@/components/related-items";
@@ -151,6 +152,13 @@ export function ArticleLayout({
             dangerouslySetInnerHTML={{ __html: contentHtml }}
           />
         )}
+
+        {/* Keyed so the effect re-runs on the new HTML after a language switch. */}
+        <CodeBlocks
+          key={`${locale}:${articleKey}`}
+          copyLabel={dict.article.copyCode}
+          copiedLabel={dict.article.codeCopied}
+        />
 
         <AuthorCard locale={locale} dict={dict} />
 

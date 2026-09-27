@@ -8,6 +8,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import { rehypeCdnImages } from "@/lib/rehype-cdn-images";
+import { rehypeCodeWindow } from "@/lib/rehype-code-window";
 import { rehypeRestoreCodeMeta, rehypeStashCodeMeta } from "@/lib/rehype-code-meta";
 import { rehypeLazyImages } from "@/lib/rehype-lazy-images";
 import {
@@ -53,7 +54,10 @@ export async function renderMarkdown(markdown: string): Promise<RenderedMarkdown
       // highlighter output (and its CSS) simple, with no light/dark token swap.
       theme: "github-dark",
       keepBackground: false,
+      // Untagged fences get the same editor window and line numbers.
+      defaultLang: { block: "plaintext" },
     })
+    .use(rehypeCodeWindow)
     .use(rehypeStringify, { allowDangerousHtml: true })
     .process(markdown);
 

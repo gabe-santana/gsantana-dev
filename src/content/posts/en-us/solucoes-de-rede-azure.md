@@ -279,7 +279,9 @@ An L4 filter (and partly L3). Each rule has: priority (lower number = evaluated 
 Opening everything “temporarily” becomes a forgotten rule. Apply the principle of least privilege from day one. For debugging, create a specific rule with a documented expiration. Automate the cleanup in your pipeline.
 
 Simplified rule example (concept):
-<div class="vscode-block"><div class="vscode-title">nsg-http.json</div><pre><code class="language-json">{
+
+```json title="nsg-http.json"
+{
   "name": "Allow-Web-In",
   "priority": 200,
   "direction": "Inbound",
@@ -290,7 +292,7 @@ Simplified rule example (concept):
   "destinationAddressPrefix": "VirtualNetwork",
   "access": "Allow"
 }
-</code></pre></div>
+```
 
 ### Route Table (UDR)
 

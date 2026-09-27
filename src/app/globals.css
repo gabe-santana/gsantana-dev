@@ -256,6 +256,8 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   border: 1px solid var(--color-border);
   border-radius: 0.375rem;
   padding: 0.15rem 0.4rem;
+  /* Long identifiers would otherwise push the page sideways on phones. */
+  overflow-wrap: anywhere;
 }
 
 .prose-post [data-rehype-pretty-code-fragment] {
@@ -454,34 +456,176 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   margin-bottom: 0;
 }
 
-/* Editor-style code: legacy <div class="vscode-block"> and code fences with
-   a title (```python title="app.py"), which rehype-pretty-code turns into a
-   figcaption. Both get the same file-tab look. */
+/* Editor-style code blocks (lib/rehype-code-window.ts): a VS Code window
+   with a file tab, a line-number gutter that stays put while the code
+   scrolls sideways, and a current line set by components/code-blocks.tsx. */
 
-.prose-post .vscode-block,
-.prose-post figure[data-rehype-pretty-code-figure]:has(> figcaption) {
+.prose-post figure.code-window {
+  --code-bg: #0d1117;
+  --code-gutter: #6e7681;
+  --code-current: rgb(255 255 255 / 0.07);
   margin: 2rem 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: 0.75rem;
-  background-color: var(--color-surface);
+  background-color: var(--code-bg);
+  box-shadow: 0 12px 32px -18px rgb(0 0 0 / 0.8);
 }
 
-.prose-post .vscode-title,
-.prose-post figcaption[data-rehype-pretty-code-title] {
-  padding: 0.5rem 1rem;
+.prose-post .code-window-bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  min-height: 2.375rem;
+  margin: 0;
+  background-color: #010409;
   border-bottom: 1px solid var(--color-border);
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  line-height: 1;
   color: var(--color-muted);
-  background-color: rgb(255 255 255 / 0.02);
 }
 
-.prose-post .vscode-block pre,
-.prose-post figure[data-rehype-pretty-code-figure]:has(> figcaption) pre {
+.prose-post .code-window-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  padding: 0 1rem;
+  margin-bottom: -1px;
+  background-color: var(--code-bg);
+  border-right: 1px solid var(--color-border);
+  box-shadow: inset 0 1px 0 var(--color-accent);
+  color: #e6edf3;
+}
+
+.prose-post .code-window-icon {
+  flex: none;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.prose-post .code-window-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prose-post .code-window-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem 0 1rem;
+}
+
+.prose-post .code-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  justify-content: center;
+  padding: 0 0.4rem;
+  border-radius: 0.375rem;
+  color: var(--color-muted);
+  transition: color 150ms, background-color 150ms;
+}
+
+.prose-post .code-copy[hidden] {
+  display: none;
+}
+
+.prose-post .code-copy:hover,
+.prose-post .code-copy:focus-visible {
+  color: #e6edf3;
+  background-color: rgb(255 255 255 / 0.08);
+}
+
+.prose-post .code-copy:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: -1px;
+}
+
+.prose-post .code-copy[data-copied] {
+  color: var(--color-accent);
+}
+
+.prose-post .code-copy .code-copy-done,
+.prose-post .code-copy[data-copied] .code-copy-idle {
+  display: none;
+}
+
+.prose-post .code-copy[data-copied] .code-copy-done {
+  display: block;
+}
+
+.prose-post .code-copy-label:empty {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .prose-post .code-window-lang {
+    display: none;
+  }
+}
+
+.prose-post .code-window pre {
   margin: 0;
+  padding: 0.75rem 0;
   border: 0;
   border-radius: 0;
+  background-color: transparent !important;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  outline: none;
+  scrollbar-width: thin;
+  scrollbar-color: #30363d transparent;
+}
+
+.prose-post .code-window pre code {
+  counter-reset: line;
+  min-width: 100%;
+  width: max-content;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 1em;
+}
+
+.prose-post .code-window [data-line] {
+  counter-increment: line;
+  padding-right: 1.5rem;
+  cursor: text;
+}
+
+/* The gutter needs its own opaque background to cover code scrolled under it. */
+.prose-post .code-window [data-line]::before {
+  content: counter(line);
+  position: sticky;
+  left: 0;
+  display: inline-block;
+  box-sizing: content-box;
+  width: calc(var(--code-digits, 2) * 1ch);
+  padding: 0 1.25rem 0 1rem;
+  margin-right: 0.25rem;
+  text-align: right;
+  color: var(--code-gutter);
+  background-color: var(--code-bg);
+  user-select: none;
+  cursor: pointer;
+}
+
+.prose-post .code-window [data-line].is-active,
+.prose-post .code-window [data-line][data-highlighted-line] {
+  background-color: var(--code-current);
+}
+
+.prose-post .code-window [data-line].is-active::before,
+.prose-post .code-window [data-line][data-highlighted-line]::before {
+  color: #e6edf3;
+  background-image: linear-gradient(var(--code-current), var(--code-current));
 }
 
 /* "Júnior Inocente": a recurring character who interrupts the post with
