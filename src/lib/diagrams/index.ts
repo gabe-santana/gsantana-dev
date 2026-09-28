@@ -3,6 +3,7 @@ import { agentHandoff, agentPipeline, mcpIntegrations, mcpTrustBoundaries, super
 import { costControlLoop, idempotencyFlow, multiCloudReference, pollyPipeline, stranglerFigFlow } from "@/lib/diagrams/architecture";
 import { messagingServices, serviceBusOrderStatus } from "@/lib/diagrams/messaging";
 import { chunkingPipeline, containerAppsRagApi, hnswLayers, hybridSearch, ragEvaluation } from "@/lib/diagrams/rag";
+import { layaDiagrams } from "@/lib/diagrams/laya";
 import { sightlineDiagrams } from "@/lib/diagrams/sightline";
 import type { Diagram } from "@/lib/diagrams/types";
 
@@ -13,6 +14,7 @@ import type { Diagram } from "@/lib/diagrams/types";
  */
 const registry: Record<string, (locale: Locale) => Diagram> = {
   ...sightlineDiagrams,
+  ...layaDiagrams,
   "service-bus-order-status": serviceBusOrderStatus,
   "messaging-services": messagingServices,
   "chunking-pipeline": chunkingPipeline,
