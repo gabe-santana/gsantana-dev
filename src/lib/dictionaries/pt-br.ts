@@ -230,15 +230,16 @@ export const ptBr: Dictionary = {
     connectLinkedIn: "Conectar no LinkedIn",
     certificationsTitle: "CertLabs",
     certificationsSubtitle: "Microsoft Azure, da administração à arquitetura de soluções.",
-    projectsTitle: "Projetos em destaque",
-    projectsSubtitle: "Open source, no GitHub.",
-    projects: {
-      "agentic-mesh":
-        "Plataforma open source distribuída para agentes de IA e RAG corporativo.",
-      sightline: "Plataforma autônoma de inteligência de vídeo e áudio para agentes de IA.",
-      "hybrid-cloud-mcp-agentic-framework":
-        "Arquitetura de referência conectando o Google Cloud Vertex AI e a Oracle Cloud via Model Context Protocol, com workflows multi-cloud orientados a eventos e de alta disponibilidade.",
-      "gabe-language": "Um compilador x86 feito do zero para aprender como compiladores funcionam.",
+    projectsShowcase: {
+      eyebrow: "Projetos",
+      title: "O que eu construí",
+      subtitle:
+        "{count} projetos do meu GitHub, de um mapa indoor para pessoas cegas em 2020 às plataformas de agentes deste ano. Os grandes primeiro, depois o laboratório.",
+      viewCode: "Ver código",
+      readStory: "Ler a história",
+      stars: "{count} estrelas",
+      labTitle: "Do laboratório",
+      labSubtitle: "Projetos menores: compiladores, engines, templates e experimentos, cada um feito para aprender algo.",
     },
   },
   certification: {

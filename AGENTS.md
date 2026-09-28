@@ -459,6 +459,29 @@ for the same `visitor_id`.
 - The owner reads the data in the Cloudflare D1 console; there's no UI and
   no retention job yet (rows are kept until deleted by hand).
 
+## About page projects
+
+The projects section of `/about` shows the repositories the owner created on
+GitHub that have code (forks, the profile README repo and empty repos left
+out). The data is
+`lib/projects.ts`, written in both languages there (`{ en, pt }`, like the
+diagram specs) because it is content, not UI copy: `featuredProjects`
+(alternating rows with layered media) and `labProjects` (the card grid). Media are images under
+`public/projects/<repo>/` (also uploaded to R2, referenced with `?v=` so a new
+version skips the CDN cache), canvas diagrams from `lib/diagrams/projects.ts`
+for repos that ship none, code snippets rendered at build time through the
+markdown pipeline, or generated art. `components/projects/` renders it;
+`tests/projects.test.ts` checks both languages, em dashes and that every
+media file exists.
+
+Motion there is scroll-triggered, not scroll-linked: `components/reveal.tsx`
+animates content into place the first time it enters the viewport (fade plus
+a slide from below, the left, the right, or a small scale; `[data-reveal]` in
+`globals.css`), with `delay` to stagger siblings. It only hides elements that
+start below the fold, and only once JS runs, so the first screen never
+flickers and no-JS readers see everything; `prefers-reduced-motion` turns
+the motion off.
+
 ## The parallax system
 
 `src/components/parallax/parallax-provider.tsx` + `parallax-layer.tsx`.

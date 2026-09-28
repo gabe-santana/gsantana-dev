@@ -5,12 +5,12 @@ import { notFound } from "next/navigation";
 import { CertificationCard } from "@/components/certification-card";
 import { Container } from "@/components/container";
 import {
-  ExternalLinkIcon,
   GitHubIcon,
   LinkedInIcon,
   MailIcon,
 } from "@/components/icons";
 import { GridBackdrop } from "@/components/grid-backdrop";
+import { ProjectShowcase } from "@/components/projects/project-showcase";
 import { author, certifications } from "@/lib/author";
 import { getDictionary } from "@/lib/dictionaries";
 import { isLocale, localePath } from "@/lib/i18n";
@@ -40,14 +40,6 @@ export async function generateMetadata({
     alternates: alternatesFor(lang, "/about"),
   };
 }
-
-// Descriptions live in the dictionaries (about.projects), keyed by repo name.
-const projects = [
-  { name: "agentic-mesh", language: "Python" },
-  { name: "sightline", language: "Terraform" },
-  { name: "hybrid-cloud-mcp-agentic-framework", language: "Terraform" },
-  { name: "gabe-language", language: "C" },
-] as const;
 
 export default async function AboutPage({ params }: PageProps) {
   const { lang } = await params;
@@ -139,7 +131,7 @@ export default async function AboutPage({ params }: PageProps) {
         </Container>
       </div>
 
-      <Container className="pb-24">
+      <Container className="pb-24 lg:max-w-6xl">
         <section aria-labelledby="certifications" className="mt-12">
           <div className="mb-8">
             <h2 id="certifications" className="text-2xl font-semibold">
@@ -161,40 +153,7 @@ export default async function AboutPage({ params }: PageProps) {
           </div>
         </section>
 
-        <section aria-labelledby="projects" className="mt-28">
-          <div className="mb-8">
-            <h2 id="projects" className="text-2xl font-semibold">
-              {dict.about.projectsTitle}
-            </h2>
-            <p className="mt-1 text-sm text-muted">
-              {dict.about.projectsSubtitle}
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {projects.map((project) => (
-              <a
-                key={project.name}
-                href={`${author.github}/${project.name}`}
-                target="_blank"
-                rel="noreferrer"
-                className="group flex flex-col rounded-2xl border border-border/60 bg-surface/50 p-5 transition-colors hover:border-accent/50 hover:bg-surface"
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="truncate font-mono text-sm font-semibold text-foreground transition-colors group-hover:text-accent">
-                    {project.name}
-                  </span>
-                  <span className="text-muted transition-colors group-hover:text-accent">
-                    <ExternalLinkIcon />
-                  </span>
-                </div>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
-                  {dict.about.projects[project.name]}
-                </p>
-                <p className="mt-3 text-xs text-muted/80">{project.language}</p>
-              </a>
-            ))}
-          </div>
-        </section>
+        <ProjectShowcase locale={lang} dict={dict} />
       </Container>
     </>
   );

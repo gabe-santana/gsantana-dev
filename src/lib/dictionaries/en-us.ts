@@ -232,14 +232,16 @@ export const enUs = {
     certificationsTitle: "CertLabs",
     certificationsSubtitle:
       "Microsoft Azure, from administration to solution architecture.",
-    projectsTitle: "Selected projects",
-    projectsSubtitle: "Open source, on GitHub.",
-    projects: {
-      "agentic-mesh": "Open-source distributed platform for AI agents and enterprise RAG.",
-      sightline: "Autonomous video and audio intelligence platform for AI agents.",
-      "hybrid-cloud-mcp-agentic-framework":
-        "Reference architecture connecting Google Cloud Vertex AI and Oracle Cloud through the Model Context Protocol, with event-driven, highly available multi-cloud workflows.",
-      "gabe-language": "An x86 compiler built from scratch to learn how compilers work.",
+    projectsShowcase: {
+      eyebrow: "Projects",
+      title: "Things I've built",
+      subtitle:
+        "{count} projects from my GitHub, from a 2020 indoor map for blind visitors to this year's agent platforms. The big ones first, then the lab.",
+      viewCode: "View code",
+      readStory: "Read the story",
+      stars: "{count} stars",
+      labTitle: "From the lab",
+      labSubtitle: "Smaller projects: compilers, engines, templates and experiments, each one built to learn something.",
     },
   },
   certification: {

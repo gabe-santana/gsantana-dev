@@ -688,3 +688,54 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
     height: 2.5rem;
   }
 }
+
+/* Code windows as project thumbnails (components/projects/project-media.tsx):
+   the article styles, a size smaller, no page margins. */
+.project-code figure.code-window {
+  margin: 0;
+  font-size: 0.72rem;
+}
+.project-code .code-window pre {
+  margin: 0;
+}
+
+/* Scroll reveal (components/reveal.tsx): hidden only once JS has marked an
+   element below the fold, then eased into place when it enters the view. */
+[data-reveal] {
+  transition:
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
+}
+[data-reveal="hidden"] {
+  opacity: 0;
+}
+[data-reveal="hidden"][data-reveal-from="up"] {
+  transform: translate3d(0, 3rem, 0);
+}
+[data-reveal="hidden"][data-reveal-from="left"] {
+  transform: translate3d(-4rem, 0, 0);
+}
+[data-reveal="hidden"][data-reveal-from="right"] {
+  transform: translate3d(4rem, 0, 0);
+}
+[data-reveal="hidden"][data-reveal-from="scale"] {
+  transform: translate3d(0, 1.5rem, 0) scale(0.92);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    transition: none;
+  }
+  [data-reveal="hidden"] {
+    opacity: 1;
+    transform: none;
+  }
+}
+.project-diagram .canvas-diagram {
+  margin: 0;
+}
+/* The file name says what the snippet is; the grammar behind the colors is
+   only the closest one Shiki has (Gabe and Q# have none of their own). */
+.project-code .code-window-icon,
+.project-code .code-window-lang {
+  display: none;
+}
