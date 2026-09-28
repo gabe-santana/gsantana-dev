@@ -13,24 +13,6 @@ import { localePath, type Locale } from "@/lib/i18n";
 // The owner keeps the button in English on both locales.
 const BUY_COFFEE_TEXT = "Buy me a coffee";
 
-// Buy Me a Coffee's own button, as the image its button API renders (the
-// Cookie font is embedded in the SVG). Their embed script writes the button
-// where the tag sits, which React never runs, and it would add a script to
-// every page; the image is one lazy request.
-function buyCoffeeImage(): string {
-  const params = new URLSearchParams({
-    text: BUY_COFFEE_TEXT,
-    emoji: "",
-    slug: author.buyMeACoffee,
-    button_colour: "FFDD00",
-    font_colour: "000000",
-    font_family: "Cookie",
-    outline_colour: "000000",
-    coffee_colour: "ffffff",
-  });
-  return `https://img.buymeacoffee.com/button-api/?${params}`;
-}
-
 // Deliberately faint: it's a release check for the author, not content.
 function BuildVersion() {
   const { version, sha, shortSha, builtAt } = buildInfo;
@@ -88,9 +70,9 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
             rel="noreferrer"
             className="rounded-lg transition-opacity hover:opacity-90"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element -- a remote SVG badge; next/image adds nothing here */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- a remote badge; next/image adds nothing here */}
             <img
-              src={buyCoffeeImage()}
+              src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
               alt={BUY_COFFEE_TEXT}
               width={188}
               height={40}
