@@ -5,6 +5,7 @@ date: "2026-09-27"
 tags: [Software Architecture, AI Agents, RAG, AWS, Terraform]
 # ?v= busts the 404 some CDN edges cached before the image was uploaded.
 cover: "/posts/sightline-video-compliance-intelligence/cover.webp?v=2"
+video: "https://www.youtube-nocookie.com/embed/UgdMSg5sq_4"
 tldr:
   - "O Sightline responde perguntas de compliance sobre vídeos gravados com JSON validado por schema: cada finding traz o ID do vídeo, o timestamp e um score de confiança."
   - "A ingestão são três etapas no EventBridge, cada uma com política de retry e dead-letter queue própria; a rota de consulta nunca deixa o modelo informar ID de vídeo ou timestamp."

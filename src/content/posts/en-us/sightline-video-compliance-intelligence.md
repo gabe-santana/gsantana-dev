@@ -5,6 +5,7 @@ date: "2026-09-27"
 tags: [Software Architecture, AI Agents, RAG, AWS, Terraform]
 # ?v= busts the 404 some CDN edges cached before the image was uploaded.
 cover: "/posts/sightline-video-compliance-intelligence/cover.webp?v=2"
+video: "https://www.youtube-nocookie.com/embed/UgdMSg5sq_4"
 tldr:
   - "Sightline answers compliance questions about recorded video with schema-validated JSON: every finding carries a video ID, a timestamp, and a confidence score."
   - "Ingestion is three EventBridge hops, each with its own retry policy and dead-letter queue; the query route never lets the model supply a video ID or a timestamp."
