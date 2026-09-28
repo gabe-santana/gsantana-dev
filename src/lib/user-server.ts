@@ -146,6 +146,11 @@ async function currentUser(request: Request, deps: UserDeps): Promise<UserRecord
   return userId === null ? null : deps.store.getUser(userId);
 }
 
+/** GitHub login of the signed-in reader, or null (no session, or an invalid one). */
+export async function signedInLogin(request: Request, deps: UserDeps): Promise<string | null> {
+  return (await currentUser(request, deps))?.login ?? null;
+}
+
 // --- helpers ----------------------------------------------------------------
 
 function json(body: unknown, status = 200, setCookies: string[] = []): Response {

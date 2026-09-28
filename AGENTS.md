@@ -406,6 +406,43 @@ pixel, answered with 204). The path is deliberately neutral: "clarity",
 - The disclosure text is `site.recordingNotice` in the dictionaries; the
   owner is still deciding where to show it (currently not rendered).
 
+## Access insights (page views in D1)
+
+`components/access-insights.tsx`, mounted by the `[lang]` layout after
+`SessionInsights`, sends a beacon to `POST /api/insights`
+(`functions/api/insights.ts`, logic in `lib/access-insights-server.ts`) when
+a page view starts and again whenever the page is hidden or left, including
+client-side navigations. Each page view is one row in the D1 table
+`page_views` (`migrations/0003_page_views.sql`), keyed by an id the browser
+makes; later beacons for the same view only grow the metrics (visible time,
+total time, scroll depth) and fill in ids that weren't known yet, and only
+for the same `visitor_id`.
+
+- **Flags (Pages env vars):** `FLAG_TRACK_USER_ACCESS` must be `true`;
+  anything else, or no value, answers 204 without reading the body or
+  touching D1. `TRACK_USER_ACCESS_BLACK_LIST` is a comma-separated list of
+  exact IPs (`CF-Connecting-IP`) whose beacons are dropped. The browser always
+  sends, so both take effect with the next deployment, no code change. In
+  `next dev` the stand-in (`app/api/insights/route.dev.ts`) reads the same
+  names from `src/.env.local`, keeps rows in memory and logs them.
+- **What a row holds:** IP and `request.cf` location/network fields; the
+  user agent parsed into browser (in-app browsers like the LinkedIn app
+  included), OS and device type; path, query, title, locale; referrer,
+  `referrer_source` (`lib/access-insights.ts#classifyReferrer`) and `source`
+  (`utm_source`, else `?ref=`, else the referrer source; the LinkedIn app
+  often sends no referrer, so shared links should carry `utm_source`); UTM
+  tags and ad click ids; screen, viewport, language, timezone, connection;
+  load timing; the signed-in reader's GitHub login.
+- **Ids:** `visitor_id` (`localStorage["gsantana_visitor"]`), `session_id`
+  (`gsantana_visit`, renewed after 30 min idle, `is_landing` marks its first
+  page) and Clarity's user, session and page ids, from Clarity's `metadata`
+  callback or its `_clck`/`_clsk` cookies. The link also goes the other way:
+  `clarity("identify", visitor_id, session_id, view_id)` and the tags
+  `gs_visitor`/`gs_view`, so recordings can be filtered by our ids. Clarity
+  only runs on gsantana.dev without GPC, so its columns can be null.
+- The owner reads the data in the Cloudflare D1 console; there's no UI and
+  no retention job yet (rows are kept until deleted by hand).
+
 ## The parallax system
 
 `src/components/parallax/parallax-provider.tsx` + `parallax-layer.tsx`.
