@@ -21,6 +21,8 @@ export interface PostFrontmatter {
   date: string;
   tags: string[];
   cover?: string;
+  /** Embed URL of a video shown in place of the cover at the top of the post (the cover still feeds cards and OG). */
+  video?: string;
   draft?: boolean;
   /** 2 to 4 short takeaways shown in the TL;DR box. Required (tests enforce it). */
   tldr: string[];

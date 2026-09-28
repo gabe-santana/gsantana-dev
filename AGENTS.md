@@ -72,6 +72,8 @@ description: string
 date: "YYYY-MM-DD"
 tags: string[]
 cover: string   # optional, root-relative path resolved via mediaUrl()
+video: string   # optional embed URL (youtube-nocookie.com/embed/<id>); replaces the
+                # cover at the top of the post, the cover still feeds cards and OG
 draft: boolean  # optional, default false; drafts only render in `next dev`
 ```
 

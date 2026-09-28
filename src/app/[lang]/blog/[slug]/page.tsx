@@ -113,15 +113,26 @@ export default async function BlogPostPage({ params }: PageProps) {
         </>
       }
       lead={
-        <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-border/60">
-          <Image
-            src={mediaUrl(cover)}
-            alt=""
-            fill
-            className="object-cover"
-            sizes="(min-width: 768px) 768px, 100vw"
-            priority
-          />
+        <div className="relative mb-10 aspect-[16/9] overflow-hidden rounded-2xl border border-border/60 bg-black">
+          {post.video ? (
+            <iframe
+              src={post.video}
+              title={post.title}
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+          ) : (
+            <Image
+              src={mediaUrl(cover)}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(min-width: 768px) 768px, 100vw"
+              priority
+            />
+          )}
         </div>
       }
     />
