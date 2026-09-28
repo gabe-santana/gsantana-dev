@@ -85,6 +85,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <ConsoleEasterEgg />
         <ProgressSync />
+        {/* Reveal (components/reveal.tsx) hides content until JS shows it. */}
+        <noscript
+          dangerouslySetInnerHTML={{ __html: "<style>[data-reveal]{opacity:1!important;transform:none!important}</style>" }}
+        />
         <SessionInsights />
         <AccessInsights />
         <ParallaxProvider>

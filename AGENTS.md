@@ -474,13 +474,15 @@ markdown pipeline, or generated art. `components/projects/` renders it;
 `tests/projects.test.ts` checks both languages, em dashes and that every
 media file exists.
 
-Motion there is scroll-triggered, not scroll-linked: `components/reveal.tsx`
-animates content into place the first time it enters the viewport (fade plus
-a slide from below, the left, the right, or a small scale; `[data-reveal]` in
-`globals.css`), with `delay` to stagger siblings. It only hides elements that
-start below the fold, and only once JS runs, so the first screen never
-flickers and no-JS readers see everything; `prefers-reduced-motion` turns
-the motion off.
+Motion on the About page is scroll-triggered, not scroll-linked:
+`components/reveal.tsx` animates content into place the first time it enters
+the viewport (fade plus a slide from below, the left, the right, or a small
+scale; `[data-reveal]` in `globals.css`), with `delay` to stagger siblings.
+It starts hidden in the server HTML, so content already on screen at load
+animates in rather than flickering; a `<noscript>` style in the `[lang]`
+layout shows everything when JS never runs. The hero uses `.enter` /
+`.enter-portrait` instead, a CSS-only entrance that plays on first paint
+(`--enter-delay` staggers it). `prefers-reduced-motion` turns both off.
 
 ## The parallax system
 

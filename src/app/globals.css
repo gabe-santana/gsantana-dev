@@ -699,8 +699,8 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   margin: 0;
 }
 
-/* Scroll reveal (components/reveal.tsx): hidden only once JS has marked an
-   element below the fold, then eased into place when it enters the view. */
+/* Scroll reveal (components/reveal.tsx): hidden in the server HTML, eased
+   into place the first time the element enters the view. */
 [data-reveal] {
   transition:
     opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
@@ -721,6 +721,28 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
 [data-reveal="hidden"][data-reveal-from="scale"] {
   transform: translate3d(0, 1.5rem, 0) scale(0.92);
 }
+
+/* Page-load entrance for content on the first screen (the About hero):
+   plain CSS, so it plays on first paint, before any JS. */
+@keyframes enter-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+}
+@keyframes enter-portrait {
+  from {
+    opacity: 0;
+    transform: translate3d(-2.5rem, 0, 0) scale(0.94);
+  }
+}
+.enter {
+  animation: enter-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--enter-delay, 0ms) both;
+}
+.enter-portrait {
+  animation: enter-portrait 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     transition: none;
@@ -729,10 +751,12 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
     opacity: 1;
     transform: none;
   }
+  .enter,
+  .enter-portrait {
+    animation: none;
+  }
 }
-.project-diagram .canvas-diagram {
-  margin: 0;
-}
+
 /* The file name says what the snippet is; the grammar behind the colors is
    only the closest one Shiki has (Gabe and Q# have none of their own). */
 .project-code .code-window-icon,
