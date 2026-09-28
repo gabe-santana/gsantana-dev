@@ -90,6 +90,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={post.slug}
+      share={{ path: `/blog/${post.slug}`, title: post.title }}
       relatedItems={getRelatedItems(lang, post.slug)}
       tldr={post.tldr}
       headings={post.headings}

@@ -4,6 +4,7 @@ import { CodeBlocks } from "@/components/code-blocks";
 import { Comments } from "@/components/comments";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
 import { RelatedItems } from "@/components/related-items";
+import { ShareBar } from "@/components/share-bar";
 import {
   MobileTableOfContents,
   TableOfContents,
@@ -13,6 +14,7 @@ import { isGiscusConfigured } from "@/lib/giscus";
 import { localeConfig, type Locale } from "@/lib/i18n";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 import type { RelatedItem } from "@/lib/related-items";
+import { pageUrl } from "@/lib/seo";
 import { SEARCH_SECTION_FILTER, type SearchResultKind } from "@/lib/search";
 
 export interface ContentInsert {
@@ -58,6 +60,8 @@ interface ArticleLayoutProps {
   /** Key takeaways shown in a TL;DR box right under the header. */
   tldr?: string[];
   relatedItems?: RelatedItem[];
+  /** What the share bar shares: the article's path (without the locale) and title. */
+  share: { path: string; title: string };
 }
 
 export function ArticleLayout({
@@ -72,9 +76,20 @@ export function ArticleLayout({
   section,
   tldr,
   relatedItems = [],
+  share,
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
   const parts = splitContent(contentHtml, contentInserts);
+  const shareLabels = {
+    heading: section === "news" ? dict.article.share.news : dict.article.share.post,
+    shareOn: dict.article.share.shareOn,
+    copyLink: dict.article.share.copyLink,
+    copied: dict.article.share.copied,
+    more: dict.article.share.more,
+  };
+  const shareBar = (placement: "top" | "bottom") => (
+    <ShareBar url={pageUrl(locale, share.path)} title={share.title} labels={shareLabels} placement={placement} />
+  );
   const tocLabels = {
     onThisPage: dict.article.onThisPage,
     backToTop: dict.article.backToTop,
@@ -99,6 +114,10 @@ export function ArticleLayout({
         >
           {header}
         </header>
+
+        {/* Under the title and description: the pitch is fresh, and a reader
+            who likes it can share before scrolling on. */}
+        {shareBar("top")}
 
         {tldr?.length ? (
           <aside
@@ -167,6 +186,10 @@ export function ArticleLayout({
           copyLabel={dict.article.copyCode}
           copiedLabel={dict.article.codeCopied}
         />
+
+        {/* The second share row: right after the last paragraph, the moment
+            a reader has just finished and decides what to do next. */}
+        {shareBar("bottom")}
 
         <AuthorCard locale={locale} dict={dict} />
 

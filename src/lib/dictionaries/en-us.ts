@@ -182,6 +182,14 @@ export const enUs = {
     relatedItems: "Related Items",
     copyCode: "Copy code",
     codeCopied: "Copied",
+    share: {
+      post: "Share this post",
+      news: "Share this news",
+      shareOn: "Share on {network}",
+      copyLink: "Copy link",
+      copied: "Link copied",
+      more: "More",
+    },
   },
   principles: {
     eyebrow: "Principles",

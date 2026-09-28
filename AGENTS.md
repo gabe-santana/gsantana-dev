@@ -128,6 +128,22 @@ line, shift+click a range, arrow keys move it, Escape clears it. New
 languages get their name and icon color in `LANGUAGES`. Write
 `title="terminal"` for shell sessions.
 
+### Share bar
+
+`components/share-bar.tsx`, rendered twice by `ArticleLayout`, so every
+post, news story, CertLabs article and principle gets it (each page passes
+`share={{ path, title }}`): `placement="top"`, a compact icon strip between
+the header and the TL;DR (on phones only LinkedIn, WhatsApp, X, copy and the
+share sheet, to stay one row), and `placement="bottom"`, the full row right
+after the article body, before the author card.
+The heading reads "Share this news" on news and "Share this post" everywhere
+else (`article.share` in the dictionaries). Network links are plain anchors
+built by `lib/share.ts`; copy link and the device share sheet ("More",
+`navigator.share`) appear once JS runs. Every shared URL carries
+`utm_source=<network>&utm_medium=share` (`copied_link` and `share_sheet` for
+the two buttons), which access insights stores in `source`/`utm_medium`, and
+each click sends a Clarity event `share_<network>`.
+
 ### Diagrams in articles
 
 Never ASCII art or box-drawing characters in a code block

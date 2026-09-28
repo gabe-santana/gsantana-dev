@@ -76,6 +76,7 @@ export default async function NewsStoryPage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={`news/${story.slug}`}
+      share={{ path: `/news/${story.slug}`, title: copy.title }}
       relatedItems={getRelatedItems(lang, `news/${story.slug}`)}
       contentHtml={html}
       headings={headings}

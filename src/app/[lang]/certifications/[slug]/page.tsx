@@ -59,6 +59,7 @@ export default async function CertificationArticlePage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={`certifications/${slug}`}
+      share={{ path: `/certifications/${slug}`, title: article.title }}
       relatedItems={getRelatedItems(lang, `certifications/${slug}`)}
       headings={article.headings}
       contentHtml={article.contentHtml}

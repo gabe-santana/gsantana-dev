@@ -181,6 +181,14 @@ export const ptBr: Dictionary = {
     relatedItems: "Conteúdos relacionados",
     copyCode: "Copiar código",
     codeCopied: "Copiado",
+    share: {
+      post: "Compartilhe este post",
+      news: "Compartilhe esta notícia",
+      shareOn: "Compartilhar no {network}",
+      copyLink: "Copiar link",
+      copied: "Link copiado",
+      more: "Mais",
+    },
   },
   principles: {
     eyebrow: "Princípios",

@@ -70,6 +70,7 @@ export default async function PrinciplePage({ params }: PageProps) {
       locale={lang}
       dict={dict}
       articleKey={principle.key}
+      share={{ path: `/${principle.key}`, title: principle.title }}
       relatedItems={getRelatedItems(lang, principle.key)}
       tldr={principle.tldr}
       headings={principle.headings}
