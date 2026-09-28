@@ -10,6 +10,27 @@ import { buildInfo } from "@/lib/build-info";
 import type { Dictionary } from "@/lib/dictionaries";
 import { localePath, type Locale } from "@/lib/i18n";
 
+// The owner keeps the button in English on both locales.
+const BUY_COFFEE_TEXT = "Buy me a coffee";
+
+// Buy Me a Coffee's own button, as the image its button API renders (the
+// Cookie font is embedded in the SVG). Their embed script writes the button
+// where the tag sits, which React never runs, and it would add a script to
+// every page; the image is one lazy request.
+function buyCoffeeImage(): string {
+  const params = new URLSearchParams({
+    text: BUY_COFFEE_TEXT,
+    emoji: "",
+    slug: author.buyMeACoffee,
+    button_colour: "FFDD00",
+    font_colour: "000000",
+    font_family: "Cookie",
+    outline_colour: "000000",
+    coffee_colour: "ffffff",
+  });
+  return `https://img.buymeacoffee.com/button-api/?${params}`;
+}
+
 // Deliberately faint: it's a release check for the author, not content.
 function BuildVersion() {
   const { version, sha, shortSha, builtAt } = buildInfo;
@@ -60,19 +81,38 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           </p>
           <BuildVersion />
         </div>
-        <div className="flex items-center gap-1">
-          {socialLinks.map(({ href, label, Icon, external }) => (
-            <a
-              key={label}
-              href={href}
-              aria-label={label}
-              title={label}
-              {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-              className="rounded-lg p-2 transition-colors hover:bg-surface hover:text-foreground"
-            >
-              <Icon className="h-5 w-5" />
-            </a>
-          ))}
+        <div className="flex flex-col items-center gap-3 sm:flex-row">
+          <a
+            href={`https://www.buymeacoffee.com/${author.buyMeACoffee}`}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg transition-opacity hover:opacity-90"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- a remote SVG badge; next/image adds nothing here */}
+            <img
+              src={buyCoffeeImage()}
+              alt={BUY_COFFEE_TEXT}
+              width={188}
+              height={40}
+              loading="lazy"
+              decoding="async"
+              className="h-10 w-auto"
+            />
+          </a>
+          <div className="flex items-center gap-1">
+            {socialLinks.map(({ href, label, Icon, external }) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                title={label}
+                {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+                className="rounded-lg p-2 transition-colors hover:bg-surface hover:text-foreground"
+              >
+                <Icon className="h-5 w-5" />
+              </a>
+            ))}
+          </div>
         </div>
       </Container>
     </footer>

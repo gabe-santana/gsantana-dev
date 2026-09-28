@@ -82,12 +82,25 @@ export const enUs = {
     resultMany: "{count} results",
     loadMore: "Show more results",
     unavailable: "Search is unavailable right now. Try again in a moment.",
+    sections: {
+      blog: "Search the blog",
+      news: "Search the news",
+      principles: "Search the principles",
+      certifications: "Search CertLabs",
+    },
     types: {
       blog: "Blog",
       news: "News",
       principles: "Principle",
       certifications: "CertLabs",
     },
+  },
+  pagination: {
+    label: "Pagination",
+    previous: "Previous",
+    next: "Next",
+    page: "Page {page}",
+    title: "{title}, page {page}",
   },
   hero: {
     eyebrow: "AI · Software Engineering · Technology",
@@ -125,7 +138,7 @@ export const enUs = {
     description: "The stories moving AI and software engineering forward.",
     metaDescription: "Recent AI, programming, and software engineering news, curated with original summaries and links to primary sources.",
     issue: "The briefing",
-    asOf: "Updated September 26, 2026",
+    asOf: "Updated September 28, 2026",
     lead: "The lead",
     latest: "Latest stories",
     source: "Sources and further reading",
@@ -134,6 +147,10 @@ export const enUs = {
     back: "Back to news",
     waferAlt: "Editorial illustration of a silicon wafer",
     codeAlt: "Editorial illustration of a code review on a laptop",
+    notification: {
+      eyebrow: "Latest news",
+      close: "Dismiss",
+    },
     categories: {
       ai: "Artificial intelligence",
       engineering: "Engineering",

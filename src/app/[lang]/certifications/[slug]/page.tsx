@@ -55,6 +55,7 @@ export default async function CertificationArticlePage({ params }: PageProps) {
 
   return (
     <ArticleLayout
+      section="certifications"
       locale={lang}
       dict={dict}
       articleKey={`certifications/${slug}`}

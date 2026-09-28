@@ -86,6 +86,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <ArticleLayout
+      section="blog"
       locale={lang}
       dict={dict}
       articleKey={post.slug}

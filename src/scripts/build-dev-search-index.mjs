@@ -30,26 +30,29 @@ function markdownFiles(dir) {
   return fs.readdirSync(dir).filter((f) => f.endsWith(".md")).map((f) => path.join(dir, f));
 }
 
-function recordFromMarkdown(file, url, language) {
+// Same filter ArticleLayout sets on real pages (lib/search.ts, SEARCH_SECTION_FILTER).
+const section = (name) => ({ section: [name] });
+
+function recordFromMarkdown(file, url, language, kind) {
   const { data, content } = matter(fs.readFileSync(file, "utf8"));
   const summary = [data.description ?? data.short ?? "", ...(data.tldr ?? [])].join(" ");
-  return { url, language, meta: { title: String(data.title) }, content: `${data.title}. ${summary} ${plainText(content)}` };
+  return { url, language, filters: section(kind), meta: { title: String(data.title) }, content: `${data.title}. ${summary} ${plainText(content)}` };
 }
 
 const records = [];
 for (const locale of locales) {
   const dir = (type) => path.join(contentRoot, type, locale);
   for (const file of markdownFiles(dir("posts"))) {
-    records.push(recordFromMarkdown(file, `/${locale}/blog/${path.basename(file, ".md")}/`, locale));
+    records.push(recordFromMarkdown(file, `/${locale}/blog/${path.basename(file, ".md")}/`, locale, "blog"));
   }
   for (const file of markdownFiles(dir("certifications"))) {
-    records.push(recordFromMarkdown(file, `/${locale}/certifications/${path.basename(file, ".md")}/`, locale));
+    records.push(recordFromMarkdown(file, `/${locale}/certifications/${path.basename(file, ".md")}/`, locale, "certifications"));
   }
   const principlesDir = dir("principles");
   for (const category of fs.existsSync(principlesDir) ? fs.readdirSync(principlesDir) : []) {
     for (const file of markdownFiles(path.join(principlesDir, category))) {
       records.push(
-        recordFromMarkdown(file, `/${locale}/principles/${category}/${path.basename(file, ".md")}/`, locale)
+        recordFromMarkdown(file, `/${locale}/principles/${category}/${path.basename(file, ".md")}/`, locale, "principles")
       );
     }
   }
@@ -58,6 +61,7 @@ for (const locale of locales) {
     records.push({
       url: `/${locale}/news/${path.basename(file, ".md")}/`,
       language: locale,
+      filters: section("news"),
       meta: { title: String(data.title) },
       content: [data.title, data.summary, ...(data.lead ?? []), plainText(content)].join(" "),
     });

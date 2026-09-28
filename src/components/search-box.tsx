@@ -10,8 +10,10 @@ import {
   SEARCH_BUNDLE_URL,
   searchResultKind,
   type PagefindApi,
+  type SearchResultKind,
   type PagefindResult,
   type PagefindResultData,
+  SEARCH_SECTION_FILTER,
 } from "@/lib/search";
 
 const PAGE_SIZE = 8;
@@ -42,7 +44,15 @@ function loadPagefind(locale: Locale): Promise<PagefindApi> {
 
 type Status = "idle" | "loading" | "done" | "error";
 
-export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictionary["search"] }) {
+interface SearchBoxProps {
+  locale: Locale;
+  labels: Dictionary["search"];
+  /** Limits results to one section (its list page); the landing page searches everything. */
+  section?: SearchResultKind;
+  className?: string;
+}
+
+export function SearchBox({ locale, labels, section, className = "mx-auto w-full max-w-3xl" }: SearchBoxProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const searchId = useRef(0);
@@ -83,7 +93,8 @@ export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictiona
     (async () => {
       try {
         const pagefind = await loadPagefind(locale);
-        const search = await pagefind.debouncedSearch(term, {}, 200);
+        const filters = section ? { filters: { [SEARCH_SECTION_FILTER]: section } } : {};
+        const search = await pagefind.debouncedSearch(term, filters, 200);
         // null means a newer keystroke superseded this search.
         if (!search || id !== searchId.current) return;
         const first = await Promise.all(search.results.slice(0, PAGE_SIZE).map((r) => r.data()));
@@ -96,7 +107,7 @@ export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictiona
         if (id === searchId.current) setStatus("error");
       }
     })();
-  }, [query, locale]);
+  }, [query, locale, section]);
 
   async function loadMore() {
     const id = searchId.current;
@@ -140,7 +151,7 @@ export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictiona
   const showList = items.length > 0 && status !== "error" && status !== "idle";
 
   return (
-    <div role="search" className="mx-auto w-full max-w-3xl">
+    <div role="search" className={className}>
       <label
         className="group flex items-center gap-3 rounded-2xl border border-border bg-surface/80 px-5 shadow-[0_0_0_1px_transparent] backdrop-blur transition-colors focus-within:border-accent/60 focus-within:shadow-[0_0_24px_-6px_var(--color-accent)]"
       >
@@ -153,7 +164,7 @@ export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictiona
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={onInputKey}
           onFocus={() => loadPagefind(locale).catch(() => undefined)}
-          placeholder={labels.placeholder}
+          placeholder={section ? labels.sections[section] : labels.placeholder}
           aria-controls={listId}
           aria-activedescendant={active >= 0 && items.length ? `${listId}-${active}` : undefined}
           role="combobox"
@@ -190,7 +201,8 @@ export function SearchBox({ locale, labels }: { locale: Locale; labels: Dictiona
         <>
           <ul ref={listRef} id={listId} role="listbox" className="divide-y divide-border/50">
             {items.map((item, index) => {
-              const kind = searchResultKind(item.url);
+              // A section page's results are all one kind, so the label would only repeat.
+              const kind = section ? null : searchResultKind(item.url);
               return (
                 <li
                   key={item.url}

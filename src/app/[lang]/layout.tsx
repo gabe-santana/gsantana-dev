@@ -3,12 +3,15 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
+import { NewsNotification } from "@/components/news-notification";
 import { ConsoleEasterEgg } from "@/components/console-easter-egg";
 import { ProgressSync } from "@/components/progress-sync";
 import { SessionInsights } from "@/components/session-insights";
 import { ParallaxProvider } from "@/components/parallax/parallax-provider";
 import { getDictionary } from "@/lib/dictionaries";
-import { isLocale, localeConfig, localePath, locales } from "@/lib/i18n";
+import { isLocale, localeConfig, localePath, locales, type Locale } from "@/lib/i18n";
+import { mediaUrl } from "@/lib/media";
+import { newsStories } from "@/lib/news";
 import {
   alternatesFor,
   localeSocialAlt,
@@ -56,10 +59,22 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
   };
 }
 
+function newestStory(lang: Locale) {
+  const story = newsStories[0];
+  if (!story) return null;
+  return {
+    slug: story.slug,
+    href: localePath(lang, `/news/${story.slug}`),
+    title: story.copy[lang].title,
+    image: mediaUrl(story.image),
+  };
+}
+
 export default async function LocaleLayout({ children, params }: LayoutProps) {
   const { lang } = await params;
   if (!isLocale(lang)) notFound();
   const dict = getDictionary(lang);
+  const newest = newestStory(lang);
 
   return (
     <html
@@ -75,6 +90,16 @@ export default async function LocaleLayout({ children, params }: LayoutProps) {
           <main className="flex-1">{children}</main>
           <Footer locale={lang} dict={dict} />
         </ParallaxProvider>
+        {newest ? (
+          <NewsNotification
+            story={newest}
+            labels={{
+              eyebrow: dict.news.notification.eyebrow,
+              read: dict.news.readStory,
+              close: dict.news.notification.close,
+            }}
+          />
+        ) : null}
       </body>
     </html>
   );

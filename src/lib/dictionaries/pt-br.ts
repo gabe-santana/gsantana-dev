@@ -81,12 +81,25 @@ export const ptBr: Dictionary = {
     resultMany: "{count} resultados",
     loadMore: "Mostrar mais resultados",
     unavailable: "A busca está indisponível agora. Tente de novo em instantes.",
+    sections: {
+      blog: "Buscar no blog",
+      news: "Buscar nas notícias",
+      principles: "Buscar nos princípios",
+      certifications: "Buscar no CertLabs",
+    },
     types: {
       blog: "Blog",
       news: "Notícia",
       principles: "Princípio",
       certifications: "CertLabs",
     },
+  },
+  pagination: {
+    label: "Paginação",
+    previous: "Anterior",
+    next: "Próxima",
+    page: "Página {page}",
+    title: "{title}, página {page}",
   },
   hero: {
     eyebrow: "IA · Engenharia de Software · Tecnologia",
@@ -124,7 +137,7 @@ export const ptBr: Dictionary = {
     description: "As histórias que movem a IA e a engenharia de software.",
     metaDescription: "Notícias recentes de IA, programação e engenharia de software, com resumos originais e links para fontes primárias.",
     issue: "O panorama",
-    asOf: "Atualizado em 26 de setembro de 2026",
+    asOf: "Atualizado em 28 de setembro de 2026",
     lead: "Em destaque",
     latest: "Últimas notícias",
     source: "Fontes e leituras complementares",
@@ -133,6 +146,10 @@ export const ptBr: Dictionary = {
     back: "Voltar para notícias",
     waferAlt: "Ilustração editorial de uma pastilha de silício",
     codeAlt: "Ilustração editorial de uma revisão de código em um notebook",
+    notification: {
+      eyebrow: "Última notícia",
+      close: "Dispensar",
+    },
     categories: {
       ai: "Inteligência artificial",
       engineering: "Engenharia",

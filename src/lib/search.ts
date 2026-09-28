@@ -6,6 +6,13 @@ export const SEARCH_BUNDLE_URL = "/pagefind/pagefind.js";
 export const SEARCH_RESULT_KINDS = ["blog", "news", "principles", "certifications"] as const;
 export type SearchResultKind = (typeof SEARCH_RESULT_KINDS)[number];
 
+/**
+ * Articles carry their section as a Pagefind filter under this name
+ * (ArticleLayout in production, build-dev-search-index.mjs in dev), so a
+ * section page can search only its own articles.
+ */
+export const SEARCH_SECTION_FILTER = "section";
+
 /** The section an indexed page belongs to, read from its URL: /en-us/blog/x/ -> "blog". */
 export function searchResultKind(url: string): SearchResultKind | null {
   const [first, second] = url.split(/[?#]/)[0]!.split("/").filter(Boolean);
@@ -33,7 +40,7 @@ export interface PagefindApi {
   preload: (term: string) => Promise<void>;
   debouncedSearch: (
     term: string,
-    options?: object,
+    options?: { filters?: Record<string, string> },
     debounceMs?: number
   ) => Promise<{ results: PagefindResult[] } | null>;
 }

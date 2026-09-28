@@ -66,6 +66,7 @@ export default async function PrinciplePage({ params }: PageProps) {
 
   return (
     <ArticleLayout
+      section="principles"
       locale={lang}
       dict={dict}
       articleKey={principle.key}

@@ -112,8 +112,8 @@ frontmatter holds `title`, `summary`, `lead` (the opening paragraphs),
 `sourceUrl`, `image` and an optional `order` that breaks ties between
 stories on the same date (lower first). The markdown body is the analysis
 and starts with a `##` heading. `tests/news.test.ts` keeps the shared
-fields identical across locales. The news page picks its lead story by slug
-in `app/[lang]/news/page.tsx`.
+fields identical across locales. The news page picks its lead story and the three side stories by slug
+in `app/[lang]/news/news-index.tsx` (`frontPage()`).
 
 ### Code blocks
 
@@ -249,7 +249,12 @@ result, so the cost of a search stays roughly flat as the site grows (a
   keys its Pagefind instance by locale and re-initializes it on switch.
 - **UI:** `components/search-box.tsx`, an inline search field on the
   landing page, right below the hero's grid, with results listed under it
-  (not in the nav, by the owner's choice). `/` or Ctrl/Cmd+K focuses it.
+  (not in the nav, by the owner's choice). The landing page searches
+  everything; the Blog, News, CertLabs and Principles list pages each have
+  the same box with a `section` prop, so it only returns that section.
+- **Sections:** `ArticleLayout` requires a `section` and writes it as the
+  Pagefind filter `section` (`SEARCH_SECTION_FILTER` in `lib/search.ts`) on
+  the header; the dev index script sets the same filter on its records. `/` or Ctrl/Cmd+K focuses it.
   `pagefind.js` is imported lazily (on focus, with `webpackIgnore`), so the
   page pays nothing until someone searches. Result kinds come from the URL
   (`lib/search.ts`).
@@ -261,6 +266,32 @@ result, so the cost of a search stays roughly flat as the site grows (a
   two never mix. If you add a content type, add it to the dev script too.
 - Pagefind is typo tolerant and falls back to partial matches, so a query
   rarely returns nothing. That's expected.
+
+## Pagination (list pages)
+
+The Blog, News, CertLabs and Principles lists paginate with static pages:
+page 1 stays at the list's own URL (`/<locale>/blog/`), later pages live at
+`/<locale>/blog/page/<n>/` (`app/[lang]/<section>/page/[page]/page.tsx`).
+Each section's view lives next to its route (`blog-index.tsx`,
+`news-index.tsx`...) and renders both. Page sizes are `PAGE_SIZE` in
+`lib/pagination.ts`. News keeps its front page (lead and side stories,
+newsletter, ticker) on page 1 and paginates the "Latest" list; Principles
+paginates in category order. A static export refuses a `[page]` route with
+no pages to generate, so CertLabs has no `page/[page]` route until it needs
+a second page (`tests/pagination.test.ts` fails when it does).
+
+## Newest-story notification
+
+`components/news-notification.tsx`, mounted by the `[lang]` layout on every
+page, slides a toast into the bottom-left corner after
+`NEWS_NOTIFICATION_DELAY_MS` announcing `newsStories[0]` (the layout passes
+it in, so a new story reaches readers with the next deploy). Closing it, or
+opening the story, stores that story's slug in
+`localStorage["gsantana_news_seen"]` (`lib/news-notification.ts`); the toast
+shows again only when a different story becomes the newest. Storage is read
+again right before showing and followed through the `storage` event, so a
+dismissal in one tab hides it in the others. It never shows on the story's
+own page.
 
 ## Stock ticker (news page)
 

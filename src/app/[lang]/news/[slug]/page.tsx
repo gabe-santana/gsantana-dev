@@ -72,6 +72,7 @@ export default async function NewsStoryPage({ params }: PageProps) {
 
   return (
     <ArticleLayout
+      section="news"
       locale={lang}
       dict={dict}
       articleKey={`news/${story.slug}`}

@@ -13,6 +13,7 @@ import { isGiscusConfigured } from "@/lib/giscus";
 import { localeConfig, type Locale } from "@/lib/i18n";
 import type { TocHeading } from "@/lib/rehype-extract-headings";
 import type { RelatedItem } from "@/lib/related-items";
+import { SEARCH_SECTION_FILTER, type SearchResultKind } from "@/lib/search";
 
 export interface ContentInsert {
   marker: string;
@@ -52,6 +53,8 @@ interface ArticleLayoutProps {
    * languages.
    */
   articleKey: string;
+  /** The site section this article belongs to; the search index files it under that section. */
+  section: SearchResultKind;
   /** Key takeaways shown in a TL;DR box right under the header. */
   tldr?: string[];
   relatedItems?: RelatedItem[];
@@ -66,6 +69,7 @@ export function ArticleLayout({
   contentInserts = [],
   headings,
   articleKey,
+  section,
   tldr,
   relatedItems = [],
 }: ArticleLayoutProps) {
@@ -88,7 +92,11 @@ export function ArticleLayout({
         {/* data-pagefind-body marks what the search index reads (see
             scripts/build-search-index.mjs); pages without it, and the author
             card, comments and related items, stay out of search results. */}
-        <header className="mb-10" data-pagefind-body>
+        <header
+          className="mb-10"
+          data-pagefind-body
+          data-pagefind-filter={`${SEARCH_SECTION_FILTER}:${section}`}
+        >
           {header}
         </header>
 

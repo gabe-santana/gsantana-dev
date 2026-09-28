@@ -8,6 +8,7 @@ export const author = {
   github: "https://github.com/gabe-santana",
   linkedin: "https://www.linkedin.com/in/gsantana-s/",
   youtube: "https://www.youtube.com/channel/UCfVbIg4I9g0KdCtMP82bj4w",
+  buyMeACoffee: "gsantanaszm",
 };
 
 export interface Certification {
