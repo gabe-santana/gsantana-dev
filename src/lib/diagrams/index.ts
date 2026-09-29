@@ -5,6 +5,16 @@ import { messagingServices, serviceBusOrderStatus } from "@/lib/diagrams/messagi
 import { chunkingPipeline, containerAppsRagApi, hnswLayers, hybridSearch, ragEvaluation } from "@/lib/diagrams/rag";
 import { layaDiagrams } from "@/lib/diagrams/laya";
 import { projectDiagrams } from "@/lib/diagrams/projects";
+import { promptCachingDiagrams } from "@/lib/diagrams/prompt-caching-kv-cache";
+import { structuredOutputsDiagrams } from "@/lib/diagrams/structured-outputs-constrained-decoding";
+import { speculativeDecodingDiagrams } from "@/lib/diagrams/speculative-decoding-explained";
+import { llmJudgeDiagrams } from "@/lib/diagrams/llm-as-judge-calibration";
+import { contextEngineeringDiagrams } from "@/lib/diagrams/context-engineering-long-running-agents";
+import { quantizationDiagrams } from "@/lib/diagrams/quantizing-llms-in-practice";
+import { loraDiagrams } from "@/lib/diagrams/lora-fine-tuning-first-principles";
+import { llmServingDiagrams } from "@/lib/diagrams/llm-serving-continuous-batching";
+import { embeddingTrainingDiagrams } from "@/lib/diagrams/embedding-models-contrastive-training";
+import { llmObservabilityDiagrams } from "@/lib/diagrams/llm-observability-opentelemetry";
 import { sightlineDiagrams } from "@/lib/diagrams/sightline";
 import type { Diagram } from "@/lib/diagrams/types";
 
@@ -17,6 +27,16 @@ const registry: Record<string, (locale: Locale) => Diagram> = {
   ...sightlineDiagrams,
   ...layaDiagrams,
   ...projectDiagrams,
+  ...promptCachingDiagrams,
+  ...structuredOutputsDiagrams,
+  ...speculativeDecodingDiagrams,
+  ...llmJudgeDiagrams,
+  ...contextEngineeringDiagrams,
+  ...quantizationDiagrams,
+  ...loraDiagrams,
+  ...llmServingDiagrams,
+  ...embeddingTrainingDiagrams,
+  ...llmObservabilityDiagrams,
   "service-bus-order-status": serviceBusOrderStatus,
   "messaging-services": messagingServices,
   "chunking-pipeline": chunkingPipeline,
