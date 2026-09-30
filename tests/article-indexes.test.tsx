@@ -41,14 +41,14 @@ async function laterPages(page: LaterPage, params: { lang: string; page: string 
 }
 
 describe("article indexes", () => {
-  it.each(locales)("features the NVIDIA agent safety story, then Sonnet 5.5, in %s news without duplicating stories", async (locale) => {
+  it.each(locales)("features the DevDay story, then the NVIDIA agent safety story, in %s news without duplicating stories", async (locale) => {
     const page = await NewsPage({ params: Promise.resolve({ lang: locale }) });
     const root = document.createElement("div");
     root.innerHTML = renderToStaticMarkup(page);
 
     const first = links(root, "article a");
-    expect(first[0]).toBe(`/${locale}/news/nvidia-open-agent-safety-platform`);
-    expect(first[1]).toBe(`/${locale}/news/anthropic-claude-sonnet-5-5`);
+    expect(first[0]).toBe(`/${locale}/news/openai-devday-dots-gpt-6-1-sol`);
+    expect(first[1]).toBe(`/${locale}/news/nvidia-open-agent-safety-platform`);
 
     const rest = (await laterPages(NewsLaterPage, newsPageParams(), locale)).flatMap((r) => links(r, "article a"));
     const all = [...first, ...rest];
