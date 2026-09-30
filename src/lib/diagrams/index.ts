@@ -17,6 +17,7 @@ import { embeddingTrainingDiagrams } from "@/lib/diagrams/embedding-models-contr
 import { llmObservabilityDiagrams } from "@/lib/diagrams/llm-observability-opentelemetry";
 import { sightlineDiagrams } from "@/lib/diagrams/sightline";
 import { azureNetworkingDiagrams } from "@/lib/diagrams/azure-networking";
+import { pageindexAgentLoop, pageindexBenchmarkHarness, pageindexVsRagPipelines } from "@/lib/diagrams/pageindex-vs-vector-rag";
 import type { Diagram } from "@/lib/diagrams/types";
 
 /**
@@ -26,6 +27,9 @@ import type { Diagram } from "@/lib/diagrams/types";
  */
 const registry: Record<string, (locale: Locale) => Diagram> = {
   ...azureNetworkingDiagrams,
+  "pageindex-vs-rag-pipelines": pageindexVsRagPipelines,
+  "pageindex-agent-loop": pageindexAgentLoop,
+  "pageindex-benchmark-harness": pageindexBenchmarkHarness,
   ...sightlineDiagrams,
   ...layaDiagrams,
   ...projectDiagrams,
