@@ -16,6 +16,7 @@ import { llmServingDiagrams } from "@/lib/diagrams/llm-serving-continuous-batchi
 import { embeddingTrainingDiagrams } from "@/lib/diagrams/embedding-models-contrastive-training";
 import { llmObservabilityDiagrams } from "@/lib/diagrams/llm-observability-opentelemetry";
 import { sightlineDiagrams } from "@/lib/diagrams/sightline";
+import { azureNetworkingDiagrams } from "@/lib/diagrams/azure-networking";
 import type { Diagram } from "@/lib/diagrams/types";
 
 /**
@@ -24,6 +25,7 @@ import type { Diagram } from "@/lib/diagrams/types";
  * marker for the rendered diagram and fails the build on an unknown id.
  */
 const registry: Record<string, (locale: Locale) => Diagram> = {
+  ...azureNetworkingDiagrams,
   ...sightlineDiagrams,
   ...layaDiagrams,
   ...projectDiagrams,

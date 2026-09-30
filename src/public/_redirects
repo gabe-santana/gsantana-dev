@@ -1,0 +1,5 @@
+# Posts renamed after publication: keep shared links working (Cloudflare Pages).
+/en-us/blog/solucoes-de-rede-azure/ /en-us/blog/azure-networking-solutions/ 301
+/pt-br/blog/solucoes-de-rede-azure/ /pt-br/blog/azure-networking-solutions/ 301
+/en-us/blog/solucoes-de-rede-azure /en-us/blog/azure-networking-solutions/ 301
+/pt-br/blog/solucoes-de-rede-azure /pt-br/blog/azure-networking-solutions/ 301
