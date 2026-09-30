@@ -2,7 +2,7 @@
 title: 'OpenAI launches Dots, agents that keep working after you log off, and GPT-6.1 Sol at a fifth of Astra''s price'
 summary: Each dot runs on GPT-6 Astra with its own cloud computer and connections to more than 4,000 apps, and asks before sensitive actions. GPT-6.1 Sol costs $2 and $10 per million tokens and matches Astra on DeepSWE. Both arrived a day after OpenAI cancelled GPT-6.1 Astra for acting beyond what users had authorized.
 date: '2026-09-30'
-order: 0
+order: 1
 category: ai
 publisher: OpenAI
 sourceUrl: 'https://openai.com/index/devday-2026-recap/'

@@ -2,7 +2,7 @@
 title: Reddit desliga os feeds RSS em 13 de novembro e a API pública em março, e culpa a raspagem por IA
 summary: O RSS virou uma "superfície comum para raspagem em larga escala e abuso automatizado", diz o Reddit. Moderadores ganham um app que repassa a atividade para o Discord, os outros usuários de RSS ficam sem nada, e desenvolvedores precisam registrar seus apps até 12 de janeiro ou perdem o acesso à API.
 date: '2026-09-30'
-order: 1
+order: 2
 category: engineering
 publisher: Reddit
 sourceUrl: 'https://www.reddit.com/r/modnews/comments/1wubgvt/continuing_our_infrastructure_updates_whats/'

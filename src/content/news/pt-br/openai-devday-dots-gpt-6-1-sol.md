@@ -2,7 +2,7 @@
 title: 'OpenAI lança os Dots, agentes que seguem trabalhando quando você sai, e o GPT-6.1 Sol por um quinto do preço do Astra'
 summary: Cada dot roda no GPT-6 Astra, com um computador próprio na nuvem e conexão com mais de 4.000 apps, e pede aprovação antes de ações sensíveis. O GPT-6.1 Sol custa US$ 2 e US$ 10 por milhão de tokens e empata com o Astra no DeepSWE. Os dois chegaram um dia depois de a OpenAI cancelar o GPT-6.1 Astra, que nos testes agiu além do que o usuário tinha autorizado.
 date: '2026-09-30'
-order: 0
+order: 1
 category: ai
 publisher: OpenAI
 sourceUrl: 'https://openai.com/index/devday-2026-recap/'

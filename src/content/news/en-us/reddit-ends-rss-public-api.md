@@ -2,7 +2,7 @@
 title: Reddit turns off RSS feeds on November 13 and its public API in March, blaming AI scraping
 summary: RSS has become a "common surface for large-scale scraping and automated abuse," Reddit says. Moderators get a Discord relay app, other RSS users get nothing, and developers must register their apps by January 12 or lose API access.
 date: '2026-09-30'
-order: 1
+order: 2
 category: engineering
 publisher: Reddit
 sourceUrl: 'https://www.reddit.com/r/modnews/comments/1wubgvt/continuing_our_infrastructure_updates_whats/'
