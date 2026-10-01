@@ -246,6 +246,14 @@ html:not([lang^="pt"]) [data-lang="pt-br"] {
   overflow-x: auto;
 }
 
+/* Wide tables would push the whole page sideways on phones; scroll them
+   in place instead, like code blocks. */
+.prose-post table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .prose-post code {
   font-family: var(--font-mono);
   font-size: 0.875em;

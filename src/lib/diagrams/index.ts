@@ -10,6 +10,7 @@ import { structuredOutputsDiagrams } from "@/lib/diagrams/structured-outputs-con
 import { speculativeDecodingDiagrams } from "@/lib/diagrams/speculative-decoding-explained";
 import { llmJudgeDiagrams } from "@/lib/diagrams/llm-as-judge-calibration";
 import { contextEngineeringDiagrams } from "@/lib/diagrams/context-engineering-long-running-agents";
+import { backgroundAgentDiagrams } from "@/lib/diagrams/claude-background-agents";
 import { quantizationDiagrams } from "@/lib/diagrams/quantizing-llms-in-practice";
 import { loraDiagrams } from "@/lib/diagrams/lora-fine-tuning-first-principles";
 import { llmServingDiagrams } from "@/lib/diagrams/llm-serving-continuous-batching";
@@ -38,6 +39,7 @@ const registry: Record<string, (locale: Locale) => Diagram> = {
   ...speculativeDecodingDiagrams,
   ...llmJudgeDiagrams,
   ...contextEngineeringDiagrams,
+  ...backgroundAgentDiagrams,
   ...quantizationDiagrams,
   ...loraDiagrams,
   ...llmServingDiagrams,
