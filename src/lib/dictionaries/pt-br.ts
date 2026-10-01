@@ -5,7 +5,7 @@ export const ptBr: Dictionary = {
     title: "gsantana.dev | IA, programação e tecnologia",
     description:
       "Gabriel Santana escreve sobre IA aplicada, engenharia de software e tecnologia.",
-    feedDescription: "Notas de Gabriel Santana sobre IA, programação e tecnologia.",
+    feedDescription: "Posts, notícias, princípios de arquitetura e CertLabs de Gabriel Santana, sobre IA, programação e tecnologia.",
     rights: "Todos os direitos reservados.",
     recordingNotice: "Este site grava visitas anônimas (cliques e rolagem) com o Microsoft Clarity para descobrir o que melhorar. Campos de formulário são mascarados, e navegadores com Global Privacy Control nunca são gravados.",
   },
@@ -137,7 +137,7 @@ export const ptBr: Dictionary = {
     description: "As histórias que movem a IA e a engenharia de software.",
     metaDescription: "Notícias recentes de IA, programação e engenharia de software, com resumos originais e links para fontes primárias.",
     issue: "O panorama",
-    asOf: "Atualizado em 30 de setembro de 2026",
+    asOf: "Atualizado em 1º de outubro de 2026",
     lead: "Em destaque",
     latest: "Últimas notícias",
     source: "Fontes e leituras complementares",

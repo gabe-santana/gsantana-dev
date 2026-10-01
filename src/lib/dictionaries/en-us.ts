@@ -6,7 +6,7 @@ export const enUs = {
     title: "gsantana.dev | AI, programming & technology",
     description:
       "Gabriel Santana writes about applied AI, software engineering, and technology.",
-    feedDescription: "AI, programming, and technology notes from Gabriel Santana.",
+    feedDescription: "Posts, news, architecture principles and CertLabs from Gabriel Santana, on AI, programming and technology.",
     rights: "All rights reserved.",
     recordingNotice: "This site records anonymous visits (clicks and scrolling) with Microsoft Clarity to find what to improve. Form fields are masked, and browsers sending Global Privacy Control are never recorded.",
   },
@@ -138,7 +138,7 @@ export const enUs = {
     description: "The stories moving AI and software engineering forward.",
     metaDescription: "Recent AI, programming, and software engineering news, curated with original summaries and links to primary sources.",
     issue: "The briefing",
-    asOf: "Updated September 30, 2026",
+    asOf: "Updated October 1, 2026",
     lead: "The lead",
     latest: "Latest stories",
     source: "Sources and further reading",
