@@ -211,7 +211,12 @@ belongs in a client component mounted through `ArticleLayout`'s
 - `src/lib/seo.ts#alternatesFor()` adds canonical + hreflang links; use it
   in every page's `generateMetadata`. The sitemap lists each locale with
   its alternates, and each locale has its own RSS feed at
-  `/<locale>/feed.xml`.
+  `/<locale>/feed.xml`, built by `src/lib/feed.ts` from every content type:
+  posts, news, CertLabs and published principles (undated, so they come
+  last and carry no `pubDate`). A new content type goes there too
+  (`tests/feed.test.ts` checks the list). Item guids are the URL without
+  the trailing slash, as the feed first shipped them; keep them that way,
+  or readers show every item to subscribers again.
 - The language switcher uses `<Link scroll={false}>`: a client-side
   navigation between the same `[lang]` layout, so the page never reloads.
   Components holding locale-dependent client state need a `key={locale}`
