@@ -3,8 +3,8 @@ export const author = {
   email: "contact@gsantana.dev",
   // Small pre-cropped avatar on the media CDN; the original photo is far
   // too heavy (12 MB) to ship for an 80px image.
-  avatar: "/author/me-avatar.webp",
-  portrait: "/author/me-portrait.webp",
+  avatar: "/author/me-avatar.webp?v=2",
+  portrait: "/author/me-portrait.webp?v=2",
   github: "https://github.com/gabe-santana",
   linkedin: "https://www.linkedin.com/in/gsantana-s/",
   youtube: "https://www.youtube.com/channel/UCfVbIg4I9g0KdCtMP82bj4w",
