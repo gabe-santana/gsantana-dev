@@ -110,7 +110,7 @@ The numbers in that diagram come from the NumPy script below, on the real activa
   </div>
 </div>
 
-CLIP_PLACEHOLDER
+Clipping is the first thing everyone tries, and the same layer shows why it fails. Clip every activation above the 99.9th percentile, exactly 0.10% of the values (everything above 17.85), and the output of position 0 is 98.5% wrong while every other token still carries 25% error: channel 1095 sits near 39 on every token, so it gets cut on all of them. Clip only the top 0.01% (above 45.09) and channel 1095 survives, the other tokens drop to 1.9% error, and position 0 is still 97% wrong, because its 2,589 is precisely the value being cut. The massive activations paper found the same at full scale: setting those few values to zero wrecks a model's perplexity, because attention uses them as fixed biases. The outliers are rare and they carry signal. What has to change is who shares a scale with them, and LLM.int8(), SmoothQuant and weight-only quantization are three ways of arranging that. The clipping script is in the hands-on section.
 
 ### Weight-only methods: GPTQ, AWQ and the file formats
 
@@ -153,7 +153,50 @@ Everything below runs on a laptop CPU in a Python 3.12 environment with `torch` 
 Every experiment here is **fake quantization**: round the values to the integer grid and immediately map them back to floats. The model then computes in FP32 with exactly the values a real INT4 or INT8 kernel would see, so the accuracy is right even though nothing gets faster. One function covers every scheme in this post:
 
 ```python title="quantize.py"
-QUANTIZE_PLACEHOLDER
+import numpy as np
+
+
+def fake_quant(x: np.ndarray, bits: int, symmetric: bool = True, granularity: str | int = "tensor") -> np.ndarray:
+    """Quantize to `bits`-bit integers and immediately dequantize back to float.
+
+    granularity: "tensor" (one scale), "row" (one scale per row: per output
+    channel for a weight, per token for an activation) or an int group size
+    (one scale per run of that many consecutive values inside a row).
+    """
+    if granularity == "tensor":
+        blocks = x.reshape(1, -1)
+    elif granularity == "row":
+        blocks = x.reshape(x.shape[0], -1)
+    else:
+        blocks = x.reshape(-1, granularity)
+
+    if symmetric:
+        qmax = 2 ** (bits - 1) - 1
+        scale = np.abs(blocks).max(axis=1, keepdims=True) / qmax
+        scale[scale == 0] = 1.0
+        q = np.clip(np.round(blocks / scale), -qmax, qmax)
+        dequant = q * scale
+    else:
+        qmax = 2**bits - 1
+        low = blocks.min(axis=1, keepdims=True)
+        high = blocks.max(axis=1, keepdims=True)
+        scale = (high - low) / qmax
+        scale[scale == 0] = 1.0
+        zero_point = np.round(-low / scale)
+        q = np.clip(np.round(blocks / scale) + zero_point, 0, qmax)
+        dequant = (q - zero_point) * scale
+
+    return dequant.reshape(x.shape).astype(x.dtype)
+
+
+def rel_error(reference: np.ndarray, approx: np.ndarray) -> float:
+    return float(np.linalg.norm(reference - approx) / np.linalg.norm(reference))
+
+
+def bits_per_weight(bits: int, symmetric: bool, granularity: str | int, shape: tuple[int, int]) -> float:
+    # One FP16 scale per block, plus a `bits`-wide zero point when asymmetric.
+    block = shape[0] * shape[1] if granularity == "tensor" else shape[1] if granularity == "row" else granularity
+    return bits + (16 + (0 if symmetric else bits)) / block
 ```
 
 The `"row"` mode is per-channel for a weight matrix (each row is one output channel) and per-token for an activation matrix (each row is one token). A group size reshapes each row into runs of consecutive values. Dequantizing to float keeps everything else in the pipeline unchanged.
@@ -163,7 +206,27 @@ The `"row"` mode is per-channel for a weight matrix (each row is one output chan
 This pulls the `down_proj` weight of layer 28 and the activations that feed it (512 tokens of WikiText-2):
 
 ```python title="extract_layer.py"
-EXTRACT_PLACEHOLDER
+import numpy as np
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+MODEL = "HuggingFaceTB/SmolLM2-135M"
+LAYER = 28
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL)
+model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).eval()
+down_proj = model.model.layers[LAYER].mlp.down_proj
+
+text = open("data/wikitext2_test.txt", encoding="utf-8").read()
+ids = tokenizer(text[:20000], return_tensors="pt").input_ids[:, :512]
+
+captured = {}
+down_proj.register_forward_hook(lambda mod, inp, out: captured.update(x=inp[0][0].numpy()))
+with torch.no_grad():
+    model(ids)
+
+np.savez("down_proj_l28.npz", w=down_proj.weight.detach().numpy(), x=captured["x"])
+print("W", down_proj.weight.shape, "X", captured["x"].shape)
 ```
 
 ```text title="output"
@@ -173,11 +236,81 @@ W torch.Size([576, 1536]) X (512, 1536)
 Then it quantizes the weight at twelve settings. "Weight err" is the relative Frobenius error of the matrix, `||W - W'|| / ||W||`; "output err" is the same for the layer output `X W^T`, which is what the next layer actually receives. The second part plants one weight at ten times the tensor's maximum, the way an outlier would, and checks the damage on the *other* rows:
 
 ```python title="weights_demo.py"
-WEIGHTS_PLACEHOLDER
+import numpy as np
+
+from quantize import bits_per_weight, fake_quant, rel_error
+
+data = np.load("down_proj_l28.npz")
+w = data["w"]
+# Position 0 carries a massive activation (see below) and would dominate the output norm.
+x = data["x"][1:]
+y = x @ w.T
+
+SETTINGS = [
+    (8, True, "tensor"),
+    (8, True, "row"),
+    (4, True, "tensor"),
+    (4, False, "tensor"),
+    (4, True, "row"),
+    (4, False, "row"),
+    (4, True, 128),
+    (4, False, 128),
+    (4, True, 32),
+    (4, False, 32),
+    (3, False, 128),
+    (3, False, 32),
+]
+
+
+def label(bits, symmetric, granularity):
+    kind = "sym" if symmetric else "asym"
+    where = {"tensor": "per-tensor", "row": "per-channel"}.get(granularity, f"group {granularity}")
+    return f"INT{bits} {kind:<4} {where}"
+
+
+print(f"W {w.shape}, |w| max {np.abs(w).max():.3f}, std {w.std():.4f}")
+print(f"{'setting':<26} {'bits/w':>6} {'weight err':>10} {'output err':>10}")
+for bits, symmetric, granularity in SETTINGS:
+    wq = fake_quant(w, bits, symmetric, granularity)
+    bpw = bits_per_weight(bits, symmetric, granularity, w.shape)
+    print(f"{label(bits, symmetric, granularity):<26} {bpw:>6.2f} {rel_error(w, wq):>10.2%} {rel_error(y, x @ wq.T):>10.2%}")
+
+print("\nOne weight set to 10x the tensor max, at row 7, column 100")
+spiked = w.copy()
+spiked[7, 100] = 10 * np.abs(w).max()
+others = np.ones(w.shape[0], dtype=bool)
+others[7] = False
+print(f"{'setting':<26} {'err, other rows':>15} {'err, row 7':>10}")
+for bits, symmetric, granularity in [(8, True, "tensor"), (8, True, "row"), (4, True, "row"), (4, True, 32)]:
+    wq = fake_quant(spiked, bits, symmetric, granularity)
+    print(
+        f"{label(bits, symmetric, granularity):<26} "
+        f"{rel_error(spiked[others], wq[others]):>15.2%} {rel_error(spiked[7], wq[7]):>10.2%}"
+    )
 ```
 
 ```text title="output"
-WEIGHTS_OUTPUT_PLACEHOLDER
+W (576, 1536), |w| max 5.812, std 0.2001
+setting                    bits/w weight err output err
+INT8 sym  per-tensor         8.00      6.60%      8.76%
+INT8 sym  per-channel        8.01      0.90%      1.20%
+INT4 sym  per-tensor         4.00     93.29%     74.03%
+INT4 asym per-tensor         4.00     70.83%     60.46%
+INT4 sym  per-channel        4.01     15.81%     19.61%
+INT4 asym per-channel        4.01     13.79%     18.31%
+INT4 sym  group 128          4.12     12.09%     16.21%
+INT4 asym group 128          4.16     10.26%     13.45%
+INT4 sym  group 32           4.50      9.85%     13.29%
+INT4 asym group 32           4.62      8.17%     10.92%
+INT3 asym group 128          3.15     21.97%     26.86%
+INT3 asym group 32           3.59     17.48%     22.40%
+
+One weight set to 10x the tensor max, at row 7, column 100
+setting                    err, other rows err, row 7
+INT8 sym  per-tensor                64.62%      8.71%
+INT8 sym  per-channel                0.90%      8.71%
+INT4 sym  per-channel               15.80%     13.39%
+INT4 sym  group 32                   9.85%      2.43%
 ```
 
 What that says:
@@ -195,11 +328,60 @@ The output error is larger than the weight error because the activations aren't 
 Same layer, now quantizing the activations too:
 
 ```python title="activations_demo.py"
-ACTIVATIONS_PLACEHOLDER
+import numpy as np
+
+from quantize import fake_quant, rel_error
+
+data = np.load("down_proj_l28.npz")
+w, x = data["w"], data["x"]
+y = x @ w.T
+
+abs_x = np.abs(x)
+channel_max = abs_x.max(axis=0)
+print(f"X {x.shape}: median |x| {np.median(abs_x):.3f}, max {abs_x.max():.1f} at position {abs_x.max(axis=1).argmax()}")
+for c in np.argsort(-np.median(abs_x, axis=0))[:2]:
+    print(f"channel {c}: median |x| over tokens {np.median(abs_x[:, c]):.1f}")
+
+wq8 = fake_quant(w, 8, True, "row")
+
+
+def report(name, y_approx):
+    print(f"{name:<44} all {rel_error(y, y_approx):>7.2%}   pos 1+ {rel_error(y[1:], y_approx[1:]):>7.2%}")
+
+
+print("\nW8A8, weights INT8 per-channel in every row below")
+report("A8 per-tensor", fake_quant(x, 8, True, "tensor") @ wq8.T)
+report("A8 per-token", fake_quant(x, 8, True, "row") @ wq8.T)
+
+# LLM.int8(): feature dimensions with any |x| >= 6 stay in FP16, the rest go through INT8.
+outliers = channel_max >= 6.0
+x_int8 = fake_quant(np.where(outliers, 0, x), 8, True, "row")
+w_int8 = fake_quant(np.where(outliers, 0, w), 8, True, "row")
+y_mixed = x_int8 @ w_int8.T + x[:, outliers] @ w[:, outliers].T
+report(f"LLM.int8() decomposition ({outliers.sum()} FP16 dims)", y_mixed)
+
+# SmoothQuant: divide activation channel j by s_j and multiply weight column j by s_j.
+for alpha in (0.5, 0.8):
+    s = channel_max**alpha / np.abs(w).max(axis=0) ** (1 - alpha)
+    xs, ws = x / s, w * s
+    ws8 = fake_quant(ws, 8, True, "row")
+    report(f"SmoothQuant a={alpha}, A8 per-tensor", fake_quant(xs, 8, True, "tensor") @ ws8.T)
+    report(f"SmoothQuant a={alpha}, A8 per-token", fake_quant(xs, 8, True, "row") @ ws8.T)
 ```
 
 ```text title="output"
-ACTIVATIONS_OUTPUT_PLACEHOLDER
+X (512, 1536): median |x| 0.174, max 2589.6 at position 0
+channel 1095: median |x| over tokens 38.7
+channel 625: median |x| over tokens 15.7
+
+W8A8, weights INT8 per-channel in every row below
+A8 per-tensor                                all  21.26%   pos 1+  75.28%
+A8 per-token                                 all   2.35%   pos 1+   7.68%
+LLM.int8() decomposition (407 FP16 dims)     all   0.24%   pos 1+   0.86%
+SmoothQuant a=0.5, A8 per-tensor             all  11.17%   pos 1+  39.55%
+SmoothQuant a=0.5, A8 per-token              all   0.79%   pos 1+   2.54%
+SmoothQuant a=0.8, A8 per-tensor             all   2.08%   pos 1+   7.35%
+SmoothQuant a=0.8, A8 per-token              all   1.30%   pos 1+   4.61%
 ```
 
 "All" is the error over all 512 tokens and "pos 1+" skips position 0, whose massive activation makes its output 96% of the total norm and would hide everything else. Reading the "pos 1+" column:
@@ -210,6 +392,42 @@ ACTIVATIONS_OUTPUT_PLACEHOLDER
 - **SmoothQuant with `alpha = 0.5` and per-token activations reaches 2.5% with every dimension in INT8.** With a per-tensor activation scale it still suffers (39.6%), because position 0 still dominates one shared scale; pushing more of the difficulty into the weights (`alpha = 0.8`) brings per-tensor down to 7.4%.
 
 This is why production W8A8 recipes use per-token dynamic activation scales, or smoothing, or both, and why so many deployments quantize only the weights.
+
+### Clipping, measured
+
+The script behind the clipping numbers in the deep dive, on the same layer and the same 512 tokens:
+
+```python title="clip_demo.py"
+import numpy as np
+
+from quantize import fake_quant, rel_error
+
+data = np.load("down_proj_l28.npz")
+w, x = data["w"], data["x"]
+y = x @ w.T
+wq8 = fake_quant(w, 8, True, "row")
+
+for pct in (99.9, 99.99):
+    limit = np.percentile(np.abs(x), pct)
+    clipped = np.clip(x, -limit, limit)
+    share = (np.abs(x) > limit).mean()
+    y_clip = clipped @ w.T
+    y_q = fake_quant(clipped, 8, True, "tensor") @ wq8.T
+    print(f"clip at the {pct}th percentile (|x| <= {limit:.2f}, {share:.2%} of values)")
+    print(f"  clipping alone      all {rel_error(y, y_clip):>7.2%}   pos 0 {rel_error(y[:1], y_clip[:1]):>7.2%}   pos 1+ {rel_error(y[1:], y_clip[1:]):>7.2%}")
+    print(f"  + A8 per-tensor     all {rel_error(y, y_q):>7.2%}   pos 0 {rel_error(y[:1], y_q[:1]):>7.2%}   pos 1+ {rel_error(y[1:], y_q[1:]):>7.2%}")
+```
+
+```text title="output"
+clip at the 99.9th percentile (|x| <= 17.85, 0.10% of values)
+  clipping alone      all  94.79%   pos 0  98.53%   pos 1+  25.05%
+  + A8 per-tensor     all  94.79%   pos 0  98.53%   pos 1+  25.14%
+clip at the 99.99th percentile (|x| <= 45.09, 0.01% of values)
+  clipping alone      all  92.85%   pos 0  96.78%   pos 1+   1.85%
+  + A8 per-tensor     all  92.87%   pos 0  96.77%   pos 1+   9.07%
+```
+
+Adding per-tensor INT8 on top of the 0.01% clip brings the other tokens back up to 9.1%: one shared scale still has to cover channel 1095. Clipping trades a quantization problem for a correctness problem, and here it loses on both.
 
 ### The whole model, sixteen ways
 
@@ -222,7 +440,196 @@ Now for the model itself. `evaluate.py` restores the original weights, applies o
 W8A8 settings add a hook that fake-quantizes every linear input; the KV cache settings fake-quantize the output of `k_proj` and `v_proj` per token and per head (64 values share a scale). That's the pre-RoPE key, which is also what [KVQuant](https://arxiv.org/abs/2401.18079) quantizes.
 
 ```python title="evaluate.py"
-EVALUATE_PLACEHOLDER
+import json
+import os
+import re
+import sys
+import time
+
+import numpy as np
+import torch
+import torch.nn.functional as F
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from quantize import fake_quant
+
+MODEL = "HuggingFaceTB/SmolLM2-135M"
+WINDOW, N_WINDOWS, KL_WINDOWS = 1024, 32, 4
+torch.manual_seed(0)
+torch.set_num_threads(8)
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL)
+model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).eval()
+# The checkpoint is BF16, so keeping the originals in BF16 is lossless and halves the copy.
+original = {name: p.detach().to(torch.bfloat16) for name, p in model.named_parameters()}
+
+wiki_ids = tokenizer(open("data/wikitext2_test.txt", encoding="utf-8").read(), return_tensors="pt").input_ids[0]
+windows = wiki_ids[: WINDOW * N_WINDOWS].view(N_WINDOWS, WINDOW)
+lambada = json.load(open("data/lambada_1000.json", encoding="utf-8"))
+hellaswag = json.load(open("data/hellaswag_val_1000.json", encoding="utf-8"))
+
+
+def linear_layers(m):
+    return [(name, mod) for name, mod in m.named_modules() if isinstance(mod, torch.nn.Linear) and ".layers." in name]
+
+
+def fp8_e4m3(w: torch.Tensor) -> torch.Tensor:
+    scale = w.abs().max() / 448.0
+    return (w / scale).to(torch.float8_e4m3fn).to(torch.float32) * scale
+
+
+def apply(setting: dict) -> list:
+    with torch.no_grad():
+        for name, p in model.named_parameters():
+            p.copy_(original[name].float())
+    hooks = []
+    for name, mod in linear_layers(model):
+        w = mod.weight.data
+        if setting.get("w") == "fp8":
+            mod.weight.data = fp8_e4m3(w)
+        elif "w" in setting:
+            bits, sym, gran = setting["w"]
+            mod.weight.data = torch.from_numpy(fake_quant(w.numpy(), bits, sym, gran))
+        if "a" in setting:
+            bits, gran = setting["a"]
+
+            def quant_input(module, args, bits=bits, gran=gran):
+                x = args[0]
+                flat = x.reshape(-1, x.shape[-1]).numpy()
+                return (torch.from_numpy(fake_quant(flat, bits, True, gran)).view_as(x),)
+
+            hooks.append(mod.register_forward_pre_hook(quant_input))
+        if "kv" in setting and name.endswith(("k_proj", "v_proj")):
+            bits = setting["kv"]
+
+            def quant_output(module, args, out, bits=bits):
+                head_dim = model.config.head_dim
+                return torch.from_numpy(fake_quant(out.reshape(-1, head_dim).numpy(), bits, True, "row")).view_as(out)
+
+            hooks.append(mod.register_forward_hook(quant_output))
+    return hooks
+
+
+@torch.no_grad()
+def wikitext_metrics(save_reference: bool = False):
+    """Perplexity on every window; KL divergence and top-1 agreement against the baseline on the first KL_WINDOWS."""
+    if save_reference:
+        ref = np.lib.format.open_memmap("ref_logprobs.npy", "w+", np.float16, (KL_WINDOWS, WINDOW - 1, model.config.vocab_size))
+    else:
+        ref = np.load("ref_logprobs.npy", mmap_mode="r")
+    nll, kl, agree, kl_count = 0.0, 0.0, 0, 0
+    for i in range(N_WINDOWS):
+        batch = windows[i : i + 1]
+        logp = F.log_softmax(model(batch).logits[0, :-1].float(), dim=-1)
+        nll += -logp.gather(-1, batch[0, 1:].unsqueeze(-1)).sum().item()
+        if i < KL_WINDOWS:
+            if save_reference:
+                ref[i] = logp.numpy().astype(np.float16)
+            ref_logp = torch.from_numpy(np.asarray(ref[i], dtype=np.float32))
+            kl += (ref_logp.exp() * (ref_logp - logp)).sum().item()
+            agree += (logp.argmax(-1) == ref_logp.argmax(-1)).sum().item()
+            kl_count += WINDOW - 1
+        del logp
+    if save_reference:
+        ref.flush()
+    return {"ppl": float(np.exp(nll / (N_WINDOWS * (WINDOW - 1)))), "kl": kl / kl_count, "top1_agree": agree / kl_count}
+
+
+def pad(seqs):
+    width = max(len(s) for s in seqs)
+    ids = torch.zeros(len(seqs), width, dtype=torch.long)
+    mask = torch.zeros(len(seqs), width, dtype=torch.long)
+    for row, s in enumerate(seqs):
+        ids[row, : len(s)] = torch.tensor(s)
+        mask[row, : len(s)] = 1
+    return ids, mask
+
+
+@torch.no_grad()
+def continuation_logprobs(pairs, batch_size=8):
+    """Sum of log-probs of each continuation given its context, and whether every continuation token is the argmax."""
+    results = []
+    for i in range(0, len(pairs), batch_size):
+        chunk = pairs[i : i + batch_size]
+        seqs = [ctx + cont for ctx, cont in chunk]
+        ids, mask = pad(seqs)
+        logits = model(ids, attention_mask=mask).logits
+        for row, (ctx, cont) in enumerate(chunk):
+            positions = torch.arange(len(ctx) - 1, len(ctx) + len(cont) - 1)
+            target = torch.tensor(cont)
+            token_logp = F.log_softmax(logits[row, positions].float(), dim=-1)
+            results.append((token_logp.gather(-1, target.unsqueeze(-1)).sum().item(), bool((token_logp.argmax(-1) == target).all())))
+    return results
+
+
+def lambada_accuracy():
+    pairs = []
+    for row in lambada:
+        text = row["text"]
+        cut = text.rindex(" ")
+        pairs.append((tokenizer(text[:cut]).input_ids, tokenizer(text[cut:]).input_ids))
+    return float(np.mean([greedy for _, greedy in continuation_logprobs(pairs)]))
+
+
+def hellaswag_clean(text):
+    text = text.strip().replace(" [title]", ". ")
+    return re.sub(r"\[.*?\]", "", text).replace("  ", " ")
+
+
+def hellaswag_accuracy():
+    pairs, lengths, labels = [], [], []
+    for row in hellaswag:
+        ctx = row["ctx_a"] + " " + row["ctx_b"].capitalize()
+        query = tokenizer(hellaswag_clean(row["activity_label"] + ": " + ctx)).input_ids
+        for ending in row["endings"]:
+            ending = " " + hellaswag_clean(ending)
+            pairs.append((query, tokenizer(ending).input_ids))
+            lengths.append(len(ending))
+        labels.append(int(row["label"]))
+    scores = np.array([lp for lp, _ in continuation_logprobs(pairs)]) / np.array(lengths)
+    return float(np.mean(scores.reshape(-1, 4).argmax(1) == np.array(labels)))
+
+
+SETTINGS = {
+    "baseline (BF16 weights)": {},
+    "FP8 E4M3 per-tensor": {"w": "fp8"},
+    "INT8 sym per-tensor": {"w": (8, True, "tensor")},
+    "INT8 sym per-channel": {"w": (8, True, "row")},
+    "INT4 sym per-tensor": {"w": (4, True, "tensor")},
+    "INT4 sym per-channel": {"w": (4, True, "row")},
+    "INT4 asym per-channel": {"w": (4, False, "row")},
+    "INT4 sym group 64": {"w": (4, True, 64)},
+    "INT4 asym group 64": {"w": (4, False, 64)},
+    "INT4 asym group 32": {"w": (4, False, 32)},
+    "INT3 asym group 64": {"w": (3, False, 64)},
+    "INT3 asym group 32": {"w": (3, False, 32)},
+    "W8A8 per-channel / per-tensor": {"w": (8, True, "row"), "a": (8, "tensor")},
+    "W8A8 per-channel / per-token": {"w": (8, True, "row"), "a": (8, "row")},
+    "KV cache INT8": {"kv": 8},
+    "KV cache INT4": {"kv": 4},
+}
+
+if __name__ == "__main__":
+    out_path = os.environ.get("RESULTS", "results.json")
+    try:
+        results = json.load(open(out_path))
+    except FileNotFoundError:
+        results = {}
+    only = sys.argv[1:]
+    for name, setting in SETTINGS.items():
+        if name in results or (only and name not in only):
+            continue
+        start = time.time()
+        hooks = apply(setting)
+        row = wikitext_metrics(save_reference=not setting)
+        row["lambada"] = lambada_accuracy()
+        row["hellaswag"] = hellaswag_accuracy()
+        for h in hooks:
+            h.remove()
+        results[name] = row
+        json.dump(results, open(out_path, "w"), indent=1)
+        print(f"{name:<32} ppl {row['ppl']:8.3f}  kl {row['kl']:.4f}  top1 {row['top1_agree']:.2%}  "
+              f"lambada {row['lambada']:.1%}  hellaswag {row['hellaswag']:.1%}  ({time.time() - start:.0f}s)", flush=True)
 ```
 
 ```text title="terminal"
@@ -231,21 +638,149 @@ python report.py
 ```
 
 ```text title="output"
-MODEL_TABLE_PLACEHOLDER
+setting                                   PPL      KL top-1 same  LAMBADA HellaSwag
+baseline (BF16 weights)                 16.88  0.0000     100.0%    43.3%     44.4%
+FP8 E4M3 per-tensor                     17.05  0.0123      93.6%    42.7%     44.2%
+INT8 sym per-tensor                     17.55  0.0453      88.6%    42.2%     44.8%
+INT8 sym per-channel                    16.96  0.0036      97.1%    43.1%     44.3%
+INT4 sym per-tensor              4,160,947.94 12.3475       1.7%     0.0%     28.0%
+INT4 sym per-channel                    38.12  0.8719      52.8%    21.1%     39.0%
+INT4 asym per-channel                   28.06  0.4932      63.8%    26.2%     41.6%
+INT4 sym group 64                       24.18  0.3437      69.1%    24.4%     44.4%
+INT4 asym group 64                      21.70  0.2524      72.3%    31.8%     43.6%
+INT4 asym group 32                      20.37  0.1845      75.8%    35.8%     45.9%
+INT3 asym group 64                      67.10  1.3826      42.4%    10.0%     40.1%
+INT3 asym group 32                      46.32  1.0187      48.4%    13.9%     42.7%
+W8A8 per-channel / per-tensor           30.17  0.5456      61.3%    20.6%     39.9%
+W8A8 per-channel / per-token            17.59  0.0422      91.4%    41.8%     45.1%
+KV cache INT8                           16.89  0.0005      98.8%    43.0%     44.3%
+KV cache INT4                           21.03  0.2242      75.7%    30.6%     42.9%
 ```
 
-MODEL_ANALYSIS_PLACEHOLDER
+Reading it from the top:
+
+- **The baseline isn't exactly zero** (KL 0.000001, 99.98% agreement) because the reference distribution is stored in FP16 to fit on disk. That's the noise floor of the comparison.
+- **8-bit weights are safe, and granularity still shows.** INT8 per-channel moves perplexity by 0.5% and keeps 97.1% of the top-1 choices, with LAMBADA inside noise. INT8 per-tensor is clearly worse (KL 0.045, 88.6% agreement), and FP8 per-tensor lands between the two: its exponent gives small weights finer steps, which one INT8 scale can't.
+- **INT4 per-tensor is a dead model**: perplexity in the millions, LAMBADA at zero, HellaSwag at 28% where guessing gets 25%.
+- **4-bit with groups is usable, and the metrics disagree about how usable.** The best 4-bit row, asymmetric groups of 32, raises perplexity by 21% and agrees with the baseline on three tokens out of four. LAMBADA loses 7.5 points (43.3% to 35.8%), and HellaSwag goes *up* by 1.5.
+- **HellaSwag barely notices damage until the model is broken.** INT4 symmetric with groups of 64 scores exactly the baseline's 44.4% while LAMBADA falls 19 points and perplexity rises 43%. Picking one of four endings by likelihood survives a lot of noise; reproducing the exact last word of a passage doesn't. With 1,000 examples the standard error on either task is about 1.6 points, so a gap under 3 points says nothing either way.
+- **3 bits breaks a model this small** with plain rounding: perplexity between 46 and 67, LAMBADA down to 10% and 14%.
+- **W8A8 lives or dies by the activation scale**, as the single layer predicted. Per-tensor activations nearly double perplexity and halve LAMBADA; per-token activations land close to INT8 weight-only.
+- **An INT8 KV cache is free** (KL 0.0005, LAMBADA 43.0%). **INT4 isn't**, at least per token as here: LAMBADA drops to 30.6%. Keys have outlier channels, which is why KIVI quantizes keys per channel and values per token.
+
+Two caveats keep this honest. Every 4-bit and 3-bit row is round-to-nearest, the baseline GPTQ and AWQ were built to beat, so a real 4-bit build should land well above these rows. And a 135M model is far more fragile than an 8B one; the GPTQ paper's own results show larger models losing less at the same bit width. Read the absolute numbers as a worst case. The method is what carries over: one baseline, the same text, KL and agreement next to perplexity, and at least one task that needs exact answers.
 
 ### The memory calculator
 
 The last script answers the question that started this post: what fits where. It counts parameters from each model's `config.json` values (checked against the published totals: Llama 3.1 8B comes out at 8.03B), keeps the embeddings and LM head in BF16, and applies each format's real cost in bits per weight, scales and zero points included:
 
 ```python title="memory.py"
-MEMORY_PLACEHOLDER
+from dataclasses import dataclass
+
+GIB = 1024**3
+
+
+@dataclass
+class Config:
+    name: str
+    hidden: int
+    intermediate: int
+    layers: int
+    heads: int
+    kv_heads: int
+    vocab: int
+    head_dim: int = 0
+
+    def __post_init__(self):
+        self.head_dim = self.head_dim or self.hidden // self.heads
+
+    @property
+    def block_params(self) -> int:
+        attn = 2 * self.hidden * self.heads * self.head_dim + 2 * self.hidden * self.kv_heads * self.head_dim
+        return self.layers * (attn + 3 * self.hidden * self.intermediate)
+
+    @property
+    def embedding_params(self) -> int:
+        return 2 * self.vocab * self.hidden  # input embeddings + untied LM head
+
+    def kv_bytes_per_token(self, bytes_per_value: float) -> float:
+        return 2 * self.layers * self.kv_heads * self.head_dim * bytes_per_value
+
+
+# Bits per weight for the transformer blocks, scales and zero points included.
+FORMATS = {
+    "BF16": 16,
+    "INT8 or FP8": 8,
+    "INT4 g128 (GPTQ/AWQ)": 4 + (16 + 4) / 128,
+    "NF4 + double quant": 4 + 0.127,
+    "GGUF Q4_K": 4.5,
+    "INT3 g128": 3 + (16 + 3) / 128,
+}
+
+MODELS = [
+    Config("Llama 3.1 8B", 4096, 14336, 32, 32, 8, 128256),
+    Config("Qwen2.5 14B", 5120, 13824, 48, 40, 8, 152064),
+    Config("Qwen2.5 32B", 5120, 27648, 64, 40, 8, 152064),
+    Config("Llama 3.1 70B", 8192, 28672, 80, 64, 8, 128256),
+]
+
+
+def weights_gib(cfg: Config, block_bits: float, embedding_bits: float = 16) -> float:
+    return (cfg.block_params * block_bits + cfg.embedding_params * embedding_bits) / 8 / GIB
+
+
+def max_context(cfg: Config, gpu_gib: float, block_bits: float, kv_bytes: float, reserve_gib: float = 1.5) -> int:
+    free = (gpu_gib - reserve_gib - weights_gib(cfg, block_bits)) * GIB
+    return max(0, int(free // cfg.kv_bytes_per_token(kv_bytes)))
+
+
+if __name__ == "__main__":
+    print(f"{'model':<14} {'params':>7} {'embed':>6} {'KV/token':>9}")
+    for cfg in MODELS:
+        total = cfg.block_params + cfg.embedding_params
+        print(f"{cfg.name:<14} {total / 1e9:>6.2f}B {cfg.embedding_params / total:>6.1%} {cfg.kv_bytes_per_token(2) / 1024:>6.0f} KiB")
+
+    print("\nweights in GiB (embeddings and LM head kept in BF16)")
+    print(f"{'format':<22}" + "".join(f"{cfg.name:>15}" for cfg in MODELS))
+    for fmt, bits in FORMATS.items():
+        print(f"{fmt:<22}" + "".join(f"{weights_gib(cfg, bits):>15.1f}" for cfg in MODELS))
+
+    for gpu in (24, 8):
+        print(f"\n{gpu} GiB GPU, 1.5 GiB reserved: KV cache tokens that fit, all requests combined (BF16 KV / FP8 KV)")
+        for fmt in ("BF16", "INT8 or FP8", "INT4 g128 (GPTQ/AWQ)"):
+            cells = []
+            for cfg in MODELS:
+                bf16 = max_context(cfg, gpu, FORMATS[fmt], 2)
+                fp8 = max_context(cfg, gpu, FORMATS[fmt], 1)
+                cells.append("-" if bf16 == 0 and fp8 == 0 else f"{bf16 // 1000}k / {fp8 // 1000}k")
+            print(f"{fmt:<22}" + "".join(f"{c:>15}" for c in cells))
 ```
 
 ```text title="output"
-MEMORY_OUTPUT_PLACEHOLDER
+model           params  embed  KV/token
+Llama 3.1 8B     8.03B  13.1%    128 KiB
+Qwen2.5 14B     14.77B  10.5%    192 KiB
+Qwen2.5 32B     32.76B   4.8%    256 KiB
+Llama 3.1 70B   70.55B   3.0%    320 KiB
+
+weights in GiB (embeddings and LM head kept in BF16)
+format                   Llama 3.1 8B    Qwen2.5 14B    Qwen2.5 32B  Llama 3.1 70B
+BF16                             15.0           27.5           61.0          131.4
+INT8 or FP8                       8.5           15.2           32.0           67.7
+INT4 g128 (GPTQ/AWQ)              5.3            9.3           18.0           37.0
+NF4 + double quant                5.3            9.2           17.9           36.8
+GGUF Q4_K                         5.6            9.8           19.2           39.8
+INT3 g128                         4.5            7.7           14.3           29.0
+
+24 GiB GPU, 1.5 GiB reserved: KV cache tokens that fit, all requests combined (BF16 KV / FP8 KV)
+BF16                       61k / 123k              -              -              -
+INT8 or FP8               115k / 230k      39k / 79k              -              -
+INT4 g128 (GPTQ/AWQ)      140k / 281k     72k / 144k      18k / 36k              -
+
+8 GiB GPU, 1.5 GiB reserved: KV cache tokens that fit, all requests combined (BF16 KV / FP8 KV)
+BF16                                -              -              -              -
+INT8 or FP8                         -              -              -              -
+INT4 g128 (GPTQ/AWQ)         9k / 19k              -              -              -
 ```
 
 The 1.5 GiB reserve is my assumption for the CUDA context, the engine's activation workspace and fragmentation; measure yours, it varies by engine and batch size. The KV budget is shared by everything in flight: 61K tokens is one 61K-token conversation or thirty 2K-token ones.
@@ -254,4 +789,28 @@ Three things jump out. **The embeddings don't shrink** unless you quantize them 
 
 ## Production Reality Check
 
-PRODUCTION_PLACEHOLDER
+### Fake quantization measures accuracy, not speed
+
+Everything above computes in FP32 with rounded values, so it says nothing about latency. Speed comes from kernels that read packed 4-bit or 8-bit weights and dequantize them in registers, and those depend on the hardware and the format: FP8 matmuls need FP8 tensor cores (NVIDIA Ada, Hopper and newer), and 4-bit weight-only kernels such as Marlin, which vLLM uses on Ampere and later, are what turn W4A16 into faster decoding. Batch size changes the answer too. Weight-only quantization helps most at small batches, where decoding is memory bound; at high concurrency the matmuls become compute bound, the dequantization work shows, and FP8 or W8A8, which also speed up the math, often serve more tokens per second. Benchmark at the concurrency you actually run.
+
+### Use a real method, then measure it like this
+
+Round-to-nearest is the floor. For GPU serving, use GPTQ or AWQ checkpoints (llm-compressor produces both for vLLM) or FP8 on Hopper-class GPUs. For llama.cpp, build k-quants with an importance matrix from `llama-imatrix`, which gives its formats the calibration that GPTQ and AWQ get. Then repeat the comparison above against your own unquantized model. llama.cpp's `llama-perplexity` does the KL part for you: save the base model's logits once with `--kl-divergence-base`, then run each quantized file with `--kl-divergence` to get KL divergence, top-token agreement and perplexity side by side.
+
+### Calibrate on what you serve
+
+GPTQ, AWQ, SmoothQuant, importance matrices and FP8 activation or KV scales all learn from calibration text. If that text is generic English web pages and you serve Portuguese contracts or JSON extraction, the channels that matter for your traffic were never the ones measured. Calibrate on a few hundred samples of real prompts, and evaluate on a different sample.
+
+### Gate it like any other model change
+
+A quantized model is a new model. Put it through the same evals as a model upgrade: your task set, scored by your grader, against the unquantized version on the same inputs, plus the flip count, how many answers went from right to wrong. The date-format bug in the opening is what a flip looks like in production: aggregate quality barely moved, and one field broke a few times a day. If the grader is a model, calibrate it first ([An LLM-as-a-Judge You Can Trust: Calibrate the Grader Before You Believe the Grade](/en-us/blog/llm-as-judge-calibration/) covers how). Keep the unquantized model deployable, so a rollback is a config change.
+
+### Downloaded builds are someone else's choices
+
+A 4-bit file from the hub encodes decisions you didn't make: the method, the group size, the calibration data, which tensors stayed in higher precision. Prefer quantized checkpoints published by the model's authors or by a pipeline you know, read the recipe, and measure the file the same way you'd measure one you built.
+
+### Test the KV cache at your real context length
+
+An 8-bit cache was close to free here; below 8 bits, keys need per-channel treatment. Errors in the cache also compound with length, since every new token attends to every quantized key before it, so test a quantized cache at the context lengths you serve, not on short prompts.
+
+Back to the team with one 24 GB GPU. The 4-bit build may well have been the right call; what was missing was the comparison. An afternoon running their own extraction prompts through the BF16 model and the 4-bit one, with KL divergence and a field-by-field diff of the outputs, would have shown the date problem before their users did. Quantize, and run that comparison on every build before it ships.
