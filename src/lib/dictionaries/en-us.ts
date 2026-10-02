@@ -138,7 +138,7 @@ export const enUs = {
     description: "The stories moving AI and software engineering forward.",
     metaDescription: "Recent AI, programming, and software engineering news, curated with original summaries and links to primary sources.",
     issue: "The briefing",
-    asOf: "Updated October 1, 2026",
+    asOf: "Updated October 2, 2026",
     lead: "The lead",
     latest: "Latest stories",
     source: "Sources and further reading",
