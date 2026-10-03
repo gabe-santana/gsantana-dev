@@ -1,18 +1,24 @@
 import type { Config } from "tailwindcss";
 import typography from "@tailwindcss/typography";
 
+const withAlpha = (variable: string) =>
+  `color-mix(in srgb, var(${variable}) calc(<alpha-value> * 100%), transparent)`;
+
 const config: Config = {
   darkMode: "class",
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      // The tokens are hex CSS variables, which Tailwind can't split into
+      // channels, so a modifier like bg-surface/95 used to compile to nothing.
+      // color-mix() with <alpha-value> makes every opacity modifier work.
       colors: {
-        background: "var(--color-background)",
-        foreground: "var(--color-foreground)",
-        muted: "var(--color-muted)",
-        accent: "var(--color-accent)",
-        surface: "var(--color-surface)",
-        border: "var(--color-border)",
+        background: withAlpha("--color-background"),
+        foreground: withAlpha("--color-foreground"),
+        muted: withAlpha("--color-muted"),
+        accent: withAlpha("--color-accent"),
+        surface: withAlpha("--color-surface"),
+        border: withAlpha("--color-border"),
       },
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],

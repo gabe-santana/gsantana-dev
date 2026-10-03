@@ -313,7 +313,7 @@ export function ListenToArticle({ src, seconds, articleKey, title, artwork, labe
         ref={inlineRef}
         data-pagefind-ignore
         aria-label={labels.title}
-        className="mb-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-[color-mix(in_srgb,var(--color-surface)_60%,transparent)] px-3 py-2.5 sm:gap-4 sm:px-4"
+        className="mb-10 flex items-center gap-3 rounded-2xl border border-border/60 bg-surface/60 px-3 py-2.5 sm:gap-4 sm:px-4"
       >
         <audio
           ref={audioRef}
@@ -376,7 +376,7 @@ export function ListenToArticle({ src, seconds, articleKey, title, artwork, labe
                 aria-label={labels.title}
                 aria-hidden={!docked}
                 inert={!docked}
-                className={`listen-dock w-full max-w-xl rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-surface)_94%,transparent)] px-3 py-2 shadow-[0_18px_48px_-12px_rgb(0_0_0/0.85)] backdrop-blur-md sm:px-4 ${
+                className={`listen-dock w-full max-w-xl rounded-2xl border border-border bg-surface/95 px-3 py-2 shadow-[0_18px_48px_-12px_rgb(0_0_0/0.85)] backdrop-blur-md sm:px-4 ${
                   docked ? "pointer-events-auto" : ""
                 }`}
                 data-docked={docked}
