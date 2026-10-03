@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { AuthorCard } from "@/components/author-card";
 import { CodeBlocks } from "@/components/code-blocks";
 import { Comments } from "@/components/comments";
+import { ListenToArticle } from "@/components/listen-to-article";
 import { ReadingProgressBar } from "@/components/reading-progress-bar";
 import { RelatedItems } from "@/components/related-items";
 import { ShareBar } from "@/components/share-bar";
@@ -62,6 +63,8 @@ interface ArticleLayoutProps {
   relatedItems?: RelatedItem[];
   /** What the share bar shares: the article's path (without the locale) and title. */
   share: { path: string; title: string };
+  /** A narrated version: shows the "Listen to this article" player under the share strip. */
+  listen?: { src: string; seconds: number; artwork?: string };
 }
 
 export function ArticleLayout({
@@ -77,6 +80,7 @@ export function ArticleLayout({
   tldr,
   relatedItems = [],
   share,
+  listen,
 }: ArticleLayoutProps) {
   const hasToc = headings.length >= 2;
   const parts = splitContent(contentHtml, contentInserts);
@@ -118,6 +122,17 @@ export function ArticleLayout({
         {/* Under the title and description: the pitch is fresh, and a reader
             who likes it can share before scrolling on. */}
         {shareBar("top")}
+
+        {listen ? (
+          <ListenToArticle
+            src={listen.src}
+            seconds={listen.seconds}
+            artwork={listen.artwork}
+            articleKey={articleKey}
+            title={share.title}
+            labels={dict.article.listen}
+          />
+        ) : null}
 
         {tldr?.length ? (
           <aside

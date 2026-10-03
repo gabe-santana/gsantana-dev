@@ -91,6 +91,11 @@ export default async function BlogPostPage({ params }: PageProps) {
       dict={dict}
       articleKey={post.slug}
       share={{ path: `/blog/${post.slug}`, title: post.title }}
+      listen={
+        post.audio && post.audioSeconds
+          ? { src: mediaUrl(post.audio), seconds: post.audioSeconds, artwork: mediaUrl(cover) }
+          : undefined
+      }
       relatedItems={getRelatedItems(lang, post.slug)}
       tldr={post.tldr}
       headings={post.headings}

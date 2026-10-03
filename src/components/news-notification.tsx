@@ -70,7 +70,7 @@ export function NewsNotification({ story, labels }: NewsNotificationProps) {
     <aside
       role="status"
       aria-label={labels.eyebrow}
-      className={`fixed bottom-4 left-4 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-border bg-surface/95 p-3 shadow-[0_18px_48px_-12px_rgb(0_0_0/0.8)] backdrop-blur transition duration-300 ease-out motion-reduce:transition-none ${
+      className={`fixed bottom-[calc(1rem+var(--listen-dock-offset,0px))] left-4 z-50 w-[calc(100vw-2rem)] max-w-sm rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-surface)_95%,transparent)] p-3 shadow-[0_18px_48px_-12px_rgb(0_0_0/0.8)] backdrop-blur transition duration-300 ease-out motion-reduce:transition-none ${
         shown ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
       }`}
     >

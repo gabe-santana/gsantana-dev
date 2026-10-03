@@ -23,6 +23,13 @@ export interface PostFrontmatter {
   cover?: string;
   /** Embed URL of a video shown in place of the cover at the top of the post (the cover still feeds cards and OG). */
   video?: string;
+  /**
+   * Narrated version of this locale's post: a root-relative MP3 path on the
+   * media CDN, resolved via mediaUrl(). Posts without it show no player.
+   */
+  audio?: string;
+  /** Length of the audio in seconds, shown before any audio loads. Required with `audio`. */
+  audioSeconds?: number;
   draft?: boolean;
   /** 2 to 4 short takeaways shown in the TL;DR box. Required (tests enforce it). */
   tldr: string[];

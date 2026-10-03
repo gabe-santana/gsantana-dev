@@ -188,3 +188,40 @@ export function ShareIcon({ className = "h-4 w-4" }: IconProps) {
     </svg>
   );
 }
+
+export function PlayIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden viewBox="0 0 16 16" className={`fill-current ${className}`}>
+      <path d="M4.5 2.6v10.8c0 .5.55.8.97.53l8.4-5.4a.63.63 0 0 0 0-1.06l-8.4-5.4a.63.63 0 0 0-.97.53z" />
+    </svg>
+  );
+}
+
+export function PauseIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden viewBox="0 0 16 16" className={`fill-current ${className}`}>
+      <rect x="3.5" y="2.5" width="3" height="11" rx="1" />
+      <rect x="9.5" y="2.5" width="3" height="11" rx="1" />
+    </svg>
+  );
+}
+
+export function SkipBackIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 3v5h5" />
+      <text x="12" y="15.5" textAnchor="middle" fontSize="8" fontWeight="700" fill="currentColor" stroke="none">15</text>
+    </svg>
+  );
+}
+
+export function SkipForwardIcon({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 12a9 9 0 1 1-3-6.7" />
+      <path d="M21 3v5h-5" />
+      <text x="12" y="15.5" textAnchor="middle" fontSize="8" fontWeight="700" fill="currentColor" stroke="none">15</text>
+    </svg>
+  );
+}

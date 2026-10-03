@@ -3,6 +3,8 @@ title: "Vectorless RAG, Measured: PageIndex vs Vector RAG on FinanceBench"
 description: "PageIndex swaps the vector database for a document tree and an LLM agent that navigates it. I benchmarked it against two vector RAG pipelines on FinanceBench: better answers, 40 times the cost."
 date: 2026-09-30
 tags: [RAG, LLMs, Evaluation, Python]
+audio: "/posts/pageindex-vs-vector-rag-benchmark/audio-en-us.mp3?v=1"
+audioSeconds: 947
 tldr:
   - "On 46 FinanceBench questions over 11 filings, with the same answer model (gpt-4.1) for every system, PageIndex answered 87.0% correctly, against 80.4% for dense vector RAG and 78.3% for hybrid RAG with a reranker. It never missed a question the RAG pipelines got right, but with 46 questions the gap is not statistically significant."
   - "It cost 40 times more per question ($0.33 against $0.008) and read 50 times more tokens (165k against 3.3k), because the agent resends the document tree on every turn. Indexing was cheap: about $2 for 2,690 pages."

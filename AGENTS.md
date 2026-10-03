@@ -144,6 +144,23 @@ built by `lib/share.ts`; copy link and the device share sheet ("More",
 the two buttons), which access insights stores in `source`/`utm_medium`, and
 each click sends a Clarity event `share_<network>`.
 
+### Listen to this article (narrated posts)
+
+A post gets an audio player when its frontmatter has `audio` (a root-relative
+MP3 path under `/posts/<slug>/`, resolved via `mediaUrl()`, with `?v=` to skip
+the CDN cache on a new version) and `audioSeconds` (its length, so the player
+shows it before anything loads). It's per locale: only the file that has the
+fields shows the player, so a translation without its own narration shows
+none. `components/listen-to-article.tsx`, rendered by `ArticleLayout` under
+the top share strip, uses an `<audio preload="none">`: a page view downloads
+nothing, and on play the browser streams the MP3 from R2 with range requests
+(the CDN answers 206), so playback starts after the first chunk and seeking
+fetches only the bytes from the new position. It keeps the position per
+article in `localStorage["gsantana_listen:<key>"]`, the speed in
+`gsantana_listen_rate`, and sets Media Session metadata for lock-screen
+controls. Upload the MP3 to R2 (`audio/mpeg`) before publishing the
+frontmatter, like covers; `tests/listen.test.tsx` checks the fields.
+
 ### Diagrams in articles
 
 Never ASCII art or box-drawing characters in a code block
