@@ -177,7 +177,7 @@ async function FeaturedProject({ project, index, locale, labels }: { project: Pr
   const extras = project.extras ?? [];
   const phonesInStage = [project.media, ...extras].filter(isPhone).length >= 2;
   const others = extras.filter((m) => !isPhone(m));
-  const gallery = phonesInStage ? others : others.slice(2);
+  const gallery = [...(project.gallery ?? []), ...(phonesInStage ? others : others.slice(2))];
   const galleryHtml = await Promise.all(gallery.map(codeHtml));
   // The text arrives line by line, a beat after the media.
   const step = (n: number) => 150 + n * 90;

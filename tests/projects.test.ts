@@ -6,7 +6,7 @@ import { featuredProjects, labProjects, projectCount, type Localized, type Proje
 
 const PUBLIC = join(__dirname, "..", "src", "public");
 const projects = [...featuredProjects, ...labProjects];
-const allMedia: ProjectMedia[] = projects.flatMap((p) => [p.media, ...(p.extras ?? [])]);
+const allMedia: ProjectMedia[] = projects.flatMap((p) => [p.media, ...(p.extras ?? []), ...(p.gallery ?? [])]);
 const texts: Localized[] = [
   ...projects.flatMap((p) => [p.tagline, p.description, ...(p.highlights ?? [])]),
   ...allMedia.flatMap((m) => (m.kind === "image" ? [m.alt] : [])),

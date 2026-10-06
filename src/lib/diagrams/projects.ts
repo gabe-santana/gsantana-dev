@@ -2,65 +2,6 @@ import { defineDiagram, e, n } from "@/lib/diagrams/define";
 
 // components/projects/project-showcase.tsx: architecture sketches for repos that ship none.
 
-export const chariotServices = defineDiagram((t) => {
-  const nodes = {
-    ui: [t("Player UI", "Interface do jogador"), t("web client", "cliente web")],
-    matchmaking: [t("Match Making", "Match Making"), t("pairs players", "junta os jogadores")],
-    cgs: ["CGS", t("real-time games, sockets", "partidas em tempo real, sockets")],
-    management: [t("Match Management", "Match Management"), t("match data, PGN", "dados da partida, PGN")],
-    analyser: [t("Board Analyser", "Board Analyser"), t("Stockfish, live and batch", "Stockfish, ao vivo e em lote")],
-    validation: [t("Game validation", "Validação"), t("legal moves, clocks", "lances legais, relógio")],
-  } as const;
-  return {
-    title: "CHARIOT",
-    heading: t("EVENT-DRIVEN CHESS SERVICES", "SERVIÇOS DE XADREZ ORIENTADOS A EVENTOS"),
-    accessible: t(
-      "The player UI asks the Match Making service for a game; it creates the match in the Match Management service, which returns a match token. The UI then plays over a socket with CGS, the Chariot Game Server, which validates every move and clock, saves the match PGN to Match Management and sends positions to the Board Analyser, backed by Stockfish, for live and batch analysis.",
-      "A interface do jogador pede uma partida ao serviço de Match Making, que cria a partida no Match Management e devolve um token. A interface então joga por socket com o CGS, o servidor de jogo do Chariot, que valida cada lance e o relógio, salva o PGN da partida no Match Management e manda as posições para o Board Analyser, com Stockfish, para análise ao vivo e em lote."
-    ),
-    desktop: {
-      cols: 4,
-      rows: 3,
-      rowH: 104,
-      nodes: [
-        n("ui", 1.5, 0, "accent", nodes.ui[0], nodes.ui[1], { w: 220 }),
-        n("matchmaking", 0, 1, "violet", nodes.matchmaking[0], nodes.matchmaking[1]),
-        n("cgs", 2.5, 1, "amber", nodes.cgs[0], nodes.cgs[1], { w: 240 }),
-        n("management", 1, 2, "violet", nodes.management[0], nodes.management[1]),
-        n("analyser", 2, 2, "blue", nodes.analyser[0], nodes.analyser[1]),
-        n("validation", 3, 2, "blue", nodes.validation[0], nodes.validation[1]),
-      ],
-      edges: [
-        e("ui", "matchmaking", { tone: "violet", route: "hv" }),
-        e("ui", "cgs", { tone: "amber", route: "hv", label: "socket" }),
-        e("matchmaking", "management", { tone: "violet", route: "vh" }),
-        e("cgs", "management", { tone: "amber", route: "vh" }),
-        e("cgs", "analyser", { tone: "blue" }),
-        e("cgs", "validation", { tone: "blue" }),
-      ],
-    },
-    mobile: {
-      cols: 2,
-      rows: 3,
-      rowH: 92,
-      nodes: [
-        n("ui", 0.5, 0, "accent", nodes.ui[0], nodes.ui[1], { w: 200 }),
-        n("matchmaking", 0, 1, "violet", nodes.matchmaking[0]),
-        n("cgs", 1, 1, "amber", nodes.cgs[0], t("sockets, validation", "sockets, validação")),
-        n("management", 0, 2, "violet", nodes.management[0], "PGN"),
-        n("analyser", 1, 2, "blue", nodes.analyser[0], "Stockfish"),
-      ],
-      edges: [
-        e("ui", "matchmaking", { tone: "violet" }),
-        e("ui", "cgs", { tone: "amber" }),
-        e("matchmaking", "management", { tone: "violet" }),
-        e("cgs", "management", { tone: "amber", route: "straight" }),
-        e("cgs", "analyser", { tone: "blue" }),
-      ],
-    },
-  };
-});
-
 export const reachUpFlow = defineDiagram((t) => {
   const beacons = [t("BLE beacons", "Beacons BLE"), t("UUID, RSSI, major/minor", "UUID, RSSI, major/minor")] as const;
   const app = [t("Flutter app", "App Flutter"), t("voice search, narrator", "busca por voz, narrador")] as const;
@@ -215,7 +156,6 @@ export const microServiceGateway = defineDiagram((t) => {
 });
 
 export const projectDiagrams = {
-  "project-chariot": chariotServices,
   "project-reachup": reachUpFlow,
   "project-track-me": trackMeFlow,
   "project-micro-service-arch": microServiceGateway,

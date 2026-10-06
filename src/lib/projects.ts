@@ -41,6 +41,8 @@ export interface Project {
   media: ProjectMedia;
   /** Floating shots layered over the main media in the showcase. */
   extras?: ProjectMedia[];
+  /** Shown full width under the row, for media that only reads when large (a wide demo). */
+  gallery?: ProjectMedia[];
   /** Blog post slug that tells the story in depth. */
   post?: string;
 }
@@ -56,6 +58,29 @@ const img = (
 ): ProjectMedia => ({ kind: "image", src, width, height, frame, alt: { en, pt } });
 
 export const featuredProjects: Project[] = [
+  {
+    repo: "corollary",
+    name: "Corollary",
+    years: "2022 · 2026",
+    stars: 17,
+    stack: ["Python", "mypy strict", "Claude", "OpenAI-compatible", "Ollama", "MkDocs"],
+    tagline: {
+      en: "An agent runtime that keeps every conclusion tied to the evidence behind it.",
+      pt: "Um runtime de agentes que mantém cada conclusão presa à evidência que a sustenta.",
+    },
+    description: {
+      en: "Agents usually keep their state as a message log, so a wrong fact at step 3 is read at step 40 with the same trust as a verified tool result. Corollary stores beliefs instead: every claim records what it follows from, and a truth maintenance system retracts each conclusion that depended on a corrected input and re-derives only those. The model just proposes claims; the runtime validates them, runs the tools and builds every context from the beliefs still in force.",
+      pt: "Agentes costumam guardar o estado como um log de mensagens, então um fato errado no passo 3 é lido no passo 40 com a mesma confiança de um resultado de ferramenta verificado. O Corollary guarda crenças no lugar: cada afirmação registra de onde ela vem, e um sistema de manutenção de verdade retira cada conclusão que dependia de uma entrada corrigida e deriva de novo só essas. O modelo apenas propõe afirmações; o runtime as valida, executa as ferramentas e monta todo contexto a partir das crenças que continuam valendo.",
+    },
+    highlights: [
+      { en: "Correct one input and only its dependents change: 12 of 20 conclusions in the demo, with zero model calls", pt: "Corrija uma entrada e só o que dependia dela muda: 12 de 20 conclusões no demo, sem nenhuma chamada ao modelo" },
+      { en: "Answers ship with a proof a deterministic verifier checks: arithmetic, citations and dates", pt: "As respostas vêm com uma prova que um verificador determinístico confere: contas, citações e datas" },
+    ],
+    media: img("/projects/corollary/logo.png?v=1", 1254, 1254, "plain", "The Corollary logo: a blue and violet ribbon folded into a C around a violet dot.", "O logo do Corollary: uma fita azul e violeta dobrada em C em volta de um ponto violeta."),
+    gallery: [
+      img("/projects/corollary/demo.gif?v=1", 960, 470, "browser", "Corollary's belief graph: Q2 revenue is corrected, the conclusions that depended on it go OUT and are re-derived, and an independent risk belief stays untouched.", "O grafo de crenças do Corollary: a receita do 2º trimestre é corrigida, as conclusões que dependiam dela saem (OUT) e são derivadas de novo, e uma crença de risco independente fica intocada."),
+    ],
+  },
   {
     repo: "ReachUp",
     name: "ReachUp!",
@@ -182,27 +207,6 @@ export const featuredProjects: Project[] = [
       { en: "Diagrams drawn on canvas from one spec for both languages and screen sizes", pt: "Diagramas desenhados em canvas a partir de uma spec para os dois idiomas e tamanhos de tela" },
     ],
     media: img("/projects/gsantana-dev/home.webp?v=1", 1440, 900, "browser", "The gsantana.dev home page.", "A página inicial do gsantana.dev."),
-  },
-  {
-    repo: "chariot",
-    name: "Chariot",
-    years: "2022 · 2026",
-    stars: 15,
-    stack: ["C#", ".NET", "Rust", "Python", "Dapr", "gRPC", "CloudEvents", "Kubernetes", "Stockfish"],
-    tagline: {
-      en: "A highly scalable chess platform, one service per concern.",
-      pt: "Uma plataforma de xadrez altamente escalável, um serviço por responsabilidade.",
-    },
-    description: {
-      en: "Event-driven microservices built on Clean Architecture, DDD and CQRS: match making, a stateful game server that plays over sockets and validates every move and clock, match management that keeps the PGN, and a board analyser backed by Stockfish.",
-      pt: "Microsserviços orientados a eventos com Clean Architecture, DDD e CQRS: match making, um servidor de jogo com estado que joga por socket e valida cada lance e o relógio, o gerenciamento de partidas que guarda o PGN e um analisador de tabuleiro com Stockfish.",
-    },
-    highlights: [
-      { en: "Spectators join a game and receive every move, without playing", pt: "Espectadores entram na partida e recebem cada lance, sem jogar" },
-      { en: "Opening books, endgame tablebases and tournaments on the feature list", pt: "Livros de abertura, tablebases de final e torneios na lista de funcionalidades" },
-    ],
-    media: { kind: "diagram", id: "project-chariot" },
-    extras: [img("/projects/chariot/mascot.webp?v=1", 529, 472, "plain", "Chariot's mascot: a knight driving a chariot pulled by two horses.", "O mascote do Chariot: um cavaleiro guiando uma biga puxada por dois cavalos.")],
   },
   {
     repo: "track-me",
