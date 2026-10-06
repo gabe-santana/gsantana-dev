@@ -23,6 +23,12 @@ describe("Clarity proxy", () => {
     expect(upstreamScriptUrl("0.8.70/clarity.js")).toBe("https://scripts.clarity.ms/0.8.70/clarity.js");
     expect(upstreamScriptUrl("../evil.js")).toBeNull();
     expect(upstreamScriptUrl("0.8.70/other.js")).toBeNull();
+    // Clarity's loader asked for a prerelease build on 2026-10-05.
+    expect(upstreamScriptUrl("0.8.74-beta/clarity.js")).toBe("https://scripts.clarity.ms/0.8.74-beta/clarity.js");
+    expect(upstreamScriptUrl("0.8.74-rc.1/clarity.js")).toBe("https://scripts.clarity.ms/0.8.74-rc.1/clarity.js");
+    expect(upstreamScriptUrl("0.8.74-../clarity.js")).toBeNull();
+    expect(upstreamScriptUrl("0.8.74-beta/../evil.js")).toBeNull();
+    expect(upstreamScriptUrl("0.8.74-beta/x/clarity.js")).toBeNull();
     expect(upstreamCollectUrl("y")).toBe("https://y.clarity.ms/collect");
     expect(upstreamCollectUrl("evil.example")).toBeNull();
     expect(upstreamCollectUrl("")).toBeNull();

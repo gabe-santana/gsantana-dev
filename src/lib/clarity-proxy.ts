@@ -36,9 +36,15 @@ export function rewriteClarityTag(tag: string, origin: string): string {
   return out;
 }
 
-/** "0.8.70/clarity.js" -> the upstream script URL; anything else is refused. */
+/**
+ * "0.8.70/clarity.js" -> the upstream script URL; anything else is refused.
+ * Clarity also ships prerelease builds ("0.8.74-beta"), so a semver suffix
+ * of letters and digits is allowed, but never a slash or "..".
+ */
 export function upstreamScriptUrl(rest: string): string | null {
-  return /^\d+\.\d+\.\d+\/clarity\.js$/.test(rest) ? `https://scripts.clarity.ms/${rest}` : null;
+  return /^\d+\.\d+\.\d+(?:-[a-z0-9]+(?:\.[a-z0-9]+)*)?\/clarity\.js$/i.test(rest)
+    ? `https://scripts.clarity.ms/${rest}`
+    : null;
 }
 
 /** "y" -> https://y.clarity.ms/collect; only single-letter Clarity shards. */
