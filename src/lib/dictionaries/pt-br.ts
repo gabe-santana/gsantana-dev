@@ -137,7 +137,7 @@ export const ptBr: Dictionary = {
     description: "As histórias que movem a IA e a engenharia de software.",
     metaDescription: "Notícias recentes de IA, programação e engenharia de software, com resumos originais e links para fontes primárias.",
     issue: "O panorama",
-    asOf: "Atualizado em 2 de outubro de 2026",
+    asOf: "Atualizado em 5 de outubro de 2026",
     lead: "Em destaque",
     latest: "Últimas notícias",
     source: "Fontes e leituras complementares",
