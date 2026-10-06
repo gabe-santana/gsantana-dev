@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Nav } from "@/components/nav";
 import { NotFoundScreen } from "@/components/not-found-screen";
 import { getDictionary } from "@/lib/dictionaries";
 import { LOCALE_STORAGE_KEY, locales } from "@/lib/i18n";
+import { darkSiteMetadata, darkSiteViewport } from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -13,7 +14,10 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   title: "404 | gsantana.dev",
   robots: { index: false },
+  other: darkSiteMetadata,
 };
+
+export const viewport: Viewport = darkSiteViewport;
 
 // One static 404.html serves every missing URL in every language, so the
 // language is picked in the browser before first paint and written to

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/footer";
@@ -15,6 +15,8 @@ import { mediaUrl } from "@/lib/media";
 import { newsStories } from "@/lib/news";
 import {
   alternatesFor,
+  darkSiteMetadata,
+  darkSiteViewport,
   localeSocialAlt,
   pageSocialMetadata,
   siteUrl,
@@ -43,6 +45,8 @@ interface LayoutProps {
   params: Promise<{ lang: string }>;
 }
 
+export const viewport: Viewport = darkSiteViewport;
+
 export async function generateMetadata({ params }: LayoutProps): Promise<Metadata> {
   const { lang } = await params;
   if (!isLocale(lang)) return {};
@@ -57,6 +61,7 @@ export async function generateMetadata({ params }: LayoutProps): Promise<Metadat
       ...alternatesFor(lang, "/"),
       types: { "application/rss+xml": localePath(lang, "/feed.xml") },
     },
+    other: darkSiteMetadata,
   };
 }
 

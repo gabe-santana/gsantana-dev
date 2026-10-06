@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   defaultLocale,
   localeConfig,
@@ -8,6 +8,15 @@ import {
 } from "@/lib/i18n";
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gsantana.dev";
+
+/**
+ * The site is dark by design. Declaring it in <head> lets the browser paint
+ * dark from the first frame and keeps "auto dark" features from repainting
+ * it: Chromium's auto dark mode skips pages with a dark color-scheme, and
+ * darkreader-lock is the tag the Dark Reader extension honors to stay off.
+ */
+export const darkSiteViewport: Viewport = { colorScheme: "dark", themeColor: "#05070d" };
+export const darkSiteMetadata: Metadata["other"] = { "darkreader-lock": "true" };
 const OG_IMAGE_WIDTH = 1200;
 const OG_IMAGE_HEIGHT = 630;
 
