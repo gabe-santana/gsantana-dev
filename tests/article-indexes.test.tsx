@@ -47,8 +47,8 @@ describe("article indexes", () => {
     root.innerHTML = renderToStaticMarkup(page);
 
     const first = links(root, "article a");
-    expect(first[0]).toBe(`/${locale}/news/google-gemini-4-argon`);
-    expect(first[1]).toBe(`/${locale}/news/openai-devday-dots-gpt-6-1-sol`);
+    expect(first[0]).toBe(`/${locale}/news/mistral-large-4`);
+    expect(first[1]).toBe(`/${locale}/news/google-gemini-4-argon`);
 
     const rest = (await laterPages(NewsLaterPage, newsPageParams(), locale)).flatMap((r) => links(r, "article a"));
     const all = [...first, ...rest];

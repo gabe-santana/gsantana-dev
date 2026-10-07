@@ -17,8 +17,8 @@ import { alternatesFor, localeSocialAlt, pageSocialMetadata } from "@/lib/seo";
 // The front page features a lead story and three side stories by slug; the
 // rest form the "Latest" list, which is the part that paginates.
 function frontPage() {
-  const lead = newsStories.find((story) => story.slug === "google-gemini-4-argon")!;
-  const side = ["openai-devday-dots-gpt-6-1-sol", "nvidia-open-agent-safety-platform", "anthropic-claude-sonnet-5-5"].map((slug) =>
+  const lead = newsStories.find((story) => story.slug === "mistral-large-4")!;
+  const side = ["google-gemini-4-argon", "reflection-ai-beam-open-weight", "openai-devday-dots-gpt-6-1-sol"].map((slug) =>
     newsStories.find((story) => story.slug === slug)!
   );
   const latest = newsStories.filter((story) => story !== lead && !side.includes(story));
