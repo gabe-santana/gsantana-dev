@@ -18,6 +18,7 @@ import { embeddingTrainingDiagrams } from "@/lib/diagrams/embedding-models-contr
 import { llmObservabilityDiagrams } from "@/lib/diagrams/llm-observability-opentelemetry";
 import { sightlineDiagrams } from "@/lib/diagrams/sightline";
 import { azureNetworkingDiagrams } from "@/lib/diagrams/azure-networking";
+import { tokenTaxDiagrams } from "@/lib/diagrams/portuguese-token-tax";
 import { pageindexAgentLoop, pageindexBenchmarkHarness, pageindexVsRagPipelines } from "@/lib/diagrams/pageindex-vs-vector-rag";
 import type { Diagram } from "@/lib/diagrams/types";
 
@@ -45,6 +46,7 @@ const registry: Record<string, (locale: Locale) => Diagram> = {
   ...llmServingDiagrams,
   ...embeddingTrainingDiagrams,
   ...llmObservabilityDiagrams,
+  ...tokenTaxDiagrams,
   "service-bus-order-status": serviceBusOrderStatus,
   "messaging-services": messagingServices,
   "chunking-pipeline": chunkingPipeline,
